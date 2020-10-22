@@ -1,0 +1,67 @@
+@font-face {
+  font-family: "Inconsolata";
+  src: url("/Inconsolata-Bold.1f03cb8b.ttf") format("truetype");
+  font-weight: 700;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  overflow: hidden;
+}
+
+body {
+  margin: 0;
+  background: #120114;
+  height: 100vh;
+  overflow: hidden;
+  width: 100vw;
+  font-family: "Inconsolata";
+  /* USE THIS FOR THE MAP VIEW */
+  background-image: linear-gradient(
+      30deg,
+      rgba(57, 160, 237, 0.075),
+      rgba(255, 255, 255, 0.01)
+    ),
+    linear-gradient(100deg, rgba(100, 11, 40, 0.075), rgba(94, 252, 141, 0.075));
+}
+
+body::after {
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(255, 255, 255, 0.05),
+    rgba(112, 255, 233, 0.05) 10px,
+    transparent 2px,
+    transparent 4px
+  );
+  content: "";
+  height: 100vh;
+  left: 0;
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  width: 100vw;
+  z-index: 100;
+}
+form {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  display: none;
+  grid-template-columns: min-content min-content;
+  white-space: nowrap;
+  grid-gap: 20px;
+}
+label {
+  display: block;
+  color: red;
+}
+form button {
+  grid-column: span 2;
+}
+
+
+/*# sourceMappingURL=/style.251b6741.css.map */

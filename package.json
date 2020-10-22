@@ -1,15 +1,23 @@
 {
-  "name": "fleet-commander-pixijs",
+  "name": "new",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "helpers.js",
   "scripts": {
-    "start": "serve ./src"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "parcel index.html"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "serve": "^11.0.0"
+    "@pixi-essentials/cull": "^1.0.9",
+    "pixi-cull": "^1.0.0",
+    "pixi-viewport": "^4.15.0",
+    "pixi.js": "^5.3.3",
+    "uuid": "^8.3.1"
+  },
+  "devDependencies": {
+    "parcel-bundler": "^1.12.4"
   }
 }
