@@ -46,19 +46,11 @@ body::after {
   width: 100vw;
   z-index: 100;
 }
-form {
+
+#asset__loader {
+  font-family: "Inconsolata";
+  font-weight: 700;
+  opacity: 0;
+  pointer-events: none;
   position: fixed;
-  top: 10px;
-  left: 10px;
-  display: none;
-  grid-template-columns: min-content min-content;
-  white-space: nowrap;
-  grid-gap: 20px;
-}
-label {
-  display: block;
-  color: red;
-}
-form button {
-  grid-column: span 2;
 }
