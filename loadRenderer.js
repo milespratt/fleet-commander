@@ -294,9 +294,8 @@ export default (universe) => {
     selectionLine.moveTo(lineStartX, lineStartY);
     selectionLine.lineTo(end.x, end.y);
   }
-
-  // let lastUpdate = Date.now();
-  localApp.ticker.add(() => {});
+  const loadingText = document.getElementById("loading_text");
+  loadingText.classList.add("hidden");
   app.ticker.add(() => {
     const bounds = app.viewport.getVisibleBounds();
     const boundary = {
