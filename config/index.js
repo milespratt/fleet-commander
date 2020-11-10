@@ -10,7 +10,7 @@ export const colors = {
 export const baseAPIurl =
   process.env.NODE_ENV === "dev"
     ? "http://192.168.1.30"
-    : "http://73.119.195.216";
+    : "https://api.fltcmdr.com";
 export const pixelsPerLightyear = 100;
 export const lightYear = 9460730472580800; // meters per light year
 export const lightSpeed = 299792458; // meters per second
