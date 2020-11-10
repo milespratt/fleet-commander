@@ -5,16 +5,72 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <link rel="stylesheet" href="./styles/style.css" />
-    <!-- <link
-      href="https://fonts.googleapis.com/css2?family=Inconsolata&display=swap"
-      rel="stylesheet"
-    /> -->
     <title>Fleet Commander</title>
   </head>
-  <body>
-    <div id="asset__loader">
-      load
+  <body class="padded">
+    
+    <div id="game" class="grid padded bordered">
+      <div id="asset__loader">
+        load
+      </div>
+      <div id="top_menu" class="bordered menu padded grid grid--c">
+        <button class="control bordered blue__glow padded--light">DVP</button>
+        <button class="control bordered blue__glow padded--light">LST</button>
+        <button class="control bordered blue__glow padded--light">LNCH</button>
+        <button class="control control-inactive bordered blue__glow padded--light">SCN</button>
+      </div>
+      <div id="view" class="bordered">
+        <div id="local_view" class="bordered hidden">
+          <span id="local_view_title" class="blue__glow local__map__text">SYS:...<br>BDS:...</span>
+          <div class="loader__wrapper" id="local_view_loader">
+            <span  class="blue__glow local__map__text">SCANNING SYSTEM</span>
+          </div>
+        </div>
+      </div>
+      <div id="side_menu" class="bordered menu padded grid grid--r grid--r--split">
+        <div id="menuData" class="menu__data grid grid--r">
+          <div class="info__item grid grid--nogap grid-r">
+            <span class="info__label blue__glow padded--light">LBL</span>
+            <span class="info__value bordered padded--light white__glow"
+              >VL</span
+            >
+          </div>
+        </div>
+        <div class="grid grid-r">
+          <button
+            id="stats_display"
+            class="control bordered padded--lighter blue__glow"
+          >
+            DSP
+          </button>
+          <button class="control bordered padded--lighter blue__glow">
+            STP
+          </button>
+          <button
+            id="ship_scan"
+            class="control bordered padded--lighter blue__glow"
+          >
+            SCN
+          </button>
+          <button
+            id="voyage_toggle"
+            class="control bordered padded--lighter blue__glow"
+          >
+            VYG
+          </button>
+        </div>
+      </div>
+      <div id="bottom_menu" class="bordered menu padded grid grid--c grid--c--split">
+        <div>
+          <button class="control bordered blue__glow padded--light">SHP</button>
+          <button class="control bordered blue__glow padded--light">DSTN</button>
+        </div>
+        <div>
+          <button class="control bordered blue__glow padded--light">LCK</button>
+          <button id="deselect" class="control bordered blue__glow padded--light">DSL</button>
+        </div>
+      </div>
+      <script src="./init.js"></script>
     </div>
-    <script src="./js/init.js"></script>
   </body>
 </html>

@@ -1,13 +1,12 @@
 // PIXI
 import * as PIXI from "pixi.js";
 import Cull from "pixi-cull";
-// import { Cull as NewCull } from "@pixi-essentials/cull";
 
-export function startCulling(viewport) {
+export function startCulling(containers, viewport, stats) {
   const cull = new Cull.Simple();
-  cull.addList(viewport.children);
+  containers.forEach((container) => cull.addList(container.children));
   cull.cull(viewport.getVisibleBounds());
-  console.log("started culling");
+  console.log("Culling started!");
 
   // cull whenever the viewport moves
   PIXI.Ticker.shared.add(() => {
@@ -20,6 +19,9 @@ export function startCulling(viewport) {
         y: boundingBox.y,
       };
       cull.cull(cullingBounds);
+      if (stats) {
+        console.log(cull.stats());
+      }
       viewport.dirty = false;
     }
   });

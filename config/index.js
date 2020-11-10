@@ -7,6 +7,10 @@ export const colors = {
   yellow: 0xf9e784,
   white: 0xffffff,
 };
+export const baseAPIurl =
+  process.env.NODE_ENV === "dev"
+    ? "http://192.168.1.30"
+    : "http://73.119.195.216";
 export const pixelsPerLightyear = 100;
 export const lightYear = 9460730472580800; // meters per light year
 export const lightSpeed = 299792458; // meters per second
@@ -14,10 +18,14 @@ export const calculationMultiplier = 16.6666666666666666666666666666666666666667
 export const au = 149597870700; // 1 astronomical unit in meters 1AU
 // 100 pixels per light year
 // numbers below in pixels
-export const worldWidth = 10000; // 100 light years
-export const worldHeight = 10000; // 100 light years
-export const screenWidth = window.innerWidth;
-export const screenHeight = window.innerHeight;
+export const worldWidth = 50000; // divide by 100 for light years
+export const worldHeight = 50000; // divide by 100 for light years
+// export const screenWidth = window.innerWidth;
+// export const screenHeight = window.innerHeight;
+const viewContainer = document.getElementById("view");
+const viewContainerBounds = viewContainer.getBoundingClientRect();
+export const screenWidth = viewContainerBounds.width;
+export const screenHeight = viewContainerBounds.height;
 export const viewportClamps = {
   minWidth: screenWidth / 2, // zoom in
   minHeight: screenHeight / 2, // zoom in
@@ -31,7 +39,7 @@ export const textResolution = 2;
 // universe
 export const generationParameters = {
   maxStarGenLoops: 1000000,
-  maxStars: 5000,
+  maxStars: 50000,
   maxGenTime: 60000,
   edgeDistance: 100, // pixels from edge
   // 100 pixels per light year
@@ -40,7 +48,7 @@ export const generationParameters = {
     width: worldWidth,
     height: worldHeight,
   },
-  minimumStarDistance: 50,
+  minimumStarDistance: 100,
   radial: false,
 };
 

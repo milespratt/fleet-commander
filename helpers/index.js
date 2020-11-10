@@ -1,13 +1,11 @@
-import { v4 as uuidv4, version } from "uuid";
 import * as PIXI from "pixi.js";
-uuidv4(); // ⇨ '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d'
-
+import { v4 as uuidv4, version } from "uuid";
 import {
   calculationMultiplier,
   lightYear,
   shipTypes,
   shipNames,
-} from "./config";
+} from "../config";
 
 export function getID() {
   return uuidv4();
@@ -18,7 +16,7 @@ export function randomIntFromInterval(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
-function randomFloatFromInterval(min, max) {
+export function randomFloatFromInterval(min, max) {
   // min and max included
   return Math.random() * (max - min + 1) + min;
 }
@@ -197,21 +195,39 @@ export function getStarAge(type) {
   }
 }
 
+// export function getRandomStar(stars, limit) {
+//   if (limit && limit.distance > 0) {
+//     const limitedStars = stars.filter((limitStar, index) => {
+//       const starDistance = getDistanceAndAngleBetweenTwoPoints(
+//         limitStar,
+//         limit.origin
+//       ).distance;
+//       return starDistance <= limit.distance;
+//     });
+//     let newStar;
+//     // newStar = limitedStars[randomIntFromInterval(0, limitedStars.length - 1)];
+//     newStar = getRandomArrayElement(limitedStars);
+//     return newStar;
+//   }
+//   return stars[randomIntFromInterval(0, stars.length - 1)];
+// }
+
 export function getRandomStar(stars, limit) {
+  const starArray = Object.keys(stars).map((id) => stars[id]);
+  let randomStar;
   if (limit && limit.distance > 0) {
-    const limitedStars = stars.filter((limitStar, index) => {
+    const limitedStars = starArray.filter((limitStar, index) => {
       const starDistance = getDistanceAndAngleBetweenTwoPoints(
-        limitStar,
+        limitStar.position,
         limit.origin
       ).distance;
       return starDistance <= limit.distance;
     });
-    let newStar;
-    // newStar = limitedStars[randomIntFromInterval(0, limitedStars.length - 1)];
-    newStar = getRandomArrayElement(limitedStars);
-    return newStar;
+    randomStar = getRandomArrayElement(limitedStars);
+  } else {
+    randomStar = getRandomArrayElement(starArray);
   }
-  return stars[randomIntFromInterval(0, stars.length - 1)];
+  return randomStar;
 }
 
 export function Vector(magnitude, angle) {
@@ -256,7 +272,6 @@ export function generateUniverse(options) {
     starGenLoops < maxStarGenLoops &&
     performance.now() - start < maxGenTime
   ) {
-    // console.log("while");
     let starCoordinate = {
       x: randomIntFromInterval(edgeDistance, size.width - edgeDistance),
       y: randomIntFromInterval(edgeDistance, size.height - edgeDistance),
@@ -287,7 +302,6 @@ export function generateUniverse(options) {
           ).distance;
 
           if (coordinateDistance < minDistance) {
-            // console.log("too close");
             starGenLoops++;
             starCoordinate = null;
             break;
@@ -322,7 +336,6 @@ export function generateUniverse(options) {
   console.log(
     `It took ${starGenLoops} attempts to meet the ${minimumStarDistance.toLocaleString()} pixel star distance criteria`
   );
-  console.log(new Date());
   const universe = {
     stars: starSprites,
     size,
