@@ -14,10 +14,7 @@
         load
       </div>
       <div id="top_menu" class="bordered menu padded grid grid--c">
-        <button class="control bordered blue__glow padded--light">DVP</button>
-        <button class="control bordered blue__glow padded--light">LST</button>
-        <button class="control bordered blue__glow padded--light">LNCH</button>
-        <button class="control control-inactive bordered blue__glow padded--light">SCN</button>
+        <button class="control bordered blue__glow padded--light">BTN</button>
       </div>
       <div id="view" class="bordered">
         <div id="loading_text" class="pulse">
@@ -32,6 +29,11 @@
       </div>
       <div id="side_menu" class="bordered menu padded grid grid--r grid--r--split">
         <div id="menuData" class="menu__data grid grid--r">
+          <label class="checkmark__container">
+            <input type="checkbox">
+            <span class="input__label blue__glow">CHK</span>
+            <span class="checkmark bordered"></span>
+          </label>
           <div class="info__item grid grid--nogap grid-r">
             <span class="info__label blue__glow padded--light">LBL</span>
             <span class="info__value bordered padded--light white__glow"
@@ -44,32 +46,15 @@
             id="stats_display"
             class="control bordered padded--lighter blue__glow"
           >
-            DSP
-          </button>
-          <button class="control bordered padded--lighter blue__glow">
-            STP
-          </button>
-          <button
-            id="ship_scan"
-            class="control bordered padded--lighter blue__glow"
-          >
-            SCN
-          </button>
-          <button
-            id="voyage_toggle"
-            class="control bordered padded--lighter blue__glow"
-          >
-            VYG
+            BTN
           </button>
         </div>
       </div>
       <div id="bottom_menu" class="bordered menu padded grid grid--c grid--c--split">
         <div>
-          <button class="control bordered blue__glow padded--light">SHP</button>
-          <button class="control bordered blue__glow padded--light">DSTN</button>
+          <button class="control bordered blue__glow padded--light">BTN</button>
         </div>
         <div>
-          <button class="control bordered blue__glow padded--light">LCK</button>
           <button id="deselect" class="control bordered blue__glow padded--light">DSL</button>
         </div>
       </div>

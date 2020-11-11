@@ -21,13 +21,15 @@ export default () => {
         .then((res) => res.json())
         .then((jsonData) => {
           console.log("Stars fetched!");
-          // const { stars } = jsonData;
-          // try {
-          //   localStorage.setItem("starList", JSON.stringify(stars));
-          // } catch (err) {
-          //   console.log(err);
-          // }
-          return jsonData;
+          const stars = jsonData;
+          if (process.env.NODE_ENV === "dev") {
+            try {
+              localStorage.setItem("starList", JSON.stringify(stars));
+            } catch (err) {
+              console.log(err);
+            }
+          }
+          return stars;
         })
         .catch((err) => reject(err));
     } else {

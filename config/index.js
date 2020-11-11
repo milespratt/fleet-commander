@@ -1,6 +1,8 @@
 // renderer and viewport
 export const colors = {
-  blue: 0x70ffe9,
+  blue: 0xe670ffe9,
+  blueGlow: 0x0070ffe9,
+  // blue: 0x70ffe9,
   black: 0x120114,
   purple: 0x190b28,
   pink: 0xf7567c,

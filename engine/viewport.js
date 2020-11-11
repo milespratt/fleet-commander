@@ -5,7 +5,7 @@ import { Viewport } from "pixi-viewport";
 import { worldHeight, worldWidth, screenHeight, screenWidth } from "../config";
 
 // create viewport
-export function createViewport(app, options, drag) {
+export function createViewport(app, options, clamps) {
   const viewportOptions = options || {
     worldHeight,
     worldWidth,
@@ -17,10 +17,10 @@ export function createViewport(app, options, drag) {
     .moveCenter(worldWidth / 2, worldHeight / 2)
     .clamp({ direction: "all", underflow: "center" });
 
-  if (drag) {
+  if (clamps) {
     newViewport
       .clamp({ direction: "all", underflow: "center" })
-      .clampZoom({ minScale: 0.5, maxScale: 2 })
+      .clampZoom(clamps)
       .drag()
       .pinch()
       .wheel()
@@ -34,8 +34,7 @@ export function createViewport(app, options, drag) {
   app.stage.addChild(newViewport);
 
   newViewport.on("zoomed", (ev) => {
-    console.log(ev.viewport.scaled);
-    console.log(newViewport.getVisibleBounds());
+    console.log(ev);
   });
 
   // return viewport

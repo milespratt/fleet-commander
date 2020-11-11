@@ -1,14 +1,12 @@
 // RENDERING
 import * as PIXI from "pixi.js";
+import { DotFilter, GlowFilter } from "pixi-filters";
 import { createApp, createViewport } from "./engine";
 import ringPNG from "./assets/images/star-selection-ring.png";
 import hoverRingPNG from "./assets/images/star-hover-ring.png";
 
 // ASSETS
 import starPNG from "./assets/images/star-indicator.png";
-
-// TEXTURE
-const starTexture = PIXI.Texture.from(starPNG);
 
 // CONFIG
 import {
@@ -31,6 +29,10 @@ import {
 import { startCulling } from "./engine/culler";
 
 PIXI.utils.skipHello();
+PIXI.settings.RESOLUTION = window.devicePixelRatio;
+
+// TEXTURE
+const starTexture = PIXI.Texture.from(starPNG);
 
 export default (universe) => {
   // BUTTONS
@@ -41,7 +43,7 @@ export default (universe) => {
   const localViewContainer = document.getElementById("local_view");
   const localViewTitle = document.getElementById("local_view_title");
   const localViewLoader = document.getElementById("local_view_loader");
-  app.viewport = createViewport(app, null, true);
+  app.viewport = createViewport(app, null, { minScale: 0.5, maxScale: 2 });
   localApp.viewport = createViewport(localApp, {
     worldHeight: 400,
     worldWidth: 400,
@@ -93,7 +95,15 @@ export default (universe) => {
   const orbits = new PIXI.Graphics();
   localMapContainer.addChild(orbits);
   const selectionLine = new PIXI.Graphics();
-  selectionLine.lineStyle(2, colors.blue, 1);
+  selectionLine.filters = [
+    new GlowFilter({
+      quality: 1,
+      color: colors.blueGlow,
+      distance: 10,
+      outerStrength: 1,
+    }),
+  ];
+
   lineContainer.addChild(selectionLine);
 
   let localStarSprites = null;
@@ -171,23 +181,23 @@ export default (universe) => {
   indicatorContainer.addChild(hoverRingSprite);
 
   // create star selection ring sprite
-  const ringTexture = PIXI.Texture.from(ringPNG);
-  const ringSprite = new PIXI.Sprite(ringTexture);
-  ringSprite.anchor.set(0.5);
-  ringSprite.height = 30;
-  ringSprite.interactive = false;
+  // const ringTexture = PIXI.Texture.from(ringPNG);
+  // const ringSprite = new PIXI.Sprite(ringTexture);
+  // ringSprite.anchor.set(0.5);
+  // ringSprite.height = 30;
+  // ringSprite.interactive = false;
   // ringSprite.tint = colors.yellow;
-  ringSprite.tint = colors.blue;
+  // ringSprite.tint = colors.blue;
 
-  ringSprite.visible = false;
-  ringSprite.width = 30;
+  // ringSprite.visible = false;
+  // ringSprite.width = 30;
 
   // add star selection ring sprite to star container
-  indicatorContainer.addChild(ringSprite);
+  // indicatorContainer.addChild(ringSprite);
   let selectedStar = null;
   deselect.addEventListener("click", () => {
     selectedStar = null;
-    ringSprite.visible = false;
+    // ringSprite.visible = false;
     starText.visible = false;
   });
   // add stars to container
@@ -206,38 +216,42 @@ export default (universe) => {
     });
     starSprite.on("pointerdown", async (ev) => {
       ev.stopPropagation();
-      clearPlanets();
-      localViewLoader.classList.remove("hidden");
       const clickedStar = ev.target.star;
-      const apiStar = fetch(`${baseAPIurl}/api/stars/${clickedStar.id}`)
-        .then((res) => res.json())
-        .then((jsonData) => {
-          const { star } = jsonData;
-          return star;
-        })
-        .catch((err) => console.log(err));
+      let apiStar;
+      if (
+        (selectedStar && selectedStar.id !== clickedStar.id) ||
+        !selectedStar
+      ) {
+        clearPlanets();
+        localViewLoader.classList.remove("hidden");
+        apiStar = fetch(`${baseAPIurl}/api/stars/${clickedStar.id}`)
+          .then((res) => res.json())
+          .then((jsonData) => {
+            const { star } = jsonData;
+            return star;
+          })
+          .catch((err) => console.log(err));
+      }
 
       hoverRingSprite.visible = false;
-      selectedStar = {
-        id: clickedStar.id,
-        x: clickedStar.x,
-        y: clickedStar.y,
-      };
-      app.viewport.snap(clickedStar.x, clickedStar.y, {
-        time: 500,
-        removeOnComplete: true,
-        removeOnInterrupt: true,
-        forceStart: true,
-      });
-      app.viewport.snapZoom({
-        width: app.viewport.initialWidth,
-        time: 750,
-        removeOnComplete: true,
-        removeOnInterrupt: true,
-        forceStart: true,
-      });
-      ringSprite.visible = true;
-      ringSprite.position.set(ev.target.x, ev.target.y);
+      if (selectedStar && selectedStar.id === clickedStar.id) {
+        app.viewport.snap(clickedStar.x, clickedStar.y, {
+          time: 500,
+          removeOnComplete: true,
+          removeOnInterrupt: true,
+          forceStart: true,
+        });
+        app.viewport.snapZoom({
+          width: app.viewport.initialWidth,
+          time: 750,
+          removeOnComplete: true,
+          removeOnInterrupt: true,
+          forceStart: true,
+        });
+      }
+
+      // ringSprite.visible = true;
+      // ringSprite.position.set(ev.target.x, ev.target.y);
       starText.text = `${clickedStar.name}`;
 
       starText.visible = true;
@@ -245,15 +259,22 @@ export default (universe) => {
         clickedStar.x + 21,
         clickedStar.y - starText.height / 2 + 1.8
       );
-      // await api call for star data.
-      // waiting for it here means the map will respond immediately to user input
-      setTimeout(() => {
+
+      if (
+        (selectedStar && selectedStar.id !== clickedStar.id) ||
+        !selectedStar
+      ) {
         apiStar.then((data) => {
           console.log(data);
           localViewLoader.classList.add("hidden");
           makePlanets(data.planets.length + 1, data.name);
         });
-      }, 100);
+      }
+      selectedStar = {
+        id: clickedStar.id,
+        x: clickedStar.x,
+        y: clickedStar.y,
+      };
     });
     starContainer.addChild(starSprite);
   }
@@ -287,7 +308,7 @@ export default (universe) => {
       { x: start.x, y: start.y },
       { x: end.x, y: end.y }
     );
-    const vector = new Vector(14, angle);
+    const vector = new Vector(15, angle);
     const lineStartX = start.x + vector.magnitudeX;
     const lineStartY = start.y + vector.magnitudeY;
 
@@ -307,7 +328,8 @@ export default (universe) => {
     if (hoverRingSprite.visible) {
       hoverRingSprite.rotation += 0.025;
     }
-    if (ringSprite.visible) {
+    if (selectedStar) {
+      // ringSprite.alpha = 0;
       if (localStarSprites) {
         localStarSprites.forEach((localStarSprite) => {
           localStarSprite.rotation += localStarSprite.speed;
@@ -316,22 +338,50 @@ export default (universe) => {
       if (localViewContainer.classList.contains("hidden")) {
         localViewContainer.classList.remove("hidden");
       }
+
+      // draw selection lines
       selectionLine.clear();
-      selectionLine.lineStyle(2, colors.blue, 1);
+      selectionLine.lineStyle(2 / app.viewport.scaled, colors.blue, 1);
+
+      selectionLine.drawCircle(selectedStar.x, selectedStar.y, 15);
+      // draw line to top right
       if (
         selectedStar &&
-        selectedStar.y < bounds.y + 474 / app.viewport.scaled
+        (selectedStar.x > bounds.x + 474 / app.viewport.scaled ||
+          selectedStar.y < bounds.y + 26.5 / app.viewport.scaled)
       ) {
         drawSelectionLine(
-          { x: ringSprite.x, y: ringSprite.y },
+          { x: selectedStar.x, y: selectedStar.y },
+          {
+            x: bounds.x + 474 / app.viewport.scaled,
+            y: bounds.y + 26.5 / app.viewport.scaled,
+          }
+        );
+      }
+
+      // draw line to bottom right
+      if (
+        selectedStar &&
+        (selectedStar.y > bounds.y + 474 / app.viewport.scaled ||
+          selectedStar.x > bounds.x + 474 / app.viewport.scaled)
+      ) {
+        drawSelectionLine(
+          { x: selectedStar.x, y: selectedStar.y },
           {
             x: bounds.x + 474 / app.viewport.scaled,
             y: bounds.y + 474 / app.viewport.scaled,
           }
         );
-      } else {
+      }
+
+      // draw line to bottom left
+      if (
+        selectedStar &&
+        (selectedStar.y > bounds.y + 474 / app.viewport.scaled ||
+          selectedStar.x < bounds.x + 26.5 / app.viewport.scaled)
+      ) {
         drawSelectionLine(
-          { x: ringSprite.x, y: ringSprite.y },
+          { x: selectedStar.x, y: selectedStar.y },
           {
             x: bounds.x + 26.5 / app.viewport.scaled,
             y: bounds.y + 474 / app.viewport.scaled,
@@ -339,34 +389,20 @@ export default (universe) => {
         );
       }
 
+      // draw line to top left
       if (
         selectedStar &&
-        selectedStar.x > bounds.x + 474 / app.viewport.scaled
+        (selectedStar.y < bounds.y + 26.5 / app.viewport.scaled ||
+          selectedStar.x < bounds.x + 26.5 / app.viewport.scaled)
       ) {
         drawSelectionLine(
-          { x: ringSprite.x, y: ringSprite.y },
+          { x: selectedStar.x, y: selectedStar.y },
           {
-            x: bounds.x + 474 / app.viewport.scaled,
+            x: bounds.x + 26.5 / app.viewport.scaled,
             y: bounds.y + 26.5 / app.viewport.scaled,
           }
         );
-      } else {
-        drawSelectionLine(
-          { x: ringSprite.x, y: ringSprite.y },
-          {
-            x: bounds.x + 474 / app.viewport.scaled,
-            y: bounds.y + 474 / app.viewport.scaled,
-          }
-        );
       }
-
-      drawSelectionLine(
-        { x: ringSprite.x, y: ringSprite.y },
-        {
-          x: bounds.x + 474 / app.viewport.scaled,
-          y: bounds.y + 474 / app.viewport.scaled,
-        }
-      );
     } else {
       selectionLine.clear();
       if (!localViewContainer.classList.contains("hidden")) {
