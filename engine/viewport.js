@@ -33,10 +33,6 @@ export function createViewport(app, options, clamps) {
   // add viewport to app stage
   app.stage.addChild(newViewport);
 
-  newViewport.on("zoomed", (ev) => {
-    console.log(ev);
-  });
-
   // return viewport
   return newViewport;
 }

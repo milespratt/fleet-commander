@@ -315,6 +315,7 @@ export default (universe) => {
     selectionLine.moveTo(lineStartX, lineStartY);
     selectionLine.lineTo(end.x, end.y);
   }
+
   const loadingText = document.getElementById("loading_text");
   loadingText.classList.add("hidden");
   app.ticker.add(() => {
@@ -344,6 +345,7 @@ export default (universe) => {
       selectionLine.lineStyle(2 / app.viewport.scaled, colors.blue, 1);
 
       selectionLine.drawCircle(selectedStar.x, selectedStar.y, 15);
+      // selectionLine.drawRect(selectedStar.x - 15, selectedStar.y - 15, 30, 30);
       // draw line to top right
       if (
         selectedStar &&
