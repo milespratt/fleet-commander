@@ -1,395 +1,413 @@
 @font-face {
-  font-family: "Inconsolata";
-  src: url("../assets/fonts/Inconsolata-Bold.ttf") format("truetype");
-  font-weight: 700;
+	font-family: "Inconsolata";
+	src: url("../assets/fonts/Inconsolata-Bold.ttf") format("truetype");
+	font-weight: 700;
 }
 
 @font-face {
-  font-family: "Inconsolata";
-  src: url("../assets/fonts/Inconsolata-Regular.ttf") format("truetype");
-  font-weight: 400;
+	font-family: "Inconsolata";
+	src: url("../assets/fonts/Inconsolata-Regular.ttf") format("truetype");
+	font-weight: 400;
 }
 
 :root {
-  --blue: #70ffe9;
-  --pink: #f7567c;
-  --black: #120114;
-  --purple: #190b28;
-  --yellow: #f9e784;
+	--blue: #70ffe9;
+	--pink: #f7567c;
+	--black: #120114;
+	--purple: #190b28;
+	--yellow: #f9e784;
 }
 
 * {
-  box-sizing: border-box;
-  font-family: "Inconsolata", monospace;
-  letter-spacing: 2px;
-  margin: 0;
-  padding: 0;
-  user-select: none;
+	box-sizing: border-box;
+	font-family: "Inconsolata", monospace;
+	letter-spacing: 2px;
+	margin: 0;
+	padding: 0;
+	user-select: none;
 }
 
 html,
 body {
-  overflow: hidden;
-  height: 100%;
-  width: 100%;
+	overflow: hidden;
+	height: 100%;
+	width: 100%;
 }
 
 body {
-  margin: 0;
-  display: flex;
-  align-items: center;
-  /* justify-content: center; */
-  background: var(--black);
-  font-family: "Inconsolata";
-  position: relative;
+	margin: 0;
+	display: flex;
+	align-items: center;
+	/* justify-content: center; */
+	background: var(--black);
+	font-family: "Inconsolata";
+	position: relative;
 }
 
 body::after {
-  background: repeating-linear-gradient(
-    0deg,
-    rgba(255, 255, 255, 0.05),
-    rgba(112, 255, 233, 0.05) 7px,
-    transparent 1px,
-    transparent 2px
-  );
-  content: "";
-  height: 100%;
-  left: 0;
-  pointer-events: none;
-  position: absolute;
-  top: 0;
-  width: 100%;
-  z-index: 100;
+	background: repeating-linear-gradient(
+		0deg,
+		rgba(255, 255, 255, 0.05),
+		rgba(112, 255, 233, 0.05) 7px,
+		transparent 1px,
+		transparent 2px
+	);
+	content: "";
+	height: 100%;
+	left: 0;
+	pointer-events: none;
+	position: absolute;
+	top: 0;
+	width: 100%;
+	z-index: 100;
 }
 
 .hidden {
-  /* display: none; */
-  opacity: 0;
-  transform: translate(10000px);
+	/* display: none; */
+	opacity: 0;
+	transform: translate(10000px);
 }
 
 #local_view {
-  top: 25px;
-  left: 25px;
-  position: absolute;
-  height: 450px;
-  width: 450px;
-  background: var(--black);
-  z-index: 100;
+	top: 25px;
+	left: 25px;
+	position: absolute;
+	height: 450px;
+	width: 450px;
+	background: var(--black);
+	z-index: 100;
 }
 
 #local_view_title {
-  top: 10px;
-  left: 10px;
-  font-size: 12px;
-  position: absolute;
-  line-height: 14px;
+	top: 10px;
+	left: 10px;
+	font-size: 12px;
+	position: absolute;
+	line-height: 14px;
 }
 .loader__wrapper {
-  position: absolute;
-  height: 100%;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  top: 0;
-  left: 0;
+	position: absolute;
+	height: 100%;
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	top: 0;
+	left: 0;
 }
 .local__map__text {
-  font-weight: 700;
-  text-transform: uppercase;
-  font-family: "Inconsolata";
+	font-weight: 700;
+	text-transform: uppercase;
+	font-family: "Inconsolata";
 }
 
 #asset__loader {
-  font-family: "Inconsolata";
-  font-weight: 700;
-  opacity: 0;
-  pointer-events: none;
-  position: fixed;
+	font-family: "Inconsolata";
+	font-weight: 700;
+	opacity: 0;
+	pointer-events: none;
+	position: fixed;
 }
 
 /* GAME CONTAINER */
 #game {
-  grid-template-areas:
-    "top side"
-    "view side"
-    "bottom side";
-  grid-template-columns: 1fr 300px;
-  grid-template-rows: min-content 1fr min-content;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  width: 100%;
+	grid-template-areas:
+		"top side"
+		"view side"
+		"bottom side";
+	grid-template-columns: 1fr 300px;
+	grid-template-rows: min-content 1fr min-content;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
+	width: 100%;
 }
 
 /* BORDERS AND TEXT */
 .bordered {
-  border-radius: 1px;
-  border: 4px solid rgba(112, 255, 255, 0.9);
-  box-shadow: inset 0 0 10px rgba(112, 255, 255, 0.5),
-    0 0 10px rgba(112, 255, 255, 0.5);
+	border-radius: 1px;
+	border: 4px solid rgba(112, 255, 255, 0.9);
+	box-shadow: inset 0 0 10px rgba(112, 255, 255, 0.5),
+		0 0 10px rgba(112, 255, 255, 0.5);
 }
 
 .bordered--white {
-  border-radius: 1px;
-  border: 4px solid rgba(255, 255, 255, 0.9);
-  box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.5),
-    0 0 10px rgba(255, 255, 255, 0.5);
+	border-radius: 1px;
+	border: 4px solid rgba(255, 255, 255, 0.9);
+	box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.5),
+		0 0 10px rgba(255, 255, 255, 0.5);
 }
 
 .blue__glow {
-  color: rgba(112, 255, 255, 0.9);
-  text-shadow: 0px 0px 6px rgba(112, 255, 255, 0.8);
+	color: rgba(112, 255, 255, 0.9);
+	text-shadow: 0px 0px 6px rgba(112, 255, 255, 0.8);
 }
 
 .white__glow {
-  color: #fff;
-  text-shadow: 0px 0px 6px rgba(255, 255, 255, 0.8);
+	color: #fff;
+	text-shadow: 0px 0px 6px rgba(255, 255, 255, 0.8);
 }
 
 /* PADDING */
 .padded {
-  padding: 15px;
+	padding: 15px;
 }
 
 .padded--light {
-  padding: 5px;
+	padding: 5px;
 }
 
 .padded--lighter {
-  padding: 2px 5px;
+	padding: 2px 5px;
 }
 
 /* GRIDS */
 .grid {
-  display: grid;
-  grid-gap: 15px;
+	display: grid;
+	grid-gap: 15px;
 }
 
 .grid--nogap {
-  grid-gap: 0px;
+	grid-gap: 0px;
 }
 
 .grid--c {
-  grid-auto-flow: column;
-  justify-content: start;
+	grid-auto-flow: column;
+	justify-content: start;
 }
 
 .grid--r {
-  grid-auto-flow: row;
-  align-content: start;
+	grid-auto-flow: row;
+	align-content: start;
 }
 
 .grid--r--split {
-  align-content: space-between;
+	align-content: space-between;
 }
 
 .grid--c--split {
-  justify-content: space-between;
+	justify-content: space-between;
 }
 
 /* MENUS */
 .menu {
-  height: 100%;
-  width: 100%;
+	height: 100%;
+	width: 100%;
 }
 
 #top_menu {
-  grid-area: top;
+	grid-area: top;
 }
 
 #side_menu {
-  grid-area: side;
+	grid-area: side;
 }
 
 #bottom_menu {
-  grid-area: bottom;
+	grid-area: bottom;
 }
 
 /* INFO ITEMS */
 .info__item {
-  font-size: 30px;
+	font-size: 30px;
 }
 
 .info__label {
-  padding-left: 8px;
+	padding-left: 8px;
 }
 
 /* VIEWPORT */
 #view {
-  grid-area: view;
-  overflow: hidden;
-  height: 100%;
-  width: 100%;
-  position: relative;
-  background: var(--black);
-  background-image: linear-gradient(
-      30deg,
-      rgba(57, 160, 237, 0.075),
-      rgba(255, 255, 255, 0.01)
-    ),
-    linear-gradient(100deg, rgba(100, 11, 40, 0.075), rgba(94, 252, 141, 0.075));
+	grid-area: view;
+	overflow: hidden;
+	height: 100%;
+	width: 100%;
+	position: relative;
+	background: var(--black);
+	/* background-image: linear-gradient(
+			30deg,
+			rgba(57, 160, 237, 0.075),
+			rgba(255, 255, 255, 0.01)
+		),
+		linear-gradient(100deg, rgba(100, 11, 40, 0.075), rgba(94, 252, 141, 0.075)); */
+}
+
+#view::after {
+	content: "";
+	position: absolute;
+	pointer-events: none;
+	height: 100%;
+	width: 100%;
+	z-index: 100;
+	top: 0;
+	left: 0;
+	box-sizing: border-box;
+	background-image: linear-gradient(
+			30deg,
+			rgba(57, 160, 237, 0.075),
+			rgba(255, 255, 255, 0.01)
+		),
+		linear-gradient(100deg, rgba(100, 11, 40, 0.075), rgba(94, 252, 141, 0.075));
 }
 
 /* CONTROLS */
 .control {
-  background: none;
-  outline: none;
-  cursor: pointer;
-  font-size: 30px;
-  transition: all 500ms ease-out;
-  font-weight: 400;
+	background: none;
+	outline: none;
+	cursor: pointer;
+	font-size: 30px;
+	transition: all 500ms ease-out;
+	font-weight: 400;
 }
 
 .control:active {
-  color: #fff;
-  border: 4px solid rgba(255, 255, 255, 1);
-  box-shadow: inset 0 0 10px rgba(255, 255, 255, 1),
-    0 0 10px rgba(255, 255, 255, 1);
-  text-shadow: 0px 0px 6px rgba(255, 255, 255, 1);
-  transition: none;
+	color: #fff;
+	border: 4px solid rgba(255, 255, 255, 1);
+	box-shadow: inset 0 0 10px rgba(255, 255, 255, 1),
+		0 0 10px rgba(255, 255, 255, 1);
+	text-shadow: 0px 0px 6px rgba(255, 255, 255, 1);
+	transition: none;
 }
 
 .active {
-  color: #fff !important;
-  border: 4px solid rgba(255, 255, 255, 1) !important;
-  box-shadow: inset 0 0 10px rgba(255, 255, 255, 1),
-    0 0 10px rgba(255, 255, 255, 1) !important;
-  text-shadow: 0px 0px 6px rgba(255, 255, 255, 1) !important;
-  transition: none !important;
+	color: #fff !important;
+	border: 4px solid rgba(255, 255, 255, 1) !important;
+	box-shadow: inset 0 0 10px rgba(255, 255, 255, 1),
+		0 0 10px rgba(255, 255, 255, 1) !important;
+	text-shadow: 0px 0px 6px rgba(255, 255, 255, 1) !important;
+	transition: none !important;
 }
 
 .control--inactive {
-  opacity: 0.5;
-  pointer-events: none;
-  cursor: default;
+	opacity: 0.5;
+	pointer-events: none;
+	cursor: default;
 }
 
 #loading_text {
-  position: absolute;
-  height: 100%;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  top: 0;
-  left: 0;
-  font-size: 40px;
-  font-weight: 700;
+	position: absolute;
+	height: 100%;
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	top: 0;
+	left: 0;
+	font-size: 40px;
+	font-weight: 700;
 }
 
 .pulse {
-  animation: pulse 2s infinite;
-  color: rgba(112, 255, 255, 0.9);
+	animation: pulse 2s infinite;
+	color: rgba(112, 255, 255, 0.9);
 }
 
 @keyframes pulse {
-  0% {
-    text-shadow: 0px 0px 6px rgba(112, 255, 255, 0);
-  }
+	0% {
+		text-shadow: 0px 0px 6px rgba(112, 255, 255, 0);
+	}
 
-  50% {
-    text-shadow: 0px 0px 6px rgba(112, 255, 255, 0.8);
-  }
+	50% {
+		text-shadow: 0px 0px 6px rgba(112, 255, 255, 0.8);
+	}
 
-  100% {
-    text-shadow: 0px 0px 6px rgba(112, 255, 255, 0);
-  }
+	100% {
+		text-shadow: 0px 0px 6px rgba(112, 255, 255, 0);
+	}
 }
 
 /* Customize the label (the container) */
 
 .input__label {
-  font-weight: 400;
-  font-size: 30px;
-  text-transform: uppercase;
+	font-weight: 400;
+	font-size: 30px;
+	text-transform: uppercase;
 }
 .checkmark__container {
-  display: flex;
-  align-items: center;
-  height: 50px;
-  position: relative;
-  padding-left: 60px;
-  /* margin-bottom: 12px; */
-  cursor: pointer;
-  font-size: 22px;
+	display: flex;
+	align-items: center;
+	height: 50px;
+	position: relative;
+	padding-left: 60px;
+	/* margin-bottom: 12px; */
+	cursor: pointer;
+	font-size: 22px;
 
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
 }
 
 /* Hide the browser's default checkbox */
 .checkmark__container input {
-  position: absolute;
-  opacity: 0;
-  cursor: pointer;
-  height: 0;
-  width: 0;
+	position: absolute;
+	opacity: 0;
+	cursor: pointer;
+	height: 0;
+	width: 0;
 }
 
 /* Create a custom checkbox */
 .checkmark {
-  position: absolute;
-  box-sizing: border-box;
-  top: 0;
-  left: 0;
-  height: 50px;
-  width: 50px;
+	position: absolute;
+	box-sizing: border-box;
+	top: 0;
+	left: 0;
+	height: 50px;
+	width: 50px;
 }
 
 /* On mouse-over, add a grey background color */
 .checkmark__container:hover input ~ .checkmark {
-  /* background-color: #ccc; */
+	/* background-color: #ccc; */
 }
 
 .checkmark__container input:checked ~ .input__label {
-  color: #fff !important;
-  /* border: 4px solid rgba(255, 255, 255, 1) !important; */
-  /* box-shadow: inset 0 0 10px rgba(255, 255, 255, 1),
+	color: #fff !important;
+	/* border: 4px solid rgba(255, 255, 255, 1) !important; */
+	/* box-shadow: inset 0 0 10px rgba(255, 255, 255, 1),
     0 0 10px rgba(255, 255, 255, 1) !important; */
-  text-shadow: 0px 0px 6px rgba(255, 255, 255, 1) !important;
-  transition: none !important;
+	text-shadow: 0px 0px 6px rgba(255, 255, 255, 1) !important;
+	transition: none !important;
 }
 
 /* When the checkbox is checked, add a blue background */
 .checkmark__container input:checked ~ .checkmark {
-  /* background-color: #2196f3; */
-  border: 4px solid rgba(255, 255, 255, 1) !important;
-  box-shadow: inset 0 0 10px rgba(255, 255, 255, 1),
-    0 0 10px rgba(255, 255, 255, 1) !important;
+	/* background-color: #2196f3; */
+	border: 4px solid rgba(255, 255, 255, 1) !important;
+	box-shadow: inset 0 0 10px rgba(255, 255, 255, 1),
+		0 0 10px rgba(255, 255, 255, 1) !important;
 }
 
 /* Create the checkmark/indicator (hidden when not checked) */
 .checkmark:after {
-  content: "";
-  position: absolute;
-  display: none;
+	content: "";
+	position: absolute;
+	display: none;
 }
 
 /* Show the checkmark when checked */
 .checkmark__container input:checked ~ .checkmark:after {
-  display: block;
+	display: block;
 }
 
 /* Style the checkmark/indicator */
 .checkmark__container .checkmark:after {
-  left: 5px;
-  top: 5px;
-  width: 32px;
-  height: 32px;
-  /* border: solid white;
+	left: 5px;
+	top: 5px;
+	width: 32px;
+	height: 32px;
+	/* border: solid white;
   border-width: 0 3px 3px 0;
   -webkit-transform: rotate(45deg);
   -ms-transform: rotate(45deg);
   transform: rotate(45deg); */
 
-  background-color: white;
-  box-shadow: inset 0 0 10px rgba(255, 255, 255, 1),
-    0 0 10px rgba(255, 255, 255, 1) !important;
+	background-color: white;
+	box-shadow: inset 0 0 10px rgba(255, 255, 255, 1),
+		0 0 10px rgba(255, 255, 255, 1) !important;
 
-  /* color: rgba(112, 255, 255, 0.9);
+	/* color: rgba(112, 255, 255, 0.9);
   text-shadow: 0px 0px 6px rgba(112, 255, 255, 0.8); */
 }

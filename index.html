@@ -1,64 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <link rel="stylesheet" href="./styles/style.css" />
-    <title>Fleet Commander</title>
-  </head>
-  <body class="padded">
-    
-    <div id="game" class="grid padded bordered">
-      <div id="asset__loader">
-        load
-      </div>
-      <div id="top_menu" class="bordered menu padded grid grid--c">
-        <button class="control bordered blue__glow padded--light">BTN</button>
-      </div>
-      <div id="view" class="bordered">
-        <div id="loading_text" class="pulse">
-          <span>LOADING</span>
-        </div>
-        <div id="local_view" class="bordered hidden">
-          <span id="local_view_title" class="blue__glow local__map__text">SYS:...<br>BDS:...</span>
-          <div class="loader__wrapper" id="local_view_loader">
-            <span  class="blue__glow local__map__text">SCANNING SYSTEM</span>
-          </div>
-        </div>
-      </div>
-      <div id="side_menu" class="bordered menu padded grid grid--r grid--r--split">
-        <div id="menuData" class="menu__data grid grid--r">
-          <label class="checkmark__container">
-            <input type="checkbox">
-            <span class="input__label blue__glow">CHK</span>
-            <span class="checkmark bordered"></span>
-          </label>
-          <div class="info__item grid grid--nogap grid-r">
-            <span class="info__label blue__glow padded--light">LBL</span>
-            <span class="info__value bordered padded--light white__glow"
-              >VL</span
-            >
-          </div>
-        </div>
-        <div class="grid grid-r">
-          <button
-            id="stats_display"
-            class="control bordered padded--lighter blue__glow"
-          >
-            BTN
-          </button>
-        </div>
-      </div>
-      <div id="bottom_menu" class="bordered menu padded grid grid--c grid--c--split">
-        <div>
-          <button class="control bordered blue__glow padded--light">BTN</button>
-        </div>
-        <div>
-          <button id="deselect" class="control bordered blue__glow padded--light">DSL</button>
-        </div>
-      </div>
-      <script src="./init.js"></script>
-    </div>
-  </body>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+		<link rel="stylesheet" href="./styles/style.css" />
+		<title>Fleet Commander</title>
+	</head>
+	<body class="padded">
+		<div id="game" class="grid padded bordered">
+			<div id="asset__loader">load</div>
+			<div id="top_menu" class="bordered menu padded grid grid--c">
+				<!-- <button class="control bordered blue__glow padded--light">BTN</button> -->
+			</div>
+			<div id="view" class="bordered">
+				<div id="loading_text" class="pulse">
+					<span>LOADING</span>
+				</div>
+				<div id="local_view" class="bordered hidden">
+					<span id="local_view_title" class="blue__glow local__map__text"
+						>SYS:...<br />BDS:...</span
+					>
+					<div class="loader__wrapper" id="local_view_loader">
+						<span class="blue__glow local__map__text">SCANNING SYSTEM</span>
+					</div>
+				</div>
+			</div>
+			<div
+				id="side_menu"
+				class="bordered menu padded grid grid--r grid--r--split"
+			>
+				<div id="menuData" class="menu__data grid grid--r">
+					<!-- <label class="checkmark__container">
+						<input type="checkbox" />
+						<span class="input__label blue__glow">CHK</span>
+						<span class="checkmark bordered"></span>
+					</label>
+					<div class="info__item grid grid--nogap grid-r">
+						<span class="info__label blue__glow padded--light">LBL</span>
+						<span class="info__value bordered padded--light white__glow"
+							>VL</span
+						>
+					</div> -->
+				</div>
+				<div class="grid grid-r">
+					<button id="scan" class="control bordered padded--lighter blue__glow">
+						SCN
+					</button>
+				</div>
+			</div>
+			<div
+				id="bottom_menu"
+				class="bordered menu padded grid grid--c grid--c--split"
+			>
+				<div>
+					<!-- <button class="control bordered blue__glow padded--light">BTN</button> -->
+				</div>
+				<div>
+					<button
+						id="deselect"
+						class="control bordered blue__glow padded--light"
+					>
+						DSL
+					</button>
+				</div>
+			</div>
+			<script src="./init.js"></script>
+		</div>
+	</body>
 </html>

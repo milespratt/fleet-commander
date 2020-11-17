@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Fleet Commander</title>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link href="main.css" rel="stylesheet" />
+		<script
+			src="https://kit.fontawesome.com/cacada40d0.js"
+			crossorigin="anonymous"
+		></script>
+	</head>
+	<body>
+		<header class="header">
+			<div class="logo">
+				<i
+					class="logo__icon fad fa-solar-system"
+					style="--fa-primary-color: #1dccc9; --fa-secondary-color: #4f81e1"
+				></i>
+			</div>
+			<nav class="nav">
+				<a href="#" class="nav__link">Dashboard</a>
+				<a href="#" class="nav__link nav__link--inactive">Propulsion</a>
+				<a href="#" class="nav__link nav__link--inactive">Power</a>
+				<a href="#" class="nav__link nav__link--inactive">Engine</a>
+				<a href="#" class="nav__link nav__link--inactive">System</a>
+				<a href="#" class="nav__link nav__link--inactive">Safety</a>
+			</nav>
+			<div class="header__controls">
+				<button class="header__control">
+					<i class="header__control__icon far fa-search"></i>
+				</button>
+				<button class="header__control">
+					<i class="header__control__icon far fa-bell"></i>
+				</button>
+			</div>
+		</header>
+		<div class="display">
+			<!-- left -->
+			<div class="card" style="grid-column: 1 / span 3; grid-row: 1 / span 2">
+				<div class="card__title">
+					<i class="icon fas fa-badge-dollar"></i><span>Operating Cost</span>
+				</div>
+				<span class="card__value">$1,276,448.97/au</span>
+			</div>
+			<div class="card" style="grid-column: 1 / span 3; grid-row: span 2">
+				<div class="card__title">
+					<i class="icon fas fa-tasks"></i>
+					<span>Current Operation</span>
+				</div>
+				<span class="card__value">Accelerating</span>
+			</div>
+			<div class="card" style="grid-column: 1 / span 3; grid-row: span 6">
+				<div class="card__title">
+					<i class="icon fas fa-analytics"></i><span>Overall Performance</span>
+				</div>
+			</div>
+
+			<!-- mid -->
+			<div class="card" style="grid-column: 4 / span 6; grid-row: 1 / span 6">
+				<div class="card__title">
+					<i class="icon fas fa-rocket-launch"></i>
+					<span>Craft Overview</span>
+				</div>
+			</div>
+			<div class="card" style="grid-column: 4 / span 6; grid-row: span 2">
+				<div class="card__title">
+					<i class="icon fas fa-gas-pump"></i>
+					<span>Fuel Overview</span>
+				</div>
+			</div>
+			<div class="card" style="grid-column: 4 / span 6; grid-row: span 2">
+				<div class="card__title">
+					<i class="icon fas fa-conveyor-belt-alt"></i>
+					<span>Cargo Manifest</span>
+				</div>
+			</div>
+
+			<!-- right -->
+			<div class="card" style="grid-column: 10 / span 3; grid-row: 1 / span 4">
+				<div class="card__title">
+					<i class="icon fas fa-monitor-heart-rate"></i>
+					<span>System Monitoring</span>
+				</div>
+			</div>
+			<div class="card" style="grid-column: 10 / span 3; grid-row: 5 / span 6">
+				<div class="card__title">
+					<i class="icon fas fa-satellite-dish"></i>
+					<span>Communications</span>
+				</div>
+				<div class="card__list">
+					<div class="card__list__item card__list__item--alert">
+						<div class="card__title">
+							<i class="icon icon--alert fas fa-exclamation-circle"></i>
+							<span>ALERT</span>
+						</div>
+					</div>
+					<div class="card__list__item card__list__item--warn">
+						<div class="card__title">
+							<i class="icon icon--warn fas fa-do-not-enter"></i>
+							<span>WARNING</span>
+						</div>
+					</div>
+					<div class="card__list__item card__list__item--complete">
+						<div class="card__title">
+							<i class="icon icon--complete fas fa-check-square"></i>
+							<span>CONFIRMATION</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
