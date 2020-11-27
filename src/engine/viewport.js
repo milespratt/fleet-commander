@@ -2,19 +2,19 @@
 import { Viewport } from "pixi-viewport";
 
 // CONFIG
-import { worldHeight, worldWidth, screenHeight, screenWidth } from "../config";
+import { worldSize, screenHeight, screenWidth } from "../config";
 
 // create viewport
 export function createViewport(app, options, clamps) {
   const viewportOptions = options || {
-    worldHeight,
-    worldWidth,
+    worldHeight: worldSize,
+    worldWidth: worldSize,
     screenHeight,
     screenWidth,
   };
   viewportOptions.interaction = app.renderer.plugins.interaction;
   const newViewport = new Viewport(viewportOptions)
-    .moveCenter(worldWidth / 2, worldHeight / 2)
+    .moveCenter(worldSize / 2, worldSize / 2)
     .clamp({ direction: "all", underflow: "center" });
 
   if (clamps) {

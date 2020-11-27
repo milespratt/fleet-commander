@@ -20,8 +20,9 @@ export const calculationMultiplier = 16.6666666666666666666666666666666666666667
 export const au = 149597870700; // 1 astronomical unit in meters 1AU
 // 100 pixels per light year
 // numbers below in pixels
-export const worldWidth = 50000; // divide by 100 for light years
-export const worldHeight = 50000; // divide by 100 for light years
+// export const worldWidth = 50000; // divide by 100 for light years
+// export const worldHeight = 50000; // divide by 100 for light years
+export const worldSize = 50000;
 // export const screenWidth = window.innerWidth;
 // export const screenHeight = window.innerHeight;
 const viewContainer = document.getElementById("view");
@@ -42,15 +43,12 @@ export const textResolution = 2;
 export const generationParameters = {
   maxStarGenLoops: 1000000,
   maxStars: 50000,
-  maxGenTime: 60000,
+  maxGenTime: 1000 * 60 * 5, // milliseconds base
   edgeDistance: 100, // pixels from edge
   // 100 pixels per light year
   // numbers below in pixels
-  size: {
-    width: worldWidth,
-    height: worldHeight,
-  },
-  minimumStarDistance: 100,
+  size: worldSize,
+  minimumStarDistance: 100, // 100 default
   radial: false,
 };
 

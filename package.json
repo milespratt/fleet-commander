@@ -4,17 +4,17 @@
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "NODE_ENV=dev parcel index.html",
-    "build": "NODE_ENV=prod parcel build index.html"
+    "start": "NODE_ENV=dev parcel src/index.html",
+    "build": "NODE_ENV=prod parcel build src/index.html"
   },
-  "keywords": [],
-  "author": "",
+  "author": "Miles Pratt",
   "license": "ISC",
   "dependencies": {
     "pixi-cull": "^1.0.0",
     "pixi-filters": "^3.1.1",
     "pixi-viewport": "^4.15.0",
     "pixi.js": "^5.3.3",
+    "stats.js": "^0.17.0",
     "uuid": "^8.3.1"
   },
   "devDependencies": {

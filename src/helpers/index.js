@@ -1,5 +1,5 @@
 import * as PIXI from "pixi.js";
-import { v4 as uuidv4, version } from "uuid";
+// import { v4 as uuidv4, version } from "uuid";
 import {
   calculationMultiplier,
   lightYear,
@@ -7,9 +7,9 @@ import {
   shipNames,
 } from "../config";
 
-export function getID() {
-  return uuidv4();
-}
+// export function getID() {
+//   return uuidv4();
+// }
 
 export function randomIntFromInterval(min, max) {
   // min and max included
@@ -247,9 +247,106 @@ export function getDistanceAndAngleBetweenTwoPoints(point1, point2) {
   };
 }
 
+// sector generation
+function makeSectors(size, delimiter) {
+  const rowsAndColumns = size / delimiter;
+  const sectorGrid = {
+    delimiter,
+    size,
+    firstRow: "A",
+    rows: rowsAndColumns,
+    columns: rowsAndColumns,
+    totalSectors: rowsAndColumns * rowsAndColumns,
+    sectors: {},
+  };
+  for (let r = 0; r < rowsAndColumns; r++) {
+    for (let c = 0; c < rowsAndColumns; c++) {
+      const column = String.fromCharCode(65 + r);
+      if (c === rowsAndColumns - 1) {
+        sectorGrid.lastRow = column;
+      }
+      sectorGrid.sectors[`${column}${c}`] = {
+        center: {
+          x: c * delimiter + delimiter / 2,
+          y: r * delimiter + delimiter / 2,
+        },
+        starCoordinates: [],
+      };
+    }
+  }
+  return sectorGrid;
+}
+
+function getGridRow(grid, y) {
+  const row = String.fromCharCode(
+    65 + Math.floor((grid.size - (grid.size - y)) / grid.delimiter)
+  );
+  return row;
+}
+
+function getGridColumn(grid, x) {
+  const column = Math.floor((grid.size - (grid.size - x)) / grid.delimiter);
+  return column;
+}
+
+export function getGridSector(grid, x, y) {
+  const row = getGridRow(grid, y);
+  const column = getGridColumn(grid, x);
+  return `${row}${column}`;
+}
+
+export function getAdjacentSectors(grid, sector, includeSector = false) {
+  const { sectors, rows, columns } = grid;
+  const row = sector.substring(0, 1);
+  const rowsToCapture =
+    row === grid.firstRow
+      ? [row, String.fromCharCode(grid.firstRow.charCodeAt(0) + 1)]
+      : row === grid.lastRow
+      ? [String.fromCharCode(grid.lastRow.charCodeAt(0) - 1), row]
+      : [
+          String.fromCharCode(row.charCodeAt(0) - 1),
+          row,
+          String.fromCharCode(row.charCodeAt(0) + 1),
+        ];
+  const column = parseInt(sector.substring(1));
+  const columnsToCapture =
+    column === 0
+      ? [column, 1]
+      : column === columns - 1
+      ? [column - 1, column]
+      : [column - 1, column, column + 1];
+  const adjacentSectors = [];
+  for (let r = 0; r < rowsToCapture.length; r++) {
+    for (let c = 0; c < columnsToCapture.length; c++) {
+      adjacentSectors.push(`${rowsToCapture[r]}${columnsToCapture[c]}`);
+    }
+  }
+  if (!includeSector) {
+    const filteredAdjacentSectors = adjacentSectors.filter((e) => e !== sector);
+    return filteredAdjacentSectors;
+  } else {
+    return adjacentSectors;
+  }
+}
+
+export function getStarsInSector(grid, sector) {
+  return grid.sectors[sector].starCoordinates;
+}
+
+export function getStarsInSectors(grid, sectors) {
+  const stars = [];
+  sectors.forEach((sector) => {
+    grid.sectors[sector].starCoordinates.forEach((star) => stars.push(star));
+  });
+  return stars;
+}
+
 export function generateUniverse(options) {
   console.log("Generating universe...");
+  // get start time to measure performance
   const start = performance.now();
+
+  // options
   const {
     maxStarGenLoops,
     maxStars,
@@ -259,88 +356,150 @@ export function generateUniverse(options) {
     maxGenTime,
     radial,
   } = options;
+
+  // center center of universe
   const center = {
-    x: size.width / 2,
-    y: size.height / 2,
+    x: size / 2,
+    y: size / 2,
   };
-  const maxDistanceFromCenter = size.width / 2;
+
+  // create sector grid and array for storing coordinates
+  const starGrid = makeSectors(size, 2000);
+  const starCoordinates = [];
+
+  // generation loop
+  // keep generating until one threshold is hit
   let starGenLoops = 0;
-  let starSprites = [];
-  // for (let i = 0; i < maxStars; i++) {
+  let proximityMax = 0;
   while (
-    starSprites.length < maxStars &&
+    starCoordinates.length < maxStars &&
     starGenLoops < maxStarGenLoops &&
     performance.now() - start < maxGenTime
   ) {
-    let starCoordinate = {
-      x: randomIntFromInterval(edgeDistance, size.width - edgeDistance),
-      y: randomIntFromInterval(edgeDistance, size.height - edgeDistance),
+    // create a random star coordinate
+    let newStarCoordinate = {
+      x: randomIntFromInterval(edgeDistance, size - edgeDistance),
+      y: randomIntFromInterval(edgeDistance, size - edgeDistance),
     };
 
+    // get the new coordinate sector
+    let coordinateSector = getGridSector(
+      starGrid,
+      newStarCoordinate.x,
+      newStarCoordinate.y
+    );
+
+    const adjacentSectors = getAdjacentSectors(
+      starGrid,
+      coordinateSector,
+      true
+    );
+
+    const closeStars = getStarsInSectors(starGrid, adjacentSectors);
+    proximityMax =
+      proximityMax > closeStars.length ? proximityMax : closeStars.length;
+
+    // variables for radial generation
+    const maxDistanceFromCenter = size / 2;
     const distanceFromCenter = getDistanceAndAngleBetweenTwoPoints(
-      starCoordinate,
+      newStarCoordinate,
       center
     ).distance;
-    // percentage is used for creating radial galaxies
     const percentOfMaxDistance = distanceFromCenter / maxDistanceFromCenter;
-    const minDistance = radial
+
+    // minimum distance from other existing coordinates
+    // calculated if radial
+    // fixed for non-radial
+    const minimumAdjacentDistance = radial
       ? minimumStarDistance * percentOfMaxDistance
       : minimumStarDistance;
 
     if (radial && percentOfMaxDistance > 1) {
-      starCoordinate = null;
-    } else if (starSprites.length === 0) {
-      starCoordinate = center;
+      // throw away coordinates that are outside the radial limit
+      newStarCoordinate = null;
+    } else if (starCoordinates.length === 0) {
+      // place first coordinate at the center
+      newStarCoordinate = center;
+      coordinateSector = getGridSector(
+        starGrid,
+        newStarCoordinate.x,
+        newStarCoordinate.y
+      );
     } else {
-      // check all existing stars to see if they are close
-      for (let s = 0; s < starSprites.length; s++) {
-        if (starSprites.length > 0) {
-          const coordinateToTest = starSprites[s];
-          const coordinateDistance = getDistanceAndAngleBetweenTwoPoints(
-            starCoordinate,
-            coordinateToTest
-          ).distance;
+      // loop over existing coordinates to check minimum distance
+      // for (let s = 0; s < starCoordinates.length; s++) {
+      for (let s = 0; s < closeStars.length; s++) {
+        // get distance between new and existing coordinates
+        const coordinateDistance = getDistanceAndAngleBetweenTwoPoints(
+          newStarCoordinate,
+          // starCoordinates[s]
+          closeStars[s]
+        ).distance;
 
-          if (coordinateDistance < minDistance) {
-            starGenLoops++;
-            starCoordinate = null;
-            break;
-          }
+        // throw out the new coordinate and break the loop if a close neighbor is found
+        if (coordinateDistance < minimumAdjacentDistance) {
+          starGenLoops++;
+          newStarCoordinate = null;
+          break;
         }
       }
     }
-    if (starCoordinate !== null) {
-      starCoordinate.name = generateStarName();
-      starSprites.push(starCoordinate);
+
+    // finalize the coordinate if it didn't get thrown out
+    if (newStarCoordinate !== null) {
+      // give it a name
+      newStarCoordinate.name = generateStarName();
+      // assign it to a sector
+
+      newStarCoordinate.sector = coordinateSector;
+      // push the coordinate to the list
+      starCoordinates.push(newStarCoordinate);
+      // push the coordinate to it's sector
+      starGrid.sectors[coordinateSector].starCoordinates.push(
+        newStarCoordinate
+      );
     }
   }
+  // calculate the generation time
+  const generationTime = performance.now() - start;
+  // log if loop limit is hit
   if (starGenLoops >= maxStarGenLoops) {
     console.log(
       `Generation stopped. Hit loop limit of ${maxStarGenLoops.toLocaleString()}.`
     );
   }
-  if (starSprites.length >= maxStars) {
+  // log if max star limit is hit
+  if (starCoordinates.length >= maxStars) {
     console.log(
       `Generation stopped. Hit star limit of ${maxStars.toLocaleString()}.`
     );
   }
-  if (performance.now() - start >= maxGenTime) {
+  // log if max generation time is hit
+  if (generationTime >= maxGenTime) {
     console.log(
       `Generation stopped. Hit max gen time of ${maxGenTime.toLocaleString()}ms.`
     );
   }
-  const genSpeed = (performance.now() - start).toLocaleString();
+  // log generation time
   console.log(
-    `${starSprites.length.toLocaleString()} stars generated in ${genSpeed}ms.`
+    `${starCoordinates.length.toLocaleString()} stars generated in ${generationTime.toLocaleString()}ms.`
   );
+  // log number of loops required
   console.log(
-    `It took ${starGenLoops} attempts to meet the ${minimumStarDistance.toLocaleString()} pixel star distance criteria`
+    `It took ${starGenLoops.toLocaleString()} extra generation loops to meet the ${minimumStarDistance.toLocaleString()} pixel star distance criteria.`
   );
+  // log max proximity loop
+  console.log(
+    `Max of ${proximityMax.toLocaleString()} calculations per star coordinate reached to verify minimum distance of ${minimumStarDistance.toLocaleString()}`
+  );
+  // build and return the universe
   const universe = {
-    stars: starSprites,
+    starCoordinates,
+    grid: starGrid,
     size,
-    genSpeed,
-    genLoops: starGenLoops,
+    generationTime: generationTime,
+    extraGenerationLoops: starGenLoops,
   };
+  console.log(universe);
   return universe;
 }
