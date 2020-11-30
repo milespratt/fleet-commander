@@ -7,6 +7,8 @@ import {
   shipNames,
 } from "../config";
 
+import Universe from "../entities/universe";
+
 // export function getID() {
 //   return uuidv4();
 // }
@@ -348,7 +350,7 @@ export function generateUniverse(options) {
 
   // options
   const {
-    maxStarGenLoops,
+    maxExtraGenerationLoops,
     maxStars,
     edgeDistance,
     size,
@@ -364,16 +366,16 @@ export function generateUniverse(options) {
   };
 
   // create sector grid and array for storing coordinates
-  const starGrid = makeSectors(size, 2000);
+  const sectorGrid = makeSectors(size, 2000);
   const starCoordinates = [];
 
   // generation loop
   // keep generating until one threshold is hit
-  let starGenLoops = 0;
+  let extraGenerationLoops = 0;
   let proximityMax = 0;
   while (
     starCoordinates.length < maxStars &&
-    starGenLoops < maxStarGenLoops &&
+    extraGenerationLoops < maxExtraGenerationLoops &&
     performance.now() - start < maxGenTime
   ) {
     // create a random star coordinate
@@ -384,18 +386,18 @@ export function generateUniverse(options) {
 
     // get the new coordinate sector
     let coordinateSector = getGridSector(
-      starGrid,
+      sectorGrid,
       newStarCoordinate.x,
       newStarCoordinate.y
     );
 
     const adjacentSectors = getAdjacentSectors(
-      starGrid,
+      sectorGrid,
       coordinateSector,
       true
     );
 
-    const closeStars = getStarsInSectors(starGrid, adjacentSectors);
+    const closeStars = getStarsInSectors(sectorGrid, adjacentSectors);
     proximityMax =
       proximityMax > closeStars.length ? proximityMax : closeStars.length;
 
@@ -421,7 +423,7 @@ export function generateUniverse(options) {
       // place first coordinate at the center
       newStarCoordinate = center;
       coordinateSector = getGridSector(
-        starGrid,
+        sectorGrid,
         newStarCoordinate.x,
         newStarCoordinate.y
       );
@@ -438,7 +440,7 @@ export function generateUniverse(options) {
 
         // throw out the new coordinate and break the loop if a close neighbor is found
         if (coordinateDistance < minimumAdjacentDistance) {
-          starGenLoops++;
+          extraGenerationLoops++;
           newStarCoordinate = null;
           break;
         }
@@ -455,7 +457,7 @@ export function generateUniverse(options) {
       // push the coordinate to the list
       starCoordinates.push(newStarCoordinate);
       // push the coordinate to it's sector
-      starGrid.sectors[coordinateSector].starCoordinates.push(
+      sectorGrid.sectors[coordinateSector].starCoordinates.push(
         newStarCoordinate
       );
     }
@@ -463,9 +465,9 @@ export function generateUniverse(options) {
   // calculate the generation time
   const generationTime = performance.now() - start;
   // log if loop limit is hit
-  if (starGenLoops >= maxStarGenLoops) {
+  if (extraGenerationLoops >= maxExtraGenerationLoops) {
     console.log(
-      `Generation stopped. Hit loop limit of ${maxStarGenLoops.toLocaleString()}.`
+      `Generation stopped. Hit loop limit of ${maxExtraGenerationLoops.toLocaleString()}.`
     );
   }
   // log if max star limit is hit
@@ -486,20 +488,19 @@ export function generateUniverse(options) {
   );
   // log number of loops required
   console.log(
-    `It took ${starGenLoops.toLocaleString()} extra generation loops to meet the ${minimumStarDistance.toLocaleString()} pixel star distance criteria.`
+    `It took ${extraGenerationLoops.toLocaleString()} extra generation loops to meet the ${minimumStarDistance.toLocaleString()} pixel star distance criteria.`
   );
   // log max proximity loop
   console.log(
     `Max of ${proximityMax.toLocaleString()} calculations per star coordinate reached to verify minimum distance of ${minimumStarDistance.toLocaleString()}`
   );
-  // build and return the universe
-  const universe = {
+  const universe = new Universe(
     starCoordinates,
-    grid: starGrid,
+    sectorGrid,
     size,
-    generationTime: generationTime,
-    extraGenerationLoops: starGenLoops,
-  };
+    generationTime,
+    extraGenerationLoops
+  );
   console.log(universe);
   return universe;
 }

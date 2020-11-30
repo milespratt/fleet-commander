@@ -41,9 +41,9 @@ export const textResolution = 2;
 
 // universe
 export const generationParameters = {
-  maxStarGenLoops: 1000000,
+  maxExtraGenerationLoops: 1000000,
   maxStars: 50000,
-  maxGenTime: 1000 * 60 * 5, // milliseconds base
+  maxGenTime: 1000 * 10, // milliseconds base
   edgeDistance: 100, // pixels from edge
   // 100 pixels per light year
   // numbers below in pixels

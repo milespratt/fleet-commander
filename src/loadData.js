@@ -20,7 +20,7 @@ export default () => {
     // GENERATION
     const newUniverse = generateUniverse(generationParameters);
     universe.starCoordinates = newUniverse.starCoordinates;
-    universe.grid = newUniverse.grid;
+    universe.sectorGrid = newUniverse.sectorGrid;
     // GENERATION
     // let starList = localStorage.getItem("starList");
     // if (!starList) {

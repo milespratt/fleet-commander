@@ -57,7 +57,7 @@ export default (universe) => {
   // APPS
 
   // VIEWPORTS
-  app.viewport = createViewport(app, null, { minScale: 0.5, maxScale: 2 });
+  app.viewport = createViewport(app, null, { minScale: 0.25, maxScale: 2 });
   localApp.viewport = createViewport(localApp, {
     worldHeight: 400,
     worldWidth: 400,
@@ -116,9 +116,9 @@ export default (universe) => {
   gridContainer.addChild(gridLines);
   gridLines.lineStyle(2, colors.blue); //(thickness, color)
   for (
-    let i = universe.grid.delimiter;
-    i <= universe.size - universe.grid.delimiter;
-    i += universe.grid.delimiter
+    let i = universe.sectorGrid.delimiter;
+    i <= universe.size - universe.sectorGrid.delimiter;
+    i += universe.sectorGrid.delimiter
   ) {
     gridLines.moveTo(i, 0);
     gridLines.lineTo(i, universe.size);
@@ -127,9 +127,9 @@ export default (universe) => {
     gridLines.lineTo(universe.size, i);
   }
 
-  for (const sector in universe.grid.sectors) {
-    const { grid } = universe;
-    const { center } = universe.grid.sectors[sector];
+  for (const sector in universe.sectorGrid.sectors) {
+    const { sectorGrid } = universe;
+    const { center } = sectorGrid.sectors[sector];
     const sectorLabel = new PIXI.Text(sector, {
       ...textStyle,
       strokeThickness: 0,
@@ -140,21 +140,21 @@ export default (universe) => {
     sectorLabel.position.set(
       // center.x - sectorLabel.width / 2,
       // center.y - sectorLabel.height / 2
-      center.x - grid.delimiter / 2 + 20,
-      center.y - grid.delimiter / 2 + 15
+      center.x - sectorGrid.delimiter / 2 + 20,
+      center.y - sectorGrid.delimiter / 2 + 15
     );
     gridContainer.addChild(sectorLabel);
   }
 
   app.viewport.on("clicked", (ev) => {
-    const { grid } = universe;
+    const { sectorGrid } = universe;
     const { x, y } = ev.world;
-    const clickedSector = getGridSector(grid, x, y);
-    const starsInSector = getStarsInSector(grid, clickedSector);
-    const adjacentSectors = getAdjacentSectors(grid, clickedSector);
+    const clickedSector = getGridSector(sectorGrid, x, y);
+    const starsInSector = getStarsInSector(sectorGrid, clickedSector);
+    const adjacentSectors = getAdjacentSectors(sectorGrid, clickedSector);
     const starsInAdjacentSectors = [];
     adjacentSectors.forEach((sector) => {
-      grid.sectors[sector].starCoordinates.forEach((star) =>
+      sectorGrid.sectors[sector].starCoordinates.forEach((star) =>
         starsInAdjacentSectors.push(star)
       );
     });
@@ -423,12 +423,14 @@ export default (universe) => {
       scanningLine.lineTo(star.position.x, star.position.y);
     }
   }
-  const stats = new Stats();
-  stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
-  document.body.appendChild(stats.dom);
+  // STATS DISPLAY
+  // const stats = new Stats();
+  // stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
+  // document.body.appendChild(stats.dom);
+  // STATS DISPLAY
   loadingText.classList.add("hidden");
   app.ticker.add(() => {
-    stats.begin();
+    // stats.begin();
     // const bounds = app.viewport.getVisibleBounds();
     // const boundary = {
     //   xmin: bounds.x,
@@ -570,7 +572,7 @@ export default (universe) => {
     //     shipInfoText.visible = true;
     //   }
     // }
-    stats.end();
+    // stats.end();
   });
   return app;
 };
