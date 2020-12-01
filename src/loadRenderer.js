@@ -29,6 +29,7 @@ import {
   getGridSector,
   getAdjacentSectors,
   getStarsInSector,
+  getStarsInSectors,
 } from "./helpers";
 import { startCulling } from "./engine/culler";
 
@@ -147,23 +148,24 @@ export default (universe) => {
   }
 
   app.viewport.on("clicked", (ev) => {
-    const { sectorGrid } = universe;
     const { x, y } = ev.world;
-    const clickedSector = getGridSector(sectorGrid, x, y);
-    const starsInSector = getStarsInSector(sectorGrid, clickedSector);
-    const adjacentSectors = getAdjacentSectors(sectorGrid, clickedSector);
-    const starsInAdjacentSectors = [];
-    adjacentSectors.forEach((sector) => {
-      sectorGrid.sectors[sector].starCoordinates.forEach((star) =>
-        starsInAdjacentSectors.push(star)
-      );
-    });
-    console.log(
-      `${starsInSector.length} stars found in the ${clickedSector} sector.`
-    );
-    console.log(
-      `${starsInAdjacentSectors.length} stars found in the adjacent sectors.`
-    );
+    getStarsInSectors(x, y, universe.sectorGrid);
+    // const { sectorGrid } = universe;
+    // const clickedSector = getGridSector(sectorGrid, x, y);
+    // const starsInSector = getStarsInSector(sectorGrid, clickedSector);
+    // const adjacentSectors = getAdjacentSectors(sectorGrid, clickedSector);
+    // const starsInAdjacentSectors = [];
+    // adjacentSectors.forEach((sector) => {
+    //   sectorGrid.sectors[sector].starCoordinates.forEach((star) =>
+    //     starsInAdjacentSectors.push(star)
+    //   );
+    // });
+    // console.log(
+    //   `${starsInSector.length} stars found in the ${clickedSector} sector.`
+    // );
+    // console.log(
+    //   `${starsInAdjacentSectors.length} stars found in the adjacent sectors.`
+    // );
   });
   // GRIDS
 
@@ -183,10 +185,10 @@ export default (universe) => {
 
   // GRAPHICS
   const scanningLine = new PIXI.Graphics();
-  const scanningCircle = new PIXI.Graphics();
+  // const scanningCircle = new PIXI.Graphics();
   selectionContainer.addChild(selectionLine);
   lineContainer.addChild(scanningLine);
-  lineContainer.addChild(scanningCircle);
+  // lineContainer.addChild(scanningCircle);
   // GRAPHICS
 
   // ORBIT MAP
@@ -264,6 +266,7 @@ export default (universe) => {
 
   scan.addEventListener("click", () => {
     if (selectedShip && !selectedShip.scanning) {
+      selectedShip.scanCoordinates = { ...selectedShip.position };
       selectedShip.scanning = true;
     }
   });
@@ -281,8 +284,8 @@ export default (universe) => {
     scanningLine.clear();
   });
   // add stars to container
-  for (const star in universe.stars) {
-    const starSprite = universe.stars[star].createSprite();
+  for (const star of universe.stars) {
+    const starSprite = star.createSprite();
     // add star event handlers
     starSprite.on("mouseover", (ev) => {
       // only handle hover if the hovered star is not already selected
@@ -367,6 +370,7 @@ export default (universe) => {
     voyageContainer.addChild(ship.voyageLine);
     voyageContainer.addChild(ship.pathLine);
     textContainer.addChild(ship.shipNameText);
+    lineContainer.addChild(ship.scanningCircle);
 
     shipSprite.on("pointerdown", async (ev) => {
       selectedShip = ev.target.ship;
@@ -382,7 +386,7 @@ export default (universe) => {
     });
   }
 
-  startCulling([starContainer, shipContainer], app.viewport);
+  startCulling([starContainer], app.viewport);
 
   function drawSelectionLine(start, end) {
     const { angle } = getDistanceAndAngleBetweenTwoPoints(
@@ -398,30 +402,31 @@ export default (universe) => {
   }
 
   function getLimitStars(x, y, limit) {
-    const starArray = Object.keys(universe.stars).map(
-      (id) => universe.stars[id]
-    );
-    const limitedStars = starArray.filter((limitStar) => {
+    // const starArray = Object.keys(universe.stars).map(
+    //   (id) => universe.stars[id]
+    // );
+    const limitedStars = getStarsInSectors(x, y, universe.sectorGrid);
+    return limitedStars.filter((limitStar) => {
       const starDistance = getDistanceAndAngleBetweenTwoPoints(
-        limitStar.position,
+        { x: limitStar.x, y: limitStar.y },
         { x, y }
       ).distance;
       return starDistance <= limit;
     });
-    return limitedStars;
   }
 
-  function drawingScanningCircle(x, y, radius, alpha) {
-    scanningCircle.clear();
-    scanningLine.clear();
-    scanningLine.lineStyle(1 / app.viewport.scaled, colors.white, 1);
-    scanningCircle.lineStyle(1 / app.viewport.scaled, colors.white, alpha);
-    scanningCircle.drawCircle(x, y, radius);
-    const inRangeStars = getLimitStars(x, y, radius);
-    for (const star of inRangeStars) {
-      scanningLine.moveTo(x, y);
-      scanningLine.lineTo(star.position.x, star.position.y);
-    }
+  function drawingScanningCircle(x, y, radius, alpha, circle) {
+    circle.clear();
+    // scanningLine.clear();
+    // scanningLine.lineStyle(1 / app.viewport.scaled, colors.white, 1);
+    circle.lineStyle(1 / app.viewport.scaled, colors.white, alpha);
+    circle.drawCircle(x, y, radius);
+    // const inRangeStars = getLimitStars(x, y, radius);
+
+    // for (const star of inRangeStars) {
+    //   scanningLine.moveTo(x, y);
+    //   scanningLine.lineTo(star.x, star.y);
+    // }
   }
   // STATS DISPLAY
   // const stats = new Stats();
@@ -522,56 +527,60 @@ export default (universe) => {
       //   localViewContainer.classList.add("hidden");
       // }
     }
-    // for (const ship of universe.ships) {
-    //   if (
-    //     (selectedShip &&
-    //       ship.id === selectedShip.id &&
-    //       ship.plottingCourse === false) ||
-    //     (ship.position.x > boundary.xmin &&
-    //       ship.position.x < boundary.xmax &&
-    //       ship.position.y > boundary.ymin &&
-    //       ship.position.y < boundary.ymax &&
-    //       ship.plottingCourse === false)
-    //   ) {
-    //     ship.update(universe.stars);
-    //   }
-    //   if (selectedShip && ship.id === selectedShip.id) {
-    //     if (ship.scanning) {
-    //       drawingScanningCircle(
-    //         ship.position.x,
-    //         ship.position.y,
-    //         ship.scanProgress,
-    //         1 - ship.scanProgress / ship.scanRange
-    //       );
-    //     }
-    //     const currentTime = convertTime(
-    //       ship.distanceToDestination / ship.speed / 60
-    //     ); // divide by 60 to get seconds
-    //     const currentDistance = renderDistance(
-    //       ship.distanceToDestination,
-    //       pixelsPerLightyear
-    //     );
-    //     const currentSpeed = ship.speed / (lightSpeed / lightYear);
-    //     shipInfoText.text = `NM:${ship.name}\nID:${ship.id}\nDIR:${
-    //       ship.directionY
-    //     }-${ship.directionX}\nDES:${ship.destination.name}\nORIG:${
-    //       ship.origin.name
-    //     }\nETA:${currentTime}\nDIST(m):${currentDistance}\nDIST(au):${(
-    //       ((ship.distanceToDestination / pixelsPerLightyear) * lightYear) /
-    //       au
-    //     ).toLocaleString()}au\nDIST(ly):${(
-    //       ((ship.distanceToDestination / pixelsPerLightyear) * lightYear) /
-    //       lightYear
-    //     ).toLocaleString()}ly\nVEL(c):${currentSpeed.toLocaleString()}c\nVEL(m/s):${(
-    //       currentSpeed * lightSpeed
-    //     ).toLocaleString()}m/s`;
-    //     shipInfoText.position.set(
-    //       selectedShip.position.x - 5,
-    //       selectedShip.position.y - shipInfoText.height - 13
-    //     );
-    //     shipInfoText.visible = true;
-    //   }
-    // }
+    for (const ship of universe.ships) {
+      if (
+        true
+        // (selectedShip &&
+        //   ship.id === selectedShip.id &&
+        //   ship.plottingCourse === false) ||
+        // (ship.position.x > boundary.xmin &&
+        //   ship.position.x < boundary.xmax &&
+        //   ship.position.y > boundary.ymin &&
+        //   ship.position.y < boundary.ymax &&
+        //   ship.plottingCourse === false)
+      ) {
+        ship.update(universe.stars, universe.sectorGrid);
+      }
+      if (ship.scanning) {
+        drawingScanningCircle(
+          // ship.position.x,
+          ship.scanCoordinates.x,
+          // ship.position.y,
+          ship.scanCoordinates.y,
+          ship.scanProgress,
+          1 - ship.scanProgress / ship.scanRange,
+          ship.scanningCircle
+        );
+      }
+      if (selectedShip && ship.id === selectedShip.id) {
+        const currentTime = convertTime(
+          ship.distanceToDestination / ship.speed / 60
+        ); // divide by 60 to get seconds
+        const currentDistance = renderDistance(
+          ship.distanceToDestination,
+          pixelsPerLightyear
+        );
+        const currentSpeed = ship.speed / (lightSpeed / lightYear);
+        shipInfoText.text = `NM:${ship.name}\nID:${ship.id}\nDIR:${
+          ship.directionY
+        }-${ship.directionX}\nDES:${ship.destination.name}\nORIG:${
+          ship.origin.name
+        }\nETA:${currentTime}\nDIST(m):${currentDistance}\nDIST(au):${(
+          ((ship.distanceToDestination / pixelsPerLightyear) * lightYear) /
+          au
+        ).toLocaleString()}au\nDIST(ly):${(
+          ((ship.distanceToDestination / pixelsPerLightyear) * lightYear) /
+          lightYear
+        ).toLocaleString()}ly\nVEL(c):${currentSpeed.toLocaleString()}c\nVEL(m/s):${(
+          currentSpeed * lightSpeed
+        ).toLocaleString()}m/s`;
+        shipInfoText.position.set(
+          selectedShip.position.x - 5,
+          selectedShip.position.y - shipInfoText.height - 13
+        );
+        shipInfoText.visible = true;
+      }
+    }
     // stats.end();
   });
   return app;

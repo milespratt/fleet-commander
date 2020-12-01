@@ -214,20 +214,47 @@ export function getStarAge(type) {
 //   return stars[randomIntFromInterval(0, stars.length - 1)];
 // }
 
+export function getStarsInSectors(x, y, sectorGrid) {
+  // const { sectorGrid } = universe;
+  // const { x, y } = ev.world;
+  const thisSector = getGridSector(sectorGrid, x, y);
+  const starsInSector = getStarsInSector(sectorGrid, thisSector);
+  const adjacentSectors = getAdjacentSectors(sectorGrid, thisSector, true);
+  const starsInAdjacentSectors = [];
+  adjacentSectors.forEach((sector) => {
+    sectorGrid.sectors[sector].starCoordinates.forEach((star) =>
+      starsInAdjacentSectors.push(star)
+    );
+  });
+  // console.log(
+  //   `${starsInSector.length} stars found in the ${thisSector} sector.`
+  // );
+  // console.log(
+  //   `${starsInAdjacentSectors.length} stars found in this and the adjacent sectors.`
+  // );
+  // console.log(starsInAdjacentSectors);
+  return starsInAdjacentSectors;
+}
+
 export function getRandomStar(stars, limit) {
-  const starArray = Object.keys(stars).map((id) => stars[id]);
   let randomStar;
   if (limit && limit.distance > 0) {
-    const limitedStars = starArray.filter((limitStar, index) => {
+    const limitedStars = getStarsInSectors(
+      limit.origin.x,
+      limit.origin.y,
+      limit.sectorGrid
+    );
+    // const limitedStars = starArray
+    const closeStars = limitedStars.filter((limitStar, index) => {
       const starDistance = getDistanceAndAngleBetweenTwoPoints(
-        limitStar.position,
+        { x: limitStar.x, y: limitStar.y },
         limit.origin
       ).distance;
       return starDistance <= limit.distance;
     });
-    randomStar = getRandomArrayElement(limitedStars);
+    randomStar = getRandomArrayElement(closeStars);
   } else {
-    randomStar = getRandomArrayElement(starArray);
+    randomStar = getRandomArrayElement(stars);
   }
   return randomStar;
 }
@@ -335,7 +362,7 @@ export function getStarsInSector(grid, sector) {
   return grid.sectors[sector].starCoordinates;
 }
 
-export function getStarsInSectors(grid, sectors) {
+export function getStarsFromSectorArray(grid, sectors) {
   const stars = [];
   sectors.forEach((sector) => {
     grid.sectors[sector].starCoordinates.forEach((star) => stars.push(star));
@@ -397,7 +424,7 @@ export function generateUniverse(options) {
       true
     );
 
-    const closeStars = getStarsInSectors(sectorGrid, adjacentSectors);
+    const closeStars = getStarsFromSectorArray(sectorGrid, adjacentSectors);
     proximityMax =
       proximityMax > closeStars.length ? proximityMax : closeStars.length;
 

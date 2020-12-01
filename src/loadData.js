@@ -1,87 +1,128 @@
 // ENTITIES
 import { Star, Ship } from "./entities";
 
-import { generateUniverse } from "./helpers";
-import { baseAPIurl, generationParameters } from "./config";
+import {
+  generateUniverse,
+  randomIntFromInterval,
+  getRandomStar,
+} from "./helpers";
 
-// import starData from "./data/stars";
+import { baseAPIurl, generationParameters, shipNames } from "./config";
 
 export default () => {
   return new Promise(async (resolve, reject) => {
-    // create universe object
-    const universe = {
-      stars: {},
-      ships: [],
-      size: generationParameters.size,
-    };
-
-    // get star list from api
-    console.log("Checking for stars in memory...");
     // GENERATION
     const newUniverse = generateUniverse(generationParameters);
-    universe.starCoordinates = newUniverse.starCoordinates;
-    universe.sectorGrid = newUniverse.sectorGrid;
-    // GENERATION
-    // let starList = localStorage.getItem("starList");
-    // if (!starList) {
-    // 	console.log("No stars found in memory, fetching...");
-    // 	starList = await fetch(`${baseAPIurl}/stars`)
-    // 		.then((res) => res.json())
-    // 		.then((jsonData) => {
-    // 			console.log("Stars fetched!");
-    // 			const stars = jsonData;
-    // 			if (process.env.NODE_ENV === "dev") {
-    // 				try {
-    // 					localStorage.setItem("starList", JSON.stringify(stars));
-    // 				} catch (err) {
-    // 					console.log(err);
-    // 				}
-    // 			}
-    // 			return stars;
-    // 		})
-    // 		.catch((err) => reject(err));
-    // } else {
-    // 	console.log("Loading stars from memory...");
-    // 	starList = JSON.parse(starList);
-    // }
-    console.log("Stars loaded!");
-
-    // const shipList = await fetch(`${baseAPIurl}/ships`)
-    //   .then((res) => res.json())
-    //   .then((jsonData) => {
-    //     console.log("Ships fetched!");
-    //     const { ships } = jsonData;
-    //     return ships;
-    //   })
-    //   .catch((err) => reject(err));
-    // console.log("Ships loaded!");
+    newUniverse.ships = [];
+    newUniverse.stars = [];
 
     // create stars
-    // universe.stars.forEach((star) => {
-    for (const star of universe.starCoordinates) {
-      // create new star
+    for (const star of newUniverse.starCoordinates) {
       const newStar = new Star(
         star.x,
         star.y,
         star.name,
         star._id || star.name
       );
-      universe.stars[newStar.id] = newStar;
+      newUniverse.stars.push(newStar);
     }
-    // for (const ship of shipList) {
-    //   const { name, range, speed, x, y, origin, destination } = ship;
-    //   const newShip = new Ship(
-    //     name,
-    //     ship._id,
-    //     range,
-    //     speed,
-    //     x,
-    //     y,
-    //     { ...origin, id: origin._id },
-    //     { ...destination, id: destination._id }
-    //   );
-    //   universe.ships.push(newShip);
-    // }
-    resolve(universe);
+
+    // create ships
+    const shipOrigin = newUniverse.starCoordinates[0];
+
+    // const shipList = [
+    //   {
+    //     name: "Test Ship",
+    //     range: 300,
+    //     speed: 0.1,
+    //     x: shipOrigin.x,
+    //     y: shipOrigin.y,
+    //     origin: shipOrigin,
+    //     // destination,
+    //   },
+    // ];
+    // const shipList = shipNames.map((name, i) => {
+    const shipList = new Array(100).fill(undefined).map((e, i) => {
+      return {
+        name: `Ship-${i + 1}`,
+        range: 300,
+        speed: 5,
+        x: shipOrigin.x,
+        y: shipOrigin.y,
+        origin: shipOrigin,
+        // destination,
+      };
+    });
+    for (const ship of shipList) {
+      const { name, range, speed, x, y, origin } = ship;
+      const destination = getRandomStar(newUniverse.stars, {
+        distance: range,
+        origin,
+        sectorGrid: newUniverse.sectorGrid,
+      });
+      const newShip = new Ship(
+        name,
+        ship._id || name,
+        range,
+        speed,
+        x,
+        y,
+        { ...origin, id: origin._id || origin.name },
+        { ...destination, id: destination._id || destination.name }
+      );
+      newUniverse.ships.push(newShip);
+    }
+    resolve(newUniverse);
   });
 };
+
+// GENERATION
+// get/create stars
+// let starList = localStorage.getItem("starList");
+// if (!starList) {
+// 	console.log("No stars found in memory, fetching...");
+// 	starList = await fetch(`${baseAPIurl}/stars`)
+// 		.then((res) => res.json())
+// 		.then((jsonData) => {
+// 			console.log("Stars fetched!");
+// 			const stars = jsonData;
+// 			if (process.env.NODE_ENV === "dev") {
+// 				try {
+// 					localStorage.setItem("starList", JSON.stringify(stars));
+// 				} catch (err) {
+// 					console.log(err);
+// 				}
+// 			}
+// 			return stars;
+// 		})
+// 		.catch((err) => reject(err));
+// } else {
+// 	console.log("Loading stars from memory...");
+// 	starList = JSON.parse(starList);
+// }
+
+// get ships
+// const shipList = await fetch(`${baseAPIurl}/ships`)
+//   .then((res) => res.json())
+//   .then((jsonData) => {
+//     console.log("Ships fetched!");
+//     const { ships } = jsonData;
+//     return ships;
+//   })
+//   .catch((err) => reject(err));
+// console.log("Ships loaded!");
+
+// for (const ship of shipList) {
+//   const { name, range, speed, x, y, origin, destination } = ship;
+//   const newShip = new Ship(
+//     name,
+//     ship._id,
+//     range,
+//     speed,
+//     x,
+//     y,
+//     { ...origin, id: origin._id },
+//     { ...destination, id: destination._id }
+//   );
+//   universe.ships.push(newShip);
+// }
