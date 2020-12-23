@@ -1,34 +1,38 @@
 // ENTITIES
-import { Star, Ship } from "./entities";
+import { Star, Ship, Universe } from "./entities";
+
+// import { getRandomStar } from "./helpers";
 
 import {
-  generateUniverse,
-  randomIntFromInterval,
-  getRandomStar,
-} from "./helpers";
-
-import { baseAPIurl, generationParameters, shipNames } from "./config";
+  baseAPIurl,
+  generationParameters,
+  shipNames,
+  lightSpeed,
+  lightYear,
+} from "./config";
 
 export default () => {
   return new Promise(async (resolve, reject) => {
     // GENERATION
-    const newUniverse = generateUniverse(generationParameters);
+    const newUniverse = new Universe();
+    newUniverse.generate(generationParameters);
     newUniverse.ships = [];
-    newUniverse.stars = [];
+    // newUniverse.stars = [];
 
     // create stars
-    for (const star of newUniverse.starCoordinates) {
-      const newStar = new Star(
-        star.x,
-        star.y,
-        star.name,
-        star._id || star.name
-      );
-      newUniverse.stars.push(newStar);
-    }
+    // for (const star of newUniverse.starCoordinates) {
+    //   const newStar = new Star(
+    //     star.position.x,
+    //     star.position.y,
+    //     star.name,
+    //     star._id || star.name,
+    //     star.sector
+    //   );
+    //   newUniverse.stars.push(newStar);
+    // }
 
     // create ships
-    const shipOrigin = newUniverse.starCoordinates[0];
+    const shipOrigin = newUniverse.stars[0];
 
     // const shipList = [
     //   {
@@ -42,33 +46,32 @@ export default () => {
     //   },
     // ];
     // const shipList = shipNames.map((name, i) => {
-    const shipList = new Array(100).fill(undefined).map((e, i) => {
+    const shipList = new Array(1).fill(undefined).map((e, i) => {
       return {
         name: `Ship-${i + 1}`,
         range: 300,
-        speed: 5,
-        x: shipOrigin.x,
-        y: shipOrigin.y,
+        speed: (lightSpeed / lightYear) * 1000000,
+        x: shipOrigin.position.x,
+        y: shipOrigin.position.y,
         origin: shipOrigin,
         // destination,
       };
     });
     for (const ship of shipList) {
       const { name, range, speed, x, y, origin } = ship;
-      const destination = getRandomStar(newUniverse.stars, {
+      const destination = newUniverse.getRandomStar({
         distance: range,
         origin,
-        sectorGrid: newUniverse.sectorGrid,
       });
       const newShip = new Ship(
         name,
         ship._id || name,
         range,
-        speed,
         x,
         y,
         { ...origin, id: origin._id || origin.name },
-        { ...destination, id: destination._id || destination.name }
+        { ...destination, id: destination._id || destination.name },
+        newUniverse
       );
       newUniverse.ships.push(newShip);
     }

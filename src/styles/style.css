@@ -70,6 +70,59 @@ body::after {
   z-index: 100;
 }
 
+#chat__menu {
+  /* background: white; */
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: min-content 1fr min-content;
+  height: 100%;
+  grid-auto-flow: row;
+  grid-gap: 20px;
+  /* grid-template-areas:
+    "messages"
+    "input"; */
+}
+
+.inbox {
+  height: 100%;
+  overflow: hidden;
+}
+
+.inbox__people {
+}
+
+.inbox__messages {
+  height: 100%;
+  overflow: auto;
+}
+
+.message_form {
+  display: grid;
+  grid-template-columns: 1fr min-content;
+  grid-gap: 20px;
+}
+
+.message_form__input {
+  background: none;
+  font-size: 30px;
+  padding: 0px 5px;
+  overflow: hidden;
+  outline: none;
+}
+
+.message_form__input::placeholder {
+  font-size: 30px;
+  text-shadow: none;
+}
+
+.message_form__button {
+}
+
+.messages__history {
+  max-height: 100%;
+  overflow: auto;
+}
+
 .hidden {
   /* display: none; */
   opacity: 0;

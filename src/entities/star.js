@@ -21,12 +21,11 @@ import starPNG from "../assets/images/star-indicator.png";
 const starTexture = PIXI.Texture.from(starPNG);
 
 class Star {
-  constructor(x, y, name, id) {
+  constructor(x, y, name, id, sector) {
     this.id = id;
     this.name = name;
     this.position = { x, y };
-    this.x = x;
-    this.y = y;
+    this.sector = sector;
     this.sprite = null;
     this.type = getType();
     this.class = getClass();
@@ -42,12 +41,7 @@ class Star {
     this.sprite.position.set(x, y);
     this.sprite.tint = colors.white;
     this.sprite.anchor.set(0.5);
-    this.sprite.star = {
-      id: this.id,
-      name: this.name,
-      x,
-      y,
-    };
+    this.sprite.star = this;
     this.sprite.interactive = true;
     this.sprite.buttonMode = true;
     this.sprite.height = this.size;

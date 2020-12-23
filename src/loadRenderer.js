@@ -3,7 +3,7 @@ import * as PIXI from "pixi.js";
 import { GlowFilter } from "pixi-filters";
 import { createApp, createViewport } from "./engine";
 import Stats from "stats.js";
-// import ringPNG from "./assets/images/star-selection-ring.png";
+import ringPNG from "./assets/images/star-selection-ring.png";
 import hoverRingPNG from "./assets/images/star-hover-ring.png";
 
 // ASSETS
@@ -26,10 +26,7 @@ import {
   Vector,
   getDistanceAndAngleBetweenTwoPoints,
   randomIntFromInterval,
-  getGridSector,
-  getAdjacentSectors,
-  getStarsInSector,
-  getStarsInSectors,
+  // getStarsInSectors,
 } from "./helpers";
 import { startCulling } from "./engine/culler";
 
@@ -42,6 +39,10 @@ export default (universe) => {
   // BUTTONS
   const deselect = document.getElementById("deselect");
   const scan = document.getElementById("scan");
+  const newDestination = document.getElementById("new_destination");
+  const getDestinations = document.getElementById("get_destinations");
+  const launch = document.getElementById("launch");
+  const clear = document.getElementById("clear");
   // BUTTONS
 
   // DOM
@@ -149,23 +150,25 @@ export default (universe) => {
 
   app.viewport.on("clicked", (ev) => {
     const { x, y } = ev.world;
-    getStarsInSectors(x, y, universe.sectorGrid);
-    // const { sectorGrid } = universe;
-    // const clickedSector = getGridSector(sectorGrid, x, y);
-    // const starsInSector = getStarsInSector(sectorGrid, clickedSector);
-    // const adjacentSectors = getAdjacentSectors(sectorGrid, clickedSector);
-    // const starsInAdjacentSectors = [];
-    // adjacentSectors.forEach((sector) => {
-    //   sectorGrid.sectors[sector].starCoordinates.forEach((star) =>
-    //     starsInAdjacentSectors.push(star)
-    //   );
-    // });
-    // console.log(
-    //   `${starsInSector.length} stars found in the ${clickedSector} sector.`
-    // );
-    // console.log(
-    //   `${starsInAdjacentSectors.length} stars found in the adjacent sectors.`
-    // );
+    const row = universe.getGridRow(y);
+    const column = universe.getGridColumn(x);
+    const sector = universe.getGridSector(x, y);
+    const starsInSector = universe.getStarsInSector(sector);
+    const adjacentSectors = universe.getAdjacentSectors(sector);
+    const starsInAdjacentSectors = universe.getStarsFromSectorArray(
+      adjacentSectors
+    );
+    console.log(``);
+    console.log(`Row: ${row}`);
+    console.log(`Column: ${column}`);
+    console.log(`Sector: ${sector}`);
+    console.log(`Stars in Sector: ${starsInSector.length}`);
+    console.log(`Adjacent Sectors: ${adjacentSectors}`);
+    console.log(`Stars in Adjacent Sectors: ${starsInAdjacentSectors.length}`);
+    console.log(
+      `Total Stars: ${starsInSector.length + starsInAdjacentSectors.length}`
+    );
+    console.log(``);
   });
   // GRIDS
 
@@ -184,10 +187,10 @@ export default (universe) => {
   // ORBIT MAP
 
   // GRAPHICS
-  const scanningLine = new PIXI.Graphics();
+  // const scanningLine = new PIXI.Graphics();
   // const scanningCircle = new PIXI.Graphics();
   selectionContainer.addChild(selectionLine);
-  lineContainer.addChild(scanningLine);
+
   // lineContainer.addChild(scanningCircle);
   // GRAPHICS
 
@@ -248,8 +251,8 @@ export default (universe) => {
   shipInfoText.resolution = textResolution;
   shipInfoText.visible = false;
 
-  textContainer.addChild(shipInfoText);
   textContainer.addChild(starText);
+  textContainer.addChild(shipInfoText);
 
   // create star hover ring sprite
   const hoverRingTexture = PIXI.Texture.from(hoverRingPNG);
@@ -261,13 +264,48 @@ export default (universe) => {
   hoverRingSprite.visible = false;
   hoverRingSprite.width = 50;
 
+  // create star selection ring sprite
+  const selectionRingTexture = PIXI.Texture.from(ringPNG);
+  const selectionRingSprite = new PIXI.Sprite(selectionRingTexture);
+  selectionRingSprite.anchor.set(0.5);
+  selectionRingSprite.height = 30;
+  selectionRingSprite.interactive = false;
+  selectionRingSprite.tint = colors.yellow;
+  selectionRingSprite.visible = false;
+  selectionRingSprite.width = 30;
+
   // add star hover ring sprite to star container
   indicatorContainer.addChild(hoverRingSprite);
+  indicatorContainer.addChild(selectionRingSprite);
 
+  // DOM BUTTONS
   scan.addEventListener("click", () => {
     if (selectedShip && !selectedShip.scanning) {
       selectedShip.scanCoordinates = { ...selectedShip.position };
       selectedShip.scanning = true;
+    }
+  });
+
+  clear.addEventListener("click", () => {
+    // scanningCircle.clear();
+    scanningLine.clear();
+  });
+
+  newDestination.addEventListener("click", () => {
+    if (selectedShip) {
+      selectedShip.plot();
+    }
+  });
+
+  getDestinations.addEventListener("click", () => {
+    if (selectedShip) {
+      selectedShip.getStarsInRange();
+    }
+  });
+
+  launch.addEventListener("click", () => {
+    if (selectedShip) {
+      selectedShip.launch();
     }
   });
 
@@ -276,12 +314,10 @@ export default (universe) => {
   let selectedStar = null;
   deselect.addEventListener("click", () => {
     selectedStar = null;
-    // ringSprite.visible = false;
+    selectionRingSprite.visible = false;
     starText.visible = false;
     selectedShip = null;
     shipInfoText.visible = false;
-    scanningCircle.clear();
-    scanningLine.clear();
   });
   // add stars to container
   for (const star of universe.stars) {
@@ -300,38 +336,43 @@ export default (universe) => {
     starSprite.on("pointerdown", async (ev) => {
       ev.stopPropagation();
       const clickedStar = ev.target.star;
-      let apiStar;
+      // let apiStar;
       if (
         (selectedStar && selectedStar.id !== clickedStar.id) ||
         !selectedStar
       ) {
         clearPlanets();
         localViewLoader.classList.remove("hidden");
-        apiStar = fetch(`${baseAPIurl}/stars/${clickedStar.id}`)
-          .then((res) => res.json())
-          .then((jsonData) => {
-            const { star } = jsonData;
-            return star;
-          })
-          .catch((err) => console.log(err));
+        // apiStar = fetch(`${baseAPIurl}/stars/${clickedStar.id}`)
+        //   .then((res) => res.json())
+        //   .then((jsonData) => {
+        //     const { star } = jsonData;
+        //     return star;
+        //   })
+        //   .catch((err) => console.log(err));
       }
 
       hoverRingSprite.visible = false;
-      if (selectedStar && selectedStar.id === clickedStar.id) {
-        app.viewport.snap(clickedStar.x, clickedStar.y, {
-          time: 500,
-          removeOnComplete: true,
-          removeOnInterrupt: true,
-          forceStart: true,
-        });
-        app.viewport.snapZoom({
-          width: app.viewport.initialWidth,
-          time: 750,
-          removeOnComplete: true,
-          removeOnInterrupt: true,
-          forceStart: true,
-        });
-      }
+      selectionRingSprite.visible = true;
+      selectionRingSprite.position.set(
+        clickedStar.position.x,
+        clickedStar.position.y
+      );
+      // if (selectedStar && selectedStar.id === clickedStar.id) {
+      app.viewport.snap(clickedStar.position.x, clickedStar.position.y, {
+        time: 500,
+        removeOnComplete: true,
+        removeOnInterrupt: true,
+        forceStart: true,
+      });
+      app.viewport.snapZoom({
+        width: app.viewport.initialWidth,
+        time: 750,
+        removeOnComplete: true,
+        removeOnInterrupt: true,
+        forceStart: true,
+      });
+      // }
 
       // ringSprite.visible = true;
       // ringSprite.position.set(ev.target.x, ev.target.y);
@@ -339,24 +380,24 @@ export default (universe) => {
 
       starText.visible = true;
       starText.position.set(
-        clickedStar.x + 21,
-        clickedStar.y - starText.height / 2 + 1.8
+        clickedStar.position.x - 22 - starText.width,
+        clickedStar.position.y - starText.height / 2 + 1.8
       );
 
-      if (
-        (selectedStar && selectedStar.id !== clickedStar.id) ||
-        !selectedStar
-      ) {
-        apiStar.then((data) => {
-          console.log(data);
-          localViewLoader.classList.add("hidden");
-          makePlanets(data.planets.length + 1, data.name);
-        });
-      }
+      // if (
+      //   (selectedStar && selectedStar.id !== clickedStar.id) ||
+      //   !selectedStar
+      // ) {
+      //   apiStar.then((data) => {
+      //     console.log(data);
+      //     localViewLoader.classList.add("hidden");
+      //     makePlanets(data.planets.length + 1, data.name);
+      //   });
+      // }
       selectedStar = {
         id: clickedStar.id,
-        x: clickedStar.x,
-        y: clickedStar.y,
+        x: clickedStar.position.x,
+        y: clickedStar.position.y,
       };
     });
     starContainer.addChild(starSprite);
@@ -367,22 +408,22 @@ export default (universe) => {
   for (const ship of universe.ships) {
     const shipSprite = ship.createSprite();
     shipContainer.addChild(shipSprite);
-    voyageContainer.addChild(ship.voyageLine);
-    voyageContainer.addChild(ship.pathLine);
+    voyageContainer.addChild(ship.voyageGraphics);
+    // voyageContainer.addChild(ship.pathLine);
     textContainer.addChild(ship.shipNameText);
-    lineContainer.addChild(ship.scanningCircle);
+    lineContainer.addChild(ship.scanningGraphics);
 
     shipSprite.on("pointerdown", async (ev) => {
       selectedShip = ev.target.ship;
       const clickedShip = ev.target.ship;
-      const apiShip = fetch(`${baseAPIurl}/ships/${clickedShip.id}`)
-        .then((res) => res.json())
-        .then((jsonData) => {
-          const { ship } = jsonData;
-          return ship;
-        })
-        .catch((err) => console.log(err));
-      apiShip.then((data) => console.log(data));
+      // const apiShip = fetch(`${baseAPIurl}/ships/${clickedShip.id}`)
+      //   .then((res) => res.json())
+      //   .then((jsonData) => {
+      //     const { ship } = jsonData;
+      //     return ship;
+      //   })
+      //   .catch((err) => console.log(err));
+      // apiShip.then((data) => console.log(data));
     });
   }
 
@@ -405,29 +446,54 @@ export default (universe) => {
     // const starArray = Object.keys(universe.stars).map(
     //   (id) => universe.stars[id]
     // );
-    const limitedStars = getStarsInSectors(x, y, universe.sectorGrid);
+    const limitedStars = universe.getStarsInThisAndAdjacentSectors(x, y);
     return limitedStars.filter((limitStar) => {
       const starDistance = getDistanceAndAngleBetweenTwoPoints(
-        { x: limitStar.x, y: limitStar.y },
+        { x: limitStar.position.x, y: limitStar.position.y },
         { x, y }
       ).distance;
       return starDistance <= limit;
     });
   }
 
-  function drawingScanningCircle(x, y, radius, alpha, circle) {
-    circle.clear();
-    // scanningLine.clear();
-    // scanningLine.lineStyle(1 / app.viewport.scaled, colors.white, 1);
-    circle.lineStyle(1 / app.viewport.scaled, colors.white, alpha);
-    circle.drawCircle(x, y, radius);
-    // const inRangeStars = getLimitStars(x, y, radius);
+  function drawingScanningCircle(ship) {
+    const { x, y } = ship.scanCoordinates;
+    const { scanProgress, scanRange, scanningCircle } = ship;
+    //
+    // ship.scanCoordinates.x,
+    // ship.scanCoordinates.y,
+    // ship.scanProgress,
+    // 1 - ship.scanProgress / ship.scanRange,
+    // ship.scanningCircle,
+    //
 
-    // for (const star of inRangeStars) {
-    //   scanningLine.moveTo(x, y);
-    //   scanningLine.lineTo(star.x, star.y);
-    // }
+    // clear the existing lines
+    // scanningCircle.clear();
+    // scanningLine.clear();
+
+    // set the line style
+    // scanningLine.lineStyle(1, colors.white, 0.25);
+    // scanningCircle.lineStyle(
+    //   1 / app.viewport.scaled,
+    //   colors.white,
+    //   1 - scanProgress / scanRange
+    // );
+
+    // draw the scanning circle
+    // scanningCircle.drawCircle(x, y, scanProgress);
+    // const inRangeStars = getLimitStars(x, y, radius);
+    const inRangeStars = ship.getStarsInRange(false, true);
+
+    for (const star of inRangeStars) {
+      ship.scanningGraphics.lineStyle(1, colors.white, 0.25);
+      ship.scanningGraphics.moveTo(x, y);
+      ship.scanningGraphics.lineTo(star.position.x, star.position.y);
+      ship.scanningGraphics.lineStyle(1, colors.white, 1);
+      ship.scanningGraphics.drawCircle(star.position.x, star.position.y, 15);
+    }
+    ship.scanning = false;
   }
+
   // STATS DISPLAY
   // const stats = new Stats();
   // stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
@@ -455,21 +521,20 @@ export default (universe) => {
       // if (localViewContainer.classList.contains("hidden")) {
       //   localViewContainer.classList.remove("hidden");
       // }
-
       // draw selection lines
-      selectionLine.clear();
-      selectionLine.lineStyle(2 / app.viewport.scaled, colors.blue, 1);
-
-      selectionLine.drawCircle(selectedStar.x, selectedStar.y, 15);
-      // selectionLine.drawRect(selectedStar.x - 15, selectedStar.y - 15, 30, 30);
+      //       selectionLine.clear();
+      //       selectionLine.lineStyle(2 / app.viewport.scaled, colors.blue, 1);
+      //
+      //       selectionLine.drawCircle(selectedStar.position.x, selectedStar.position.y, 15);
+      // selectionLine.drawRect(selectedStar.position.x - 15, selectedStar.position.y - 15, 30, 30);
       // draw line to top right
       //       if (
       //         selectedStar &&
-      //         (selectedStar.x > bounds.x + 474 / app.viewport.scaled ||
-      //           selectedStar.y < bounds.y + 26.5 / app.viewport.scaled)
+      //         (selectedStar.position.x > bounds.x + 474 / app.viewport.scaled ||
+      //           selectedStar.position.y < bounds.y + 26.5 / app.viewport.scaled)
       //       ) {
       //         drawSelectionLine(
-      //           { x: selectedStar.x, y: selectedStar.y },
+      //           { x: selectedStar.position.x, y: selectedStar.position.y },
       //           {
       //             x: bounds.x + 474 / app.viewport.scaled,
       //             y: bounds.y + 26.5 / app.viewport.scaled,
@@ -480,11 +545,11 @@ export default (universe) => {
       //       // draw line to bottom right
       //       if (
       //         selectedStar &&
-      //         (selectedStar.y > bounds.y + 474 / app.viewport.scaled ||
-      //           selectedStar.x > bounds.x + 474 / app.viewport.scaled)
+      //         (selectedStar.position.y > bounds.y + 474 / app.viewport.scaled ||
+      //           selectedStar.position.x > bounds.x + 474 / app.viewport.scaled)
       //       ) {
       //         drawSelectionLine(
-      //           { x: selectedStar.x, y: selectedStar.y },
+      //           { x: selectedStar.position.x, y: selectedStar.position.y },
       //           {
       //             x: bounds.x + 474 / app.viewport.scaled,
       //             y: bounds.y + 474 / app.viewport.scaled,
@@ -495,11 +560,11 @@ export default (universe) => {
       //       // draw line to bottom left
       //       if (
       //         selectedStar &&
-      //         (selectedStar.y > bounds.y + 474 / app.viewport.scaled ||
-      //           selectedStar.x < bounds.x + 26.5 / app.viewport.scaled)
+      //         (selectedStar.position.y > bounds.y + 474 / app.viewport.scaled ||
+      //           selectedStar.position.x < bounds.x + 26.5 / app.viewport.scaled)
       //       ) {
       //         drawSelectionLine(
-      //           { x: selectedStar.x, y: selectedStar.y },
+      //           { x: selectedStar.position.x, y: selectedStar.position.y },
       //           {
       //             x: bounds.x + 26.5 / app.viewport.scaled,
       //             y: bounds.y + 474 / app.viewport.scaled,
@@ -510,11 +575,11 @@ export default (universe) => {
       //       // draw line to top left
       //       if (
       //         selectedStar &&
-      //         (selectedStar.y < bounds.y + 26.5 / app.viewport.scaled ||
-      //           selectedStar.x < bounds.x + 26.5 / app.viewport.scaled)
+      //         (selectedStar.position.y < bounds.y + 26.5 / app.viewport.scaled ||
+      //           selectedStar.position.x < bounds.x + 26.5 / app.viewport.scaled)
       //       ) {
       //         drawSelectionLine(
-      //           { x: selectedStar.x, y: selectedStar.y },
+      //           { x: selectedStar.position.x, y: selectedStar.position.y },
       //           {
       //             x: bounds.x + 26.5 / app.viewport.scaled,
       //             y: bounds.y + 26.5 / app.viewport.scaled,
@@ -522,7 +587,7 @@ export default (universe) => {
       //         );
       //       }
     } else {
-      selectionLine.clear();
+      // selectionLine.clear();
       // if (!localViewContainer.classList.contains("hidden")) {
       //   localViewContainer.classList.add("hidden");
       // }
@@ -539,17 +604,16 @@ export default (universe) => {
         //   ship.position.y < boundary.ymax &&
         //   ship.plottingCourse === false)
       ) {
-        ship.update(universe.stars, universe.sectorGrid);
+        ship.update();
       }
       if (ship.scanning) {
         drawingScanningCircle(
-          // ship.position.x,
-          ship.scanCoordinates.x,
-          // ship.position.y,
-          ship.scanCoordinates.y,
-          ship.scanProgress,
-          1 - ship.scanProgress / ship.scanRange,
-          ship.scanningCircle
+          // ship.scanCoordinates.x,
+          // ship.scanCoordinates.y,
+          // ship.scanProgress,
+          // 1 - ship.scanProgress / ship.scanRange,
+          // ship.scanningCircle,
+          ship
         );
       }
       if (selectedShip && ship.id === selectedShip.id) {
@@ -561,9 +625,11 @@ export default (universe) => {
           pixelsPerLightyear
         );
         const currentSpeed = ship.speed / (lightSpeed / lightYear);
-        shipInfoText.text = `NM:${ship.name}\nID:${ship.id}\nDIR:${
-          ship.directionY
-        }-${ship.directionX}\nDES:${ship.destination.name}\nORIG:${
+        shipInfoText.text = `STS:${ship.status}\nNM:${ship.name}\nID:${
+          ship.id
+        }\nDIR:${ship.directionY}-${ship.directionX}\nDES:${
+          ship.destination.name
+        }\nORIG:${
           ship.origin.name
         }\nETA:${currentTime}\nDIST(m):${currentDistance}\nDIST(au):${(
           ((ship.distanceToDestination / pixelsPerLightyear) * lightYear) /
@@ -576,7 +642,7 @@ export default (universe) => {
         ).toLocaleString()}m/s`;
         shipInfoText.position.set(
           selectedShip.position.x - 5,
-          selectedShip.position.y - shipInfoText.height - 13
+          selectedShip.position.y - shipInfoText.height - 18
         );
         shipInfoText.visible = true;
       }

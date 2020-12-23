@@ -11,7 +11,12 @@
     <div id="game" class="grid padded bordered">
       <!-- <div id="asset__loader">load</div> -->
       <div id="top_menu" class="bordered menu padded grid grid--c">
-        <!-- <button class="control bordered blue__glow padded--light">BTN</button> -->
+        <button id="scan" class="control bordered padded--lighter blue__glow">
+          SCN
+        </button>
+        <button id="clear" class="control bordered padded--lighter blue__glow">
+          CLR
+        </button>
       </div>
       <div id="view" class="bordered">
         <div id="loading_text" class="pulse">
@@ -26,27 +31,32 @@
           </div>
         </div>
       </div>
-      <div
-        id="side_menu"
-        class="bordered menu padded grid grid--r grid--r--split"
-      >
-        <div id="menuData" class="menu__data grid grid--r">
-          <!-- <label class="checkmark__container">
-						<input type="checkbox" />
-						<span class="input__label blue__glow">CHK</span>
-						<span class="checkmark bordered"></span>
-					</label>
-					<div class="info__item grid grid--nogap grid-r">
-						<span class="info__label blue__glow padded--light">LBL</span>
-						<span class="info__value bordered padded--light white__glow"
-							>VL</span
-						>
-					</div> -->
-        </div>
-        <div class="grid grid-r">
-          <button id="scan" class="control bordered padded--lighter blue__glow">
-            SCN
-          </button>
+      <div id="side_menu" class="bordered menu padded flex">
+        <div id="chat__menu" class="blue__glow">
+          <div class="inbox__people">
+            <h4>Active users</h4>
+          </div>
+
+          <div class="inbox">
+            <div class="inbox__messages">
+              <div class="messages__history"></div>
+              <div class="fallback"></div>
+            </div>
+          </div>
+
+          <form class="message_form">
+            <input
+              type="text"
+              class="message_form__input bordered blue__glow"
+              placeholder="MSG"
+            />
+            <button
+              class="control bordered blue__glow padded--light"
+              type="submit"
+            >
+              SND
+            </button>
+          </form>
         </div>
       </div>
       <div
@@ -54,9 +64,23 @@
         class="bordered menu padded grid grid--c grid--c--split"
       >
         <div>
-          <!-- <button class="control bordered blue__glow padded--light">BTN</button> -->
+          <button
+            id="new_destination"
+            class="control bordered blue__glow padded--light"
+          >
+            DSTN
+          </button>
+          <button
+            id="get_destinations"
+            class="control bordered blue__glow padded--light"
+          >
+            RNG
+          </button>
         </div>
         <div>
+          <button id="launch" class="control bordered blue__glow padded--light">
+            LNCH
+          </button>
           <button
             id="deselect"
             class="control bordered blue__glow padded--light"
@@ -65,7 +89,7 @@
           </button>
         </div>
       </div>
-      <script src="./init.js"></script>
     </div>
+    <script src="./init.js"></script>
   </body>
 </html>
