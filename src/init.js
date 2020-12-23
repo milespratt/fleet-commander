@@ -14,7 +14,11 @@ async function init() {
 
   // sockets
   console.log(process.env.NODE_ENV);
-  const socket = io("http://192.168.1.30");
+  const socket = io(
+    process.env.NODE_ENV === "dev"
+      ? "http://192.168.1.30"
+      : "https://api.fltcmdr.com"
+  );
 
   const inboxPeople = document.querySelector(".inbox__people");
   const inputField = document.querySelector(".message_form__input");
