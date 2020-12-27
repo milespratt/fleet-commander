@@ -11,6 +11,7 @@ export function createViewport(app, options, clamps) {
     worldWidth: worldSize,
     screenHeight,
     screenWidth,
+    divWheel: document.getElementById("view"),
   };
   viewportOptions.interaction = app.renderer.plugins.interaction;
   const newViewport = new Viewport(viewportOptions)

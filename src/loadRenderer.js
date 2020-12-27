@@ -51,7 +51,21 @@ export default (universe) => {
   const localViewTitle = document.getElementById("local_view_title");
   const localViewLoader = document.getElementById("local_view_loader");
   const loadingText = document.getElementById("loading_text");
-  // DOM
+  const errorText = document.getElementById("error_text");
+  const errorTextText = document.getElementById("error_text_text");
+  //   const signInForm = document.getElementById("signInForm");
+  //   // DOM
+  //
+  //   signInForm.addEventListener("submit", (ev) => {
+  //     ev.preventDefault();
+  //     console.log(ev);
+  //   });
+
+  // ERROR LINE
+  const errorLine = new PIXI.Graphics();
+  errorLine.lineStyle(2, colors.pink); //(thickness, color)
+  let errorPosition = { origin: { x: 0, y: 0 }, destination: { x: 0, y: 0 } };
+  // ERROR LINE
 
   // APPS
   const app = createApp(null, null, "view");
@@ -97,12 +111,14 @@ export default (universe) => {
   const starContainer = new PIXI.Container();
   const indicatorContainer = new PIXI.Container();
   const textContainer = new PIXI.Container();
+  const errorContainer = new PIXI.Container();
   const lineContainer = new PIXI.Container();
   const voyageContainer = new PIXI.Container();
   const selectionContainer = new PIXI.Container();
   const localMapContainer = new PIXI.Container();
 
   // add containers to viewports
+  app.viewport.addChild(errorContainer);
   app.viewport.addChild(gridContainer);
   app.viewport.addChild(voyageContainer);
   app.viewport.addChild(starContainer);
@@ -190,6 +206,7 @@ export default (universe) => {
   // const scanningLine = new PIXI.Graphics();
   // const scanningCircle = new PIXI.Graphics();
   selectionContainer.addChild(selectionLine);
+  errorContainer.addChild(errorLine);
 
   // lineContainer.addChild(scanningCircle);
   // GRAPHICS
@@ -336,6 +353,7 @@ export default (universe) => {
     starSprite.on("pointerdown", async (ev) => {
       ev.stopPropagation();
       const clickedStar = ev.target.star;
+
       // let apiStar;
       if (
         (selectedStar && selectedStar.id !== clickedStar.id) ||
@@ -358,21 +376,21 @@ export default (universe) => {
         clickedStar.position.x,
         clickedStar.position.y
       );
-      // if (selectedStar && selectedStar.id === clickedStar.id) {
-      app.viewport.snap(clickedStar.position.x, clickedStar.position.y, {
-        time: 500,
-        removeOnComplete: true,
-        removeOnInterrupt: true,
-        forceStart: true,
-      });
-      app.viewport.snapZoom({
-        width: app.viewport.initialWidth,
-        time: 750,
-        removeOnComplete: true,
-        removeOnInterrupt: true,
-        forceStart: true,
-      });
-      // }
+      if (selectedStar && selectedStar.id === clickedStar.id && !selectedShip) {
+        app.viewport.snap(clickedStar.position.x, clickedStar.position.y, {
+          time: 500,
+          removeOnComplete: true,
+          removeOnInterrupt: true,
+          forceStart: true,
+        });
+        app.viewport.snapZoom({
+          width: app.viewport.initialWidth,
+          time: 750,
+          removeOnComplete: true,
+          removeOnInterrupt: true,
+          forceStart: true,
+        });
+      }
 
       // ringSprite.visible = true;
       // ringSprite.position.set(ev.target.x, ev.target.y);
@@ -399,6 +417,32 @@ export default (universe) => {
         x: clickedStar.position.x,
         y: clickedStar.position.y,
       };
+      if (selectedShip && selectedShip.status === "idle") {
+        const starsInRange = selectedShip.getStarsInRange(true, true);
+        const isInRange =
+          starsInRange.filter((star) => star.id === clickedStar.id).length > 0;
+        if (isInRange) {
+          selectedShip.plot(clickedStar);
+        } else {
+          errorPosition.origin = {
+            x: selectedShip.position.x,
+            y: selectedShip.position.y,
+          };
+          errorPosition.destination = {
+            x: selectedStar.x,
+            y: selectedStar.y,
+          };
+          errorTextText.innerText = "ERROR: DESTINATION OUT OF RANGE";
+          errorText.style.opacity = 1;
+          errorLine.clear();
+          errorLine.lineStyle(2, colors.pink, 1); //(thickness, color)
+          errorLine.moveTo(errorPosition.origin.x, errorPosition.origin.y);
+          errorLine.lineTo(
+            errorPosition.destination.x,
+            errorPosition.destination.y
+          );
+        }
+      }
     });
     starContainer.addChild(starSprite);
   }
@@ -501,6 +545,17 @@ export default (universe) => {
   // STATS DISPLAY
   loadingText.classList.add("hidden");
   app.ticker.add(() => {
+    if (errorText.style.opacity > 0) {
+      const opacity = errorText.style.opacity;
+      errorText.style.opacity = opacity - 0.005;
+      errorLine.clear();
+      errorLine.lineStyle(2, colors.pink, opacity - 0.005); //(thickness, color)
+      errorLine.moveTo(errorPosition.origin.x, errorPosition.origin.y);
+      errorLine.lineTo(
+        errorPosition.destination.x,
+        errorPosition.destination.y
+      );
+    }
     // stats.begin();
     // const bounds = app.viewport.getVisibleBounds();
     // const boundary = {
@@ -607,6 +662,7 @@ export default (universe) => {
         ship.update();
       }
       if (ship.scanning) {
+        console.log("scan!");
         drawingScanningCircle(
           // ship.scanCoordinates.x,
           // ship.scanCoordinates.y,
@@ -625,6 +681,7 @@ export default (universe) => {
           pixelsPerLightyear
         );
         const currentSpeed = ship.speed / (lightSpeed / lightYear);
+        const acceleration = ship.acceleration / (lightSpeed / lightYear);
         shipInfoText.text = `STS:${ship.status}\nNM:${ship.name}\nID:${
           ship.id
         }\nDIR:${ship.directionY}-${ship.directionX}\nDES:${

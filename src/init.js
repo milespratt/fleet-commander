@@ -6,13 +6,18 @@ import { io } from "socket.io-client";
 import loadData from "./loadData";
 import loadRenderer from "./loadRenderer";
 import fontLoader from "./fontLoader";
+import windows from "./windows";
+import loadControls from "./loadControls";
 
 async function init() {
   const universe = await loadData();
   await fontLoader();
+  windows();
+  loadControls();
   loadRenderer(universe);
 
-  // sockets
+  // sockets and chat
+  // /*
   console.log(process.env.NODE_ENV);
   const socket = io(
     process.env.NODE_ENV === "dev"
@@ -21,12 +26,43 @@ async function init() {
   );
 
   const inboxPeople = document.querySelector(".inbox__people");
-  const inputField = document.querySelector(".message_form__input");
+  const inputField = document.getElementById("message_form_input");
   const messageForm = document.querySelector(".message_form");
   const messageBox = document.querySelector(".messages__history");
   const fallback = document.querySelector(".fallback");
+  const signInForm = document.getElementById("signInForm");
+  const signInUsername = document.getElementById("signInUsername");
+  const signInPassword = document.getElementById("signInPassword");
+  const formError = document.getElementById("formError");
+  const inbox = document.getElementById("inbox");
 
   let userName = "";
+
+  signInForm.addEventListener("submit", (ev) => {
+    ev.preventDefault();
+    formError.innerText = `ERROR: CALL SIGN NOT FOUND`;
+    // fetch("http://192.168.1.30/users/signin", {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify({
+    //     name: signInUsername.value,
+    //     password: signInPassword.value,
+    //   }),
+    // })
+    //   .then((res) => res.json())
+    //   .then((jsonRes) => {
+    //     const { error } = jsonRes;
+    //     if (error) {
+    //       formError.innerText = `ERROR: ${error}`;
+    //     } else {
+    //       formError.innerText = "";
+    //       signInUsername.value = "";
+    //       signInPassword.value = "";
+    //     }
+    //   });
+  });
 
   const newUserConnected = (user) => {
     userName = user || `User${Math.floor(Math.random() * 1000000)}`;
@@ -40,9 +76,9 @@ async function init() {
     }
 
     const userBox = `
-      <div class="chat_ib ${userName}-userlist">
-        <h5>${userName}</h5>
-      </div>
+      <p class="blue__glow chat__user ${userName}-userlist">
+        ${userName}
+      </p>
     `;
     inboxPeople.innerHTML += userBox;
   };
@@ -52,12 +88,14 @@ async function init() {
     const formattedTime = time.toLocaleString("en-US", {
       hour: "numeric",
       minute: "numeric",
+      hour12: false,
+      timeZone: "UTC",
     });
 
     const receivedMsg = `
     <div class="incoming__message message blue__glow">
       <div class="received__message">
-        <p>${user}@${formattedTime}: ${message}</p>
+        <p><em>${user}@${formattedTime}</em> ${message}</p>
       </div>
     </div>`;
 
@@ -70,7 +108,7 @@ async function init() {
     const myMsg = `
     <div class="outgoing__message message white__glow">
       <div class="sent__message">
-        <p>ME@${formattedTime}: ${message}</p>
+        <p><em>${user}@${formattedTime}</em> ${message}</p>
       </div>
     </div>`;
 
@@ -80,31 +118,67 @@ async function init() {
     // </div>
 
     messageBox.innerHTML += user === userName ? myMsg : receivedMsg;
+    inbox.scrollTo(0, inbox.scrollHeight);
   };
 
   // new user is created so we generate nickname and emit event
   newUserConnected();
 
+  function getInputValue() {
+    // return inputField.value
+    return inputField.innerText;
+  }
+
+  function setInputValue(value) {
+    inputField.value = value;
+    inputField.innerText = value;
+  }
+
   messageForm.addEventListener("submit", (e) => {
     e.preventDefault();
-    if (!inputField.value) {
+    if (!getInputValue()) {
       return;
     }
 
     socket.emit("chat message", {
-      message: inputField.value,
+      message: getInputValue(),
       nick: userName,
     });
 
-    inputField.value = "";
+    addNewMessage({
+      message: getInputValue(),
+      user: userName,
+    });
+    addNewMessage({
+      message: getInputValue(),
+      user: "Some Guy",
+    });
+    setInputValue("");
+    typing();
   });
+  function typing() {
+    const isTyping = getInputValue().length > 0;
+    if (isTyping) {
+      socket.emit("typing", {
+        isTyping: getInputValue().length > 0,
+        nick: userName,
+      });
+    }
 
-  // inputField.addEventListener("keyup", () => {
-  //   socket.emit("typing", {
-  //     isTyping: inputField.value.length > 0,
-  //     nick: userName,
-  //   });
-  // });
+    // const { isTyping, nick } = data;
+
+    if (!isTyping) {
+      fallback.innerHTML = "";
+      return;
+    }
+
+    fallback.innerHTML = `<p>${userName} is typing...</p>`;
+    inbox.scrollTo(0, inbox.scrollHeight);
+  }
+
+  inputField.addEventListener("keyup", () => {
+    typing();
+  });
 
   socket.on("new user", function (data) {
     data.map((user) => addToUsersBox(user));
@@ -118,7 +192,7 @@ async function init() {
 
   socket.on("chat message", function (data) {
     addNewMessage({ user: data.nick, message: data.message });
-    messageBox.scrollTo(0, messageBox.scrollHeight);
+    // messageBox.scrollTo(0, messageBox.scrollHeight);
   });
 
   socket.on("typing", function (data) {
@@ -131,6 +205,7 @@ async function init() {
 
     fallback.innerHTML = `<p>${nick} is typing...</p>`;
   });
+  // */
 }
 
 init();

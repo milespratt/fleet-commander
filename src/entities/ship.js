@@ -15,7 +15,7 @@ import {
 import {
   Vector,
   getDistanceAndAngleBetweenTwoPoints,
-  // getRandomStar,
+  randomIntFromInterval,
   getRandomArrayElement,
 } from "../helpers";
 
@@ -25,6 +25,9 @@ const shipTexture = PIXI.Texture.from(shipPNG);
 const statuses = {
   idle: "idle",
   travelling: "travelling",
+  accelerating: "accelerating",
+  decelerating: "decelerating",
+  spooling: "spooling",
 };
 
 class Ship {
@@ -41,10 +44,21 @@ class Ship {
     this.name = name;
     this.id = id;
     this.range = range;
+    this.spoolTime = 0;
+    this.spoolReq = randomIntFromInterval(1, 10); //seconds
+    // ACCELERATION 447040m/s = 1 million mph
+    // this.baseAcceleration = (lightSpeed / lightYear) * (1 / lightSpeed); // 1m/s
+    // this.acceleration = 0; // 1m/s
+    // this.maxAcceleration = (lightSpeed / lightYear) * 1; // 100% the speed of light
+    // this.maxAcceleration = (lightSpeed / lightYear) * (1000000000 / lightSpeed); // 1000000000m/s
+
+    // SPEED
     this.speed = 0;
-    this.acceleration = 1;
-    this.maxAcceleration = 1000000;
-    this.maxSpeed = (lightSpeed / lightYear) * 1000000;
+    // this.speed = (lightSpeed / lightYear) * (447040 / lightSpeed); // 447040m/s
+    this.maxSpeed = (lightSpeed / lightYear) * 100000; // 80% the speed of light
+    // this.maxSpeed = (lightSpeed / lightYear) * (447040 / lightSpeed); // 447040m/s
+    this.warpSpeed = (lightSpeed / lightYear) * 1;
+
     this.position = { x, y };
     this.sprite = null;
     this.shipNameText = null;
@@ -52,6 +66,7 @@ class Ship {
     this.status = statuses.idle;
     this.destination = destination;
     this.distanceToDestination = 0;
+    this.tripDistance = 0;
     this.trips = [];
     this.plottingCourse = false;
     this.directionX =
@@ -144,21 +159,21 @@ class Ship {
   }
   getNewDestination() {
     const starsInRange = this.getStarsInRange();
-    return getRandomArrayElement(starsInRange);
+    const newDestination = getRandomArrayElement(starsInRange);
+    return newDestination;
   }
   getStarsInRange(includeOrigin = false, includeDestination = false) {
     const limitedStars = this.universe.getStarsInThisAndAdjacentSectors(
       this.position.x,
       this.position.y
     );
-    const starsInRange = limitedStars.filter((limitStar, index) => {
+    const starsInRange = limitedStars.filter((limitStar) => {
       const starDistance = getDistanceAndAngleBetweenTwoPoints(
         { x: limitStar.position.x, y: limitStar.position.y },
         this.position
       ).distance;
       return starDistance <= this.range;
     });
-    console.log(`${starsInRange.length} stars in range of ${this.name}`);
     if (includeOrigin && includeDestination) {
       return starsInRange;
     } else if (!includeOrigin && !includeDestination) {
@@ -175,21 +190,11 @@ class Ship {
   getDistanceToTarget(target) {
     const { distance } = getDistanceAndAngleBetweenTwoPoints(
       { x: this.position.x, y: this.position.y },
-      target
+      target.position
     );
     return distance;
   }
   getNewCoordinates(delta) {
-    // TODO: move acceleration and speed to function
-    // accelerate
-    if (this.acceleration < this.maxAcceleration) {
-      const accelerationIncrease = this.maxSpeed / 1000000000000000;
-      this.acceleration = accelerationIncrease * delta;
-    }
-    // update speed
-    if (this.speed < this.maxSpeed) {
-      this.speed += this.acceleration;
-    }
     const { angle, distance } = getDistanceAndAngleBetweenTwoPoints(
       { x: this.position.x, y: this.position.y },
       this.destination.position
@@ -219,11 +224,11 @@ class Ship {
     );
   }
   arrive() {
-    this.speed = 0;
-    this.acceleration = 1;
     this.status = statuses.idle;
-    const { x, y } = this.destination.position;
+    this.speed = 0;
+    this.acceleration = 0;
     this.distanceToDestination = 0;
+    const { x, y } = this.destination.position;
     this.origin = this.destination;
     const newPlot = {
       posX: x,
@@ -250,8 +255,12 @@ class Ship {
     );
     this.voyageGraphics.lineTo(this.position.x, this.position.y);
   }
-  plot() {
-    this.destination = this.getNewDestination();
+  plot(destination) {
+    if (destination) {
+      this.destination = destination;
+    } else {
+      this.destination = this.getNewDestination();
+    }
     const distance = this.getDistanceToTarget(this.destination);
     const { directionX, directionY } = this.getNewDirection(
       this.position.x,
@@ -259,13 +268,19 @@ class Ship {
       this.destination.position
     );
     this.distanceToDestination = distance;
+    this.tripDistance = distance;
     this.directionX = directionX;
     this.directionY = directionY;
   }
   launch() {
-    this.scanning = false;
-    this.scanningGraphics.clear();
-    this.status = statuses.travelling;
+    if (this.status === statuses.idle || this.status === statuses.spooling) {
+      const distance = this.getDistanceToTarget(this.destination);
+      this.tripDistance = distance;
+      this.scanning = false;
+      this.scanningGraphics.clear();
+      this.status = statuses.travelling;
+      this.speed = this.maxSpeed;
+    }
   }
   getDelta() {
     const now = Date.now();

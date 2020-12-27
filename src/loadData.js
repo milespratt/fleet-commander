@@ -49,6 +49,7 @@ export default () => {
     const shipList = new Array(1).fill(undefined).map((e, i) => {
       return {
         name: `Ship-${i + 1}`,
+        // name,
         range: 300,
         speed: (lightSpeed / lightYear) * 1000000,
         x: shipOrigin.position.x,
