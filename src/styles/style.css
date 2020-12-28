@@ -199,8 +199,9 @@ body::after {
 }
 
 .form__error {
-  font-size: var(--fontSizeSmaller);
+  font-size: var(--fontSizeSmallest);
   justify-self: center;
+  text-transform: uppercase;
 }
 
 .white__glow {

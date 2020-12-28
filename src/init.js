@@ -16,14 +16,15 @@ async function init() {
   loadControls();
   loadRenderer(universe);
 
+  const apiEndpoint =
+    process.env.NODE_ENV === "dev"
+      ? "http://192.168.1.30"
+      : "https://api.fltcmdr.com";
+
   // sockets and chat
   // /*
   console.log(process.env.NODE_ENV);
-  const socket = io(
-    process.env.NODE_ENV === "dev"
-      ? "http://192.168.1.30"
-      : "https://api.fltcmdr.com"
-  );
+  const socket = io(apiEndpoint);
 
   const inboxPeople = document.querySelector(".inbox__people");
   const inputField = document.getElementById("message_form_input");
@@ -41,7 +42,7 @@ async function init() {
   signInForm.addEventListener("submit", (ev) => {
     ev.preventDefault();
     // formError.innerText = `ERROR: CALL SIGN NOT FOUND`;
-    fetch("http://192.168.1.30/users/signin", {
+    fetch(`${apiEndpoint}/users/signin`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
