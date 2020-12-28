@@ -51,7 +51,7 @@ export default () => {
         event.target.style.zIndex = index + 5;
       }
     });
-    draggableWindow.addEventListener("mousemove", function (event) {
+    draggableWindow.addEventListener("pointermove", function (event) {
       event.stopPropagation();
       if (isDraggable(event.target)) {
         if (dragging) {
