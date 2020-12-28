@@ -638,6 +638,15 @@ body::after {
 
 .message p {
   word-break: break-all;
+  letter-spacing: 1px;
+}
+
+.fallback {
+  font-style: italic;
+}
+
+.message__time__stamp {
+  font-weight: 700;
 }
 
 /* SMALL MAP */

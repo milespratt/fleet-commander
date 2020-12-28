@@ -40,28 +40,28 @@ async function init() {
 
   signInForm.addEventListener("submit", (ev) => {
     ev.preventDefault();
-    formError.innerText = `ERROR: CALL SIGN NOT FOUND`;
-    // fetch("http://192.168.1.30/users/signin", {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify({
-    //     name: signInUsername.value,
-    //     password: signInPassword.value,
-    //   }),
-    // })
-    //   .then((res) => res.json())
-    //   .then((jsonRes) => {
-    //     const { error } = jsonRes;
-    //     if (error) {
-    //       formError.innerText = `ERROR: ${error}`;
-    //     } else {
-    //       formError.innerText = "";
-    //       signInUsername.value = "";
-    //       signInPassword.value = "";
-    //     }
-    //   });
+    // formError.innerText = `ERROR: CALL SIGN NOT FOUND`;
+    fetch("http://192.168.1.30/users/signin", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: signInUsername.value,
+        password: signInPassword.value,
+      }),
+    })
+      .then((res) => res.json())
+      .then((jsonRes) => {
+        const { error } = jsonRes;
+        if (error) {
+          formError.innerText = `ERROR: ${error}`;
+        } else {
+          formError.innerText = "";
+          signInUsername.value = "";
+          signInPassword.value = "";
+        }
+      });
   });
 
   const newUserConnected = (user) => {
@@ -86,8 +86,14 @@ async function init() {
   const addNewMessage = ({ user, message }) => {
     const time = new Date();
     const formattedTime = time.toLocaleString("en-US", {
-      hour: "numeric",
-      minute: "numeric",
+      // day: "numeric",
+      // month: "numeric",
+      // year: "numeric",
+      // hour: "numeric",
+      // minute: "numeric",
+      // seconds: "numeric",
+      dateStyle: "short",
+      timeStyle: "medium",
       hour12: false,
       timeZone: "UTC",
     });
@@ -95,7 +101,8 @@ async function init() {
     const receivedMsg = `
     <div class="incoming__message message blue__glow">
       <div class="received__message">
-        <p><em>${user}@${formattedTime}</em> ${message}</p>
+        <p class="message__time__stamp">${user} - ${formattedTime}</p>
+        <p>${message}</p>
       </div>
     </div>`;
 
@@ -108,7 +115,8 @@ async function init() {
     const myMsg = `
     <div class="outgoing__message message white__glow">
       <div class="sent__message">
-        <p><em>${user}@${formattedTime}</em> ${message}</p>
+        <p class="message__time__stamp">${user} - ${formattedTime}</p>
+        <p>${message}</p>
       </div>
     </div>`;
 
@@ -130,12 +138,11 @@ async function init() {
   }
 
   function setInputValue(value) {
-    inputField.value = value;
+    // inputField.value = value;
     inputField.innerText = value;
   }
 
-  messageForm.addEventListener("submit", (e) => {
-    e.preventDefault();
+  function submit() {
     if (!getInputValue()) {
       return;
     }
@@ -145,25 +152,22 @@ async function init() {
       nick: userName,
     });
 
-    addNewMessage({
-      message: getInputValue(),
-      user: userName,
-    });
-    addNewMessage({
-      message: getInputValue(),
-      user: "Some Guy",
-    });
     setInputValue("");
     typing();
+  }
+
+  messageForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    submit();
   });
   function typing() {
     const isTyping = getInputValue().length > 0;
-    if (isTyping) {
-      socket.emit("typing", {
-        isTyping: getInputValue().length > 0,
-        nick: userName,
-      });
-    }
+    // if (isTyping) {
+    socket.emit("typing", {
+      isTyping,
+      nick: userName,
+    });
+    // }
 
     // const { isTyping, nick } = data;
 
@@ -178,6 +182,13 @@ async function init() {
 
   inputField.addEventListener("keyup", () => {
     typing();
+  });
+
+  inputField.addEventListener("keydown", (ev) => {
+    if (ev.keyCode === 13) {
+      ev.preventDefault();
+      submit();
+    }
   });
 
   socket.on("new user", function (data) {
