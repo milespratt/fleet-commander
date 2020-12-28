@@ -86,6 +86,11 @@ body::after {
   transform: translate(10000px);
 }
 
+.faded {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
 /* GRIDS */
 .grid {
   display: grid;
@@ -127,6 +132,8 @@ body::after {
   max-width: 500px;
   min-height: 200px;
   grid-template-rows: 18px 1fr;
+  transition: opacity 250ms ease;
+  pointer-events: all;
 }
 
 .window--narrow {
@@ -142,6 +149,11 @@ body::after {
 .window__title {
   text-align: center;
   width: 100%;
+}
+
+.window__message {
+  align-self: center;
+  justify-self: center;
 }
 
 .dragging::before {
@@ -359,6 +371,20 @@ body::after {
   cursor: default;
 }
 
+.control--faded {
+  border: var(--borderWidth) solid rgba(112, 255, 255, 0.25);
+  box-shadow: inset 0 0 10px rgba(112, 255, 255, 0),
+    0 0 10px rgba(112, 255, 255, 0);
+}
+
+.control--faded svg {
+  color: rgba(112, 255, 255, 0.25);
+}
+
+.control--faded:hover svg {
+  color: rgba(112, 255, 255, 0.9);
+}
+
 .control--notify:after {
   content: "";
   background-color: var(--pink);
@@ -368,7 +394,6 @@ body::after {
   position: absolute;
   top: 3px;
   right: 3px;
-  /* box-shadow: 0px 0px 5px rgba(247, 86, 12, 1); */
   animation: pulseFast 1000ms infinite;
   transition: opacity 100ms ease;
 }
@@ -566,18 +591,19 @@ body::after {
   height: 100%;
   justify-content: center;
   pointer-events: none;
-  word-break: break-all;
+  word-break: break-word;
 }
 
 .span__input {
-  word-break: break-all;
+  /* word-break: break-word; */
+  /* overflow-wrap: break-word; */
   height: 100%;
   overflow: scroll;
   display: inline-block;
 }
 
 .span__input * {
-  /* word-break: break-all; */
+  /* word-break: break-word; */
   /* overflow: scroll; */
 }
 
@@ -638,7 +664,7 @@ body::after {
 }
 
 .message p {
-  word-break: break-all;
+  word-break: break-word;
   letter-spacing: 1px;
 }
 
@@ -732,6 +758,7 @@ body::after {
 
 .global:hover {
   transform: translateY(-10px);
+  opacity: 1 !important;
 }
 
 .global:hover .global__label {

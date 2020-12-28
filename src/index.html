@@ -16,11 +16,14 @@
       <!-- WILL BE FILLED WITH CONTROLS PROGRAMMATICALLY -->
     </div>
 
-    <div class="window grid grid--r bordered draggable">
+    <div id="chat-window" class="window grid grid--r bordered draggable">
       <div
         class="window__title__bar grid grid--c grid--c--split grid--c--split--3"
       >
-        <button class="control control--left control--small blue__glow">
+        <button
+          id="chat-window-close"
+          class="control control--left control--small blue__glow"
+        >
           <i class="control__icon control__icon--small far fa-times"></i>
         </button>
         <span class="window__title blue__glow">CHAT</span>
@@ -37,13 +40,6 @@
         </div>
 
         <form class="message_form">
-          <!-- <input
-            type="text"
-            class="input input--fluid bordered blue__glow"
-            placeholder="MSG"
-            id="message_form_input"
-            autocomplete="off"
-          /> -->
           <span
             class="input input--fluid bordered blue__glow span__input"
             id="message_form_input"
@@ -60,11 +56,17 @@
       </div>
     </div>
 
-    <div class="window grid grid--r bordered draggable">
+    <div
+      id="encyclopedia-window"
+      class="window grid grid--r bordered draggable"
+    >
       <div
         class="window__title__bar grid grid--c grid--c--split grid--c--split--3"
       >
-        <button class="control control--left control--small blue__glow">
+        <button
+          id="encyclopedia-window-close"
+          class="control control--left control--small blue__glow"
+        >
           <i class="control__icon control__icon--small far fa-times"></i>
         </button>
         <span class="window__title blue__glow">ENCYCLOPEDIA</span>
@@ -72,13 +74,17 @@
           <i class="control__icon control__icon--small far fa-bars"></i>
         </button>
       </div>
+      <p class="blue__glow window__message">ENCYCLOPEDIA SERVICE OFFLINE</p>
     </div>
 
-    <div class="window grid grid--r bordered draggable">
+    <div id="sector-window" class="window grid grid--r bordered draggable">
       <div
         class="window__title__bar grid grid--c grid--c--split grid--c--split--3"
       >
-        <button class="control control--left control--small blue__glow">
+        <button
+          id="sector-window-close"
+          class="control control--left control--small blue__glow"
+        >
           <i class="control__icon control__icon--small far fa-times"></i>
         </button>
         <span class="window__title blue__glow">SECTOR</span>
@@ -86,13 +92,20 @@
           <i class="control__icon control__icon--small far fa-bars"></i>
         </button>
       </div>
+      <p class="blue__glow window__message">SECTOR INFORMATION OFFLINE</p>
     </div>
 
-    <div class="window grid grid--r bordered draggable">
+    <div
+      id="solar-system-window"
+      class="window grid grid--r bordered draggable"
+    >
       <div
         class="window__title__bar grid grid--c grid--c--split grid--c--split--3"
       >
-        <button class="control control--left control--small blue__glow">
+        <button
+          id="solar-system-window-close"
+          class="control control--left control--small blue__glow"
+        >
           <i class="control__icon control__icon--small far fa-times"></i>
         </button>
         <span class="window__title blue__glow">SOLAR SYSTEM</span>
@@ -100,13 +113,17 @@
           <i class="control__icon control__icon--small far fa-bars"></i>
         </button>
       </div>
+      <p class="blue__glow window__message">SOLAR SYSTEM INFORMATION OFFLINE</p>
     </div>
 
-    <div class="window grid grid--r bordered draggable">
+    <div id="star-window" class="window grid grid--r bordered draggable">
       <div
         class="window__title__bar grid grid--c grid--c--split grid--c--split--3"
       >
-        <button class="control control--left control--small blue__glow">
+        <button
+          id="star-window-close"
+          class="control control--left control--small blue__glow"
+        >
           <i class="control__icon control__icon--small far fa-times"></i>
         </button>
         <span class="window__title blue__glow">STAR</span>
@@ -114,13 +131,17 @@
           <i class="control__icon control__icon--small far fa-bars"></i>
         </button>
       </div>
+      <p class="blue__glow window__message">STAR INFORMATION OFFLINE</p>
     </div>
 
-    <div class="window grid grid--r bordered draggable">
+    <div id="planet-window" class="window grid grid--r bordered draggable">
       <div
         class="window__title__bar grid grid--c grid--c--split grid--c--split--3"
       >
-        <button class="control control--left control--small blue__glow">
+        <button
+          id="planet-window-close"
+          class="control control--left control--small blue__glow"
+        >
           <i class="control__icon control__icon--small far fa-times"></i>
         </button>
         <span class="window__title blue__glow">PLANET</span>
@@ -128,13 +149,17 @@
           <i class="control__icon control__icon--small far fa-bars"></i>
         </button>
       </div>
+      <p class="blue__glow window__message">PLANET INFORMATION OFFLINE</p>
     </div>
 
-    <div class="window grid grid--r bordered draggable">
+    <div id="ship-window" class="window grid grid--r bordered draggable">
       <div
         class="window__title__bar grid grid--c grid--c--split grid--c--split--3"
       >
-        <button class="control control--left control--small blue__glow">
+        <button
+          id="ship-window-close"
+          class="control control--left control--small blue__glow"
+        >
           <i class="control__icon control__icon--small far fa-times"></i>
         </button>
         <span class="window__title blue__glow">SHIP</span>
@@ -162,11 +187,14 @@
       </div>
     </div>
 
-    <div class="window grid grid--r bordered draggable">
+    <div id="mail-window" class="window grid grid--r bordered draggable">
       <div
         class="window__title__bar grid grid--c grid--c--split grid--c--split--3"
       >
-        <button class="control control--left control--small blue__glow">
+        <button
+          id="mail-window-close"
+          class="control control--left control--small blue__glow"
+        >
           <i class="control__icon control__icon--small far fa-times"></i>
         </button>
         <span class="window__title blue__glow">MAIL</span>
@@ -174,13 +202,17 @@
           <i class="control__icon control__icon--small far fa-bars"></i>
         </button>
       </div>
+      <p class="blue__glow window__message">MAIL SERVICE OFFLINE</p>
     </div>
 
-    <div class="window grid grid--r bordered draggable">
+    <div id="profile-window" class="window grid grid--r bordered draggable">
       <div
         class="window__title__bar grid grid--c grid--c--split grid--c--split--3"
       >
-        <button class="control control--left control--small blue__glow">
+        <button
+          id="profile-window-close"
+          class="control control--left control--small blue__glow"
+        >
           <i class="control__icon control__icon--small far fa-times"></i>
         </button>
         <span class="window__title blue__glow">PROFILE</span>
@@ -188,8 +220,12 @@
           <i class="control__icon control__icon--small far fa-bars"></i>
         </button>
       </div>
-      <!-- <button class="control bordered padded--lighter blue__glow">BTN</button> -->
-      <form class="form form--fluid grid grid--r" id="signInForm">
+      <p class="blue__glow window__message">PROFILE SERVICE OFFLINE</p>
+      <form
+        style="display: none"
+        class="form form--fluid grid grid--r"
+        id="signInForm"
+      >
         <input
           class="input input--center bordered blue"
           id="signInUsername"
@@ -209,11 +245,18 @@
         <span id="formError" class="form__error red__glow"></span>
       </form>
     </div>
-    <div class="window window--narrow grid grid--r bordered draggable">
+
+    <div
+      id="users-window"
+      class="window window--narrow grid grid--r bordered draggable"
+    >
       <div
         class="window__title__bar grid grid--c grid--c--split grid--c--split--3"
       >
-        <button class="control control--left control--small blue__glow">
+        <button
+          id="users-window-close"
+          class="control control--left control--small blue__glow"
+        >
           <i class="control__icon control__icon--small far fa-times"></i>
         </button>
         <span class="window__title blue__glow">USERS</span>
@@ -223,11 +266,9 @@
       </div>
       <div class="inbox__people bordered padded"></div>
     </div>
+
     <div id="game" class="grid padded bordered--">
       <div id="top_menu" class="bordered-- menu padded-- grid grid--c">
-        <!-- <button id="scan" class="control bordered padded--lighter blue__glow">
-          SCN
-        </button> -->
         <button id="clear" class="control bordered padded--lighter blue__glow">
           CLR
         </button>
@@ -248,57 +289,18 @@
           </div>
         </div>
       </div>
-      <div id="side_menu" class="bordered-- menu padded-- flex">
-        <!-- <form class="login__form form grid grid--r" id="signInForm">
-          <input
-            class="input bordered blue"
-            id="signInUsername"
-            type="text"
-            autocomplete="off"
-            placeholder="CALL SIGN"
-          />
-          <input
-            class="input bordered blue"
-            id="signInPassword"
-            type="password"
-            placeholder="PASSWORD"
-          />
-          <button class="control bordered blue__glow padded--light">
-            SIGN IN
-          </button>
-          <span id="formError" class="form__error red__glow"
-            >ERROR: SOMETHING IS WRONG</span
-          >
-        </form> -->
-      </div>
+      <div id="side_menu" class="bordered-- menu padded-- flex"></div>
       <div
         id="bottom_menu"
         class="bordered-- menu padded-- grid grid--c grid--c--split"
       >
         <div>
-          <!-- <button
-            id="new_destination"
-            class="control bordered blue__glow padded--light"
-          >
-            DSTN
-          </button> -->
           <button
             id="get_destinations"
             class="control bordered blue__glow padded--light"
           >
             RNG
           </button>
-        </div>
-        <div>
-          <!-- <button id="launch" class="control bordered blue__glow padded--light">
-            LNCH
-          </button>
-          <button
-            id="deselect"
-            class="control bordered blue__glow padded--light"
-          >
-            DSL
-          </button> -->
         </div>
       </div>
     </div>
