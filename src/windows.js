@@ -3,8 +3,10 @@ export default () => {
   let dragging = false;
   const config = {
     canDrag: false,
-    cursorOffsetX: null,
-    cursorOffsetY: null,
+    cursorStartX: null,
+    cursorStartY: null,
+    windowStartX: null,
+    windowStartY: null,
   };
 
   function adjustPostion(event) {
@@ -12,11 +14,13 @@ export default () => {
       console.log("skipped");
       return;
     }
-    var elm = event.target;
-    elm.style.left = event.clientX - 2 - config.cursorOffsetX + "px";
-    elm.style.top = event.clientY - 2 - config.cursorOffsetY + "px";
-    // console.log(event.pageX);
-    // console.log(event.pageY);
+    // var elm = event.target;
+    const elm = dragging;
+
+    const xTranslate = event.pageX - config.cursorStartX + config.windowStartX;
+    const yTranslate = event.pageY - config.cursorStartY + config.windowStartY;
+
+    elm.style.transform = `translate(${xTranslate}px,${yTranslate}px)`;
   }
 
   function reset() {
@@ -28,17 +32,30 @@ export default () => {
     return element.classList.contains("draggable");
   }
   windows.forEach((draggableWindow, index) => {
-    draggableWindow.style.top = `${(index + 1) * 35}px`;
-    draggableWindow.style.left = `${(index + 1) * 35}px`;
+    draggableWindow.style.top = `${
+      window.innerHeight / 2 -
+      draggableWindow.getBoundingClientRect().height / 2
+    }px`;
+    draggableWindow.style.left = `${
+      window.innerWidth / 2 - draggableWindow.getBoundingClientRect().width / 2
+    }px`;
     draggableWindow.style.zIndex = 1000;
     draggableWindow.addEventListener("pointerdown", function (event) {
       event.stopPropagation();
+
       if (isDraggable(event.target)) {
         // console.log("+++++++++++++ dragstart");
-        dragging = true;
-        config.cursorOffsetX = event.offsetX;
-        config.cursorOffsetY = event.offsetY;
-        adjustPostion(event);
+        dragging = event.target;
+
+        const windowElementStyle = window.getComputedStyle(event.target);
+        const transformMatrix = new WebKitCSSMatrix(
+          windowElementStyle.transform
+        );
+        config.cursorStartX = event.pageX;
+        config.cursorStartY = event.pageY;
+        config.windowStartX = transformMatrix.m41;
+        config.windowStartY = transformMatrix.m42;
+        // adjustPostion(event);
         event.target.style.cursor = "grabbing";
         event.target.classList.add("bordered--white");
 
@@ -47,29 +64,37 @@ export default () => {
         windows.forEach((indexedWindow) => {
           const indexedWindowIndex = parseInt(indexedWindow.style["z-index"]);
           index = index > indexedWindowIndex ? index : indexedWindowIndex;
+          indexedWindow.classList.remove("window--active");
         });
         event.target.style.zIndex = index + 5;
+        event.target.classList.add("window--active");
+        document
+          .querySelectorAll(".global")
+          .forEach((global) => global.classList.remove("global--active"));
+        document
+          .getElementById(`${draggableWindow.id}-control`)
+          .classList.add("global--active");
       }
     });
-    draggableWindow.addEventListener("pointermove", function (event) {
+    window.addEventListener("pointermove", function (event) {
       event.stopPropagation();
-      if (isDraggable(event.target)) {
-        if (dragging) {
-          // console.log("+++++++++++++ drag");
+      // if (isDraggable(event.target)) {
+      if (dragging) {
+        // console.log("+++++++++++++ drag");
 
-          adjustPostion(event);
-        }
+        adjustPostion(event);
       }
+      // }
     });
-    draggableWindow.addEventListener("pointerup", function (event) {
+    window.addEventListener("pointerup", function (event) {
       event.stopPropagation();
-      if (isDraggable(event.target)) {
+      if (dragging) {
         // console.log("+++++++++++++ dragend");
-        dragging = false;
-        event.target.style.cursor = "grab";
-        event.target.classList.remove("bordered--white");
+        dragging.style.cursor = "grab";
+        dragging.classList.remove("bordered--white");
         reset();
-        event.target.classList.remove("dragging");
+        dragging.classList.remove("dragging");
+        dragging = null;
       }
     });
   });

@@ -1,15 +1,53 @@
 import controls from "./config/controls";
 
+function bringToFront(windowElement) {
+  let index = 0;
+  document.querySelectorAll(".window").forEach((indexedWindow) => {
+    const indexedWindowIndex = parseInt(indexedWindow.style["z-index"]);
+    index = index > indexedWindowIndex ? index : indexedWindowIndex;
+    indexedWindow.classList.remove("window--active");
+  });
+  windowElement.style.zIndex = index + 5;
+  // windowElement.classList.add("window--active");
+}
+
+function deactivateWindows() {
+  document
+    .querySelectorAll(".window")
+    .forEach((windowElement) =>
+      windowElement.classList.remove("window--active")
+    );
+}
+
+function fadeWindow(control, windowElement) {
+  control.classList.add("control--faded");
+  control.classList.remove("global--active");
+  if (windowElement) {
+    windowElement.classList.add("faded");
+  }
+}
+
+function showWindow(control, windowElement) {
+  control.classList.remove("control--faded");
+  document
+    .querySelectorAll(".global")
+    .forEach((global) => global.classList.remove("global--active"));
+  control.classList.add("global--active");
+  if (windowElement) {
+    bringToFront(windowElement);
+    windowElement.classList.remove("faded");
+    windowElement.classList.add("window--active");
+  }
+}
+
 function toggleWindow(control, windowElement) {
   if (control.classList.contains("control--faded")) {
-    control.classList.remove("control--faded");
-    if (windowElement) {
-      windowElement.classList.remove("faded");
-    }
+    showWindow(control, windowElement);
   } else {
-    control.classList.add("control--faded");
-    if (windowElement) {
-      windowElement.classList.add("faded");
+    if (windowElement.classList.contains("window--active")) {
+      fadeWindow(control, windowElement);
+    } else {
+      showWindow(control, windowElement);
     }
   }
 }
@@ -34,6 +72,7 @@ function makeControl(control) {
   newControl.classList.add(...classes);
   newControl.innerHTML = ` <i class="fal ${control.icon}"></i>
 	<span class="global__label">${control.name}</span>`;
+  newControl.id = `${control.windowID}-control`;
   if (windowElement) {
     newControl.addEventListener("click", () => {
       toggleWindow(newControl, windowElement);
@@ -75,7 +114,6 @@ function makeControlGroup(group, container) {
 
 export default () => {
   const globalContainer = document.getElementById("globals");
-  let windows;
   controls.categories.forEach((category) => {
     makeControlGroup(category, globalContainer);
   });
