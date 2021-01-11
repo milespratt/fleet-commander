@@ -4,304 +4,303 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <link rel="stylesheet" href="./styles/style.css" />
+    <link rel="stylesheet" href="./styles/main.css" />
+    <link rel="stylesheet" href="./styles/audio.css" />
+    <link rel="stylesheet" href="./styles/controls.css" />
+    <link rel="stylesheet" href="./styles/grids.css" />
+    <link rel="stylesheet" href="./styles/input.css" />
+    <link rel="stylesheet" href="./styles/overlay.css" />
+    <link rel="stylesheet" href="./styles/utility.css" />
+    <link rel="stylesheet" href="./styles/viewports.css" />
+    <link rel="stylesheet" href="./styles/windows.css" />
     <script
       src="https://kit.fontawesome.com/cacada40d0.js"
       crossorigin="anonymous"
     ></script>
     <title>Fleet Commander</title>
   </head>
-  <body class="padded--">
-    <div id="globals" class="globals grid grid--c">
+  <body>
+    <div id="audio__player" class="grid grid--c">
+      <button
+        id="audioPrevious"
+        class="control pic__control bordered-- padded blue__glow"
+      >
+        <i class="control__icon fal fa-backward"></i>
+      </button>
+      <button
+        id="audioPlay"
+        class="control pic__control bordered-- padded blue__glow"
+      >
+        <i class="control__icon fal fa-play"></i>
+      </button>
+      <button
+        id="audioNext"
+        class="control pic__control bordered-- padded blue__glow"
+      >
+        <i class="control__icon fal fa-forward"></i>
+      </button>
+    </div>
+    <div id="toggles" class="toggles grid grid--c">
       <!-- WILL BE FILLED WITH CONTROLS PROGRAMMATICALLY -->
     </div>
 
-    <div id="chat-window" class="window grid grid--r bordered draggable">
-      <div
-        class="window__title__bar grid grid--c grid--c--split grid--c--split--3"
-      >
-        <button
-          id="chat-window-close"
-          class="control control--left control--small blue__glow"
+    <div id="windows">
+      <!-- SHOULD BE FILLED WITH WINDOWS PROGRAMMATICALLY -->
+      <div id="chat-window" class="window grid grid--r bordered draggable">
+        <div
+          class="window__title__bar grid grid--c grid--c--split grid--c--split--3"
         >
-          <i class="control__icon control__icon--small far fa-times"></i>
-        </button>
-        <span class="window__title blue__glow">CHAT</span>
-        <button class="control control--right control--small blue__glow">
-          <i class="control__icon control__icon--small far fa-bars"></i>
-        </button>
-      </div>
-      <div id="chat__menu" class="chat blue__glow">
-        <div class="inbox bordered padded" id="inbox">
-          <div class="inbox__messages grid grid--r">
-            <div class="messages__history grid grid--r"></div>
-            <div class="fallback"></div>
-          </div>
-        </div>
-
-        <form class="message_form">
-          <span
-            class="input input--fluid bordered blue__glow span__input"
-            id="message_form_input"
-            role="textbox"
-            contenteditable
-          ></span>
           <button
-            class="control bordered blue__glow padded--light"
-            type="submit"
+            id="chat-window-close"
+            class="control control--left control--small blue__glow"
           >
-            SEND
+            <i class="control__icon control__icon--small far fa-times"></i>
           </button>
+          <span class="window__title blue__glow">CHAT</span>
+          <button class="control control--right control--small blue__glow">
+            <i class="control__icon control__icon--small far fa-bars"></i>
+          </button>
+        </div>
+        <div id="chat__menu" class="chat blue__glow">
+          <div class="inbox bordered padded" id="inbox">
+            <div class="inbox__messages grid grid--r">
+              <div class="messages__history grid grid--r"></div>
+              <div class="fallback"></div>
+            </div>
+          </div>
+
+          <form class="message_form">
+            <span
+              class="input input--fluid bordered blue__glow span__input"
+              id="message_form_input"
+              role="textbox"
+              contenteditable
+            ></span>
+            <button class="control bordered blue__glow padded" type="submit">
+              SEND
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <div
+        id="encyclopedia-window"
+        class="window grid grid--r bordered draggable"
+      >
+        <div
+          class="window__title__bar grid grid--c grid--c--split grid--c--split--3"
+        >
+          <button
+            id="encyclopedia-window-close"
+            class="control control--left control--small blue__glow"
+          >
+            <i class="control__icon control__icon--small far fa-times"></i>
+          </button>
+          <span class="window__title blue__glow">ENCYCLOPEDIA</span>
+          <button class="control control--right control--small blue__glow">
+            <i class="control__icon control__icon--small far fa-bars"></i>
+          </button>
+        </div>
+        <p class="blue__glow window__message">ENCYCLOPEDIA SERVICE OFFLINE</p>
+      </div>
+
+      <div id="sector-window" class="window grid grid--r bordered draggable">
+        <div
+          class="window__title__bar grid grid--c grid--c--split grid--c--split--3"
+        >
+          <button
+            id="sector-window-close"
+            class="control control--left control--small blue__glow"
+          >
+            <i class="control__icon control__icon--small far fa-times"></i>
+          </button>
+          <span class="window__title blue__glow">SECTOR</span>
+          <button class="control control--right control--small blue__glow">
+            <i class="control__icon control__icon--small far fa-bars"></i>
+          </button>
+        </div>
+        <p class="blue__glow window__message">SECTOR INFORMATION OFFLINE</p>
+      </div>
+
+      <div
+        id="solar-system-window"
+        class="window grid grid--r bordered draggable"
+      >
+        <div
+          class="window__title__bar grid grid--c grid--c--split grid--c--split--3"
+        >
+          <button
+            id="solar-system-window-close"
+            class="control control--left control--small blue__glow"
+          >
+            <i class="control__icon control__icon--small far fa-times"></i>
+          </button>
+          <span class="window__title blue__glow">SOLAR SYSTEM</span>
+          <button class="control control--right control--small blue__glow">
+            <i class="control__icon control__icon--small far fa-bars"></i>
+          </button>
+        </div>
+        <p class="blue__glow window__message">
+          SOLAR SYSTEM INFORMATION OFFLINE
+        </p>
+      </div>
+
+      <div id="star-window" class="window grid grid--r bordered draggable">
+        <div
+          class="window__title__bar grid grid--c grid--c--split grid--c--split--3"
+        >
+          <button
+            id="star-window-close"
+            class="control control--left control--small blue__glow"
+          >
+            <i class="control__icon control__icon--small far fa-times"></i>
+          </button>
+          <span class="window__title blue__glow">STAR</span>
+          <button class="control control--right control--small blue__glow">
+            <i class="control__icon control__icon--small far fa-bars"></i>
+          </button>
+        </div>
+        <p class="blue__glow window__message">STAR INFORMATION OFFLINE</p>
+      </div>
+
+      <div id="planet-window" class="window grid grid--r bordered draggable">
+        <div
+          class="window__title__bar grid grid--c grid--c--split grid--c--split--3"
+        >
+          <button
+            id="planet-window-close"
+            class="control control--left control--small blue__glow"
+          >
+            <i class="control__icon control__icon--small far fa-times"></i>
+          </button>
+          <span class="window__title blue__glow">PLANET</span>
+          <button class="control control--right control--small blue__glow">
+            <i class="control__icon control__icon--small far fa-bars"></i>
+          </button>
+        </div>
+        <p class="blue__glow window__message">PLANET INFORMATION OFFLINE</p>
+      </div>
+
+      <div id="ship-window" class="window grid grid--r bordered draggable">
+        <div
+          class="window__title__bar grid grid--c grid--c--split grid--c--split--3"
+        >
+          <button
+            id="ship-window-close"
+            class="control control--left control--small blue__glow"
+          >
+            <i class="control__icon control__icon--small far fa-times"></i>
+          </button>
+          <span class="window__title blue__glow">SHIP</span>
+          <button class="control control--right control--small blue__glow">
+            <i class="control__icon control__icon--small far fa-bars"></i>
+          </button>
+        </div>
+        <div class="control__grid grid">
+          <button id="scan" class="control bordered padded blue__glow">
+            SCAN
+          </button>
+          <button
+            id="new_destination"
+            class="control bordered blue__glow padded"
+            style="display: none"
+          >
+            DSTN
+          </button>
+          <button id="launch" class="control bordered blue__glow padded">
+            LAUNCH
+          </button>
+          <button id="deselect" class="control bordered blue__glow padded">
+            DESELECT SHIP
+          </button>
+        </div>
+      </div>
+
+      <div id="mail-window" class="window grid grid--r bordered draggable">
+        <div
+          class="window__title__bar grid grid--c grid--c--split grid--c--split--3"
+        >
+          <button
+            id="mail-window-close"
+            class="control control--left control--small blue__glow"
+          >
+            <i class="control__icon control__icon--small far fa-times"></i>
+          </button>
+          <span class="window__title blue__glow">MAIL</span>
+          <button class="control control--right control--small blue__glow">
+            <i class="control__icon control__icon--small far fa-bars"></i>
+          </button>
+        </div>
+        <p class="blue__glow window__message">MAIL SERVICE OFFLINE</p>
+      </div>
+
+      <div id="profile-window" class="window grid grid--r bordered draggable">
+        <div
+          class="window__title__bar grid grid--c grid--c--split grid--c--split--3"
+        >
+          <button
+            id="profile-window-close"
+            class="control control--left control--small blue__glow"
+          >
+            <i class="control__icon control__icon--small far fa-times"></i>
+          </button>
+          <span class="window__title blue__glow">PROFILE</span>
+          <button class="control control--right control--small blue__glow">
+            <i class="control__icon control__icon--small far fa-bars"></i>
+          </button>
+        </div>
+        <p class="blue__glow window__message">PROFILE SERVICE OFFLINE</p>
+        <form
+          style="display: none"
+          class="form form--fluid grid grid--r"
+          id="signInForm"
+        >
+          <input
+            class="input input--center bordered blue"
+            id="signInUsername"
+            type="text"
+            autocomplete="off"
+            placeholder="CALL SIGN"
+          />
+          <input
+            class="input input--center bordered blue"
+            id="signInPassword"
+            type="password"
+            placeholder="PASSWORD"
+          />
+          <button class="control bordered blue__glow padded">SIGN IN</button>
+          <span id="formError" class="form__error red__glow"></span>
         </form>
       </div>
-    </div>
 
-    <div
-      id="encyclopedia-window"
-      class="window grid grid--r bordered draggable"
-    >
       <div
-        class="window__title__bar grid grid--c grid--c--split grid--c--split--3"
+        id="users-window"
+        class="window window--narrow grid grid--r bordered draggable"
       >
-        <button
-          id="encyclopedia-window-close"
-          class="control control--left control--small blue__glow"
+        <div
+          class="window__title__bar grid grid--c grid--c--split grid--c--split--3"
         >
-          <i class="control__icon control__icon--small far fa-times"></i>
-        </button>
-        <span class="window__title blue__glow">ENCYCLOPEDIA</span>
-        <button class="control control--right control--small blue__glow">
-          <i class="control__icon control__icon--small far fa-bars"></i>
-        </button>
-      </div>
-      <p class="blue__glow window__message">ENCYCLOPEDIA SERVICE OFFLINE</p>
-    </div>
-
-    <div id="sector-window" class="window grid grid--r bordered draggable">
-      <div
-        class="window__title__bar grid grid--c grid--c--split grid--c--split--3"
-      >
-        <button
-          id="sector-window-close"
-          class="control control--left control--small blue__glow"
-        >
-          <i class="control__icon control__icon--small far fa-times"></i>
-        </button>
-        <span class="window__title blue__glow">SECTOR</span>
-        <button class="control control--right control--small blue__glow">
-          <i class="control__icon control__icon--small far fa-bars"></i>
-        </button>
-      </div>
-      <p class="blue__glow window__message">SECTOR INFORMATION OFFLINE</p>
-    </div>
-
-    <div
-      id="solar-system-window"
-      class="window grid grid--r bordered draggable"
-    >
-      <div
-        class="window__title__bar grid grid--c grid--c--split grid--c--split--3"
-      >
-        <button
-          id="solar-system-window-close"
-          class="control control--left control--small blue__glow"
-        >
-          <i class="control__icon control__icon--small far fa-times"></i>
-        </button>
-        <span class="window__title blue__glow">SOLAR SYSTEM</span>
-        <button class="control control--right control--small blue__glow">
-          <i class="control__icon control__icon--small far fa-bars"></i>
-        </button>
-      </div>
-      <p class="blue__glow window__message">SOLAR SYSTEM INFORMATION OFFLINE</p>
-    </div>
-
-    <div id="star-window" class="window grid grid--r bordered draggable">
-      <div
-        class="window__title__bar grid grid--c grid--c--split grid--c--split--3"
-      >
-        <button
-          id="star-window-close"
-          class="control control--left control--small blue__glow"
-        >
-          <i class="control__icon control__icon--small far fa-times"></i>
-        </button>
-        <span class="window__title blue__glow">STAR</span>
-        <button class="control control--right control--small blue__glow">
-          <i class="control__icon control__icon--small far fa-bars"></i>
-        </button>
-      </div>
-      <p class="blue__glow window__message">STAR INFORMATION OFFLINE</p>
-    </div>
-
-    <div id="planet-window" class="window grid grid--r bordered draggable">
-      <div
-        class="window__title__bar grid grid--c grid--c--split grid--c--split--3"
-      >
-        <button
-          id="planet-window-close"
-          class="control control--left control--small blue__glow"
-        >
-          <i class="control__icon control__icon--small far fa-times"></i>
-        </button>
-        <span class="window__title blue__glow">PLANET</span>
-        <button class="control control--right control--small blue__glow">
-          <i class="control__icon control__icon--small far fa-bars"></i>
-        </button>
-      </div>
-      <p class="blue__glow window__message">PLANET INFORMATION OFFLINE</p>
-    </div>
-
-    <div id="ship-window" class="window grid grid--r bordered draggable">
-      <div
-        class="window__title__bar grid grid--c grid--c--split grid--c--split--3"
-      >
-        <button
-          id="ship-window-close"
-          class="control control--left control--small blue__glow"
-        >
-          <i class="control__icon control__icon--small far fa-times"></i>
-        </button>
-        <span class="window__title blue__glow">SHIP</span>
-        <button class="control control--right control--small blue__glow">
-          <i class="control__icon control__icon--small far fa-bars"></i>
-        </button>
-      </div>
-      <div class="control__grid grid">
-        <button id="scan" class="control bordered padded--lighter blue__glow">
-          SCAN
-        </button>
-        <button
-          id="new_destination"
-          class="control bordered blue__glow padded--light"
-          style="display: none"
-        >
-          DSTN
-        </button>
-        <button id="launch" class="control bordered blue__glow padded--light">
-          LAUNCH
-        </button>
-        <button id="deselect" class="control bordered blue__glow padded--light">
-          DESELECT SHIP
-        </button>
-      </div>
-    </div>
-
-    <div id="mail-window" class="window grid grid--r bordered draggable">
-      <div
-        class="window__title__bar grid grid--c grid--c--split grid--c--split--3"
-      >
-        <button
-          id="mail-window-close"
-          class="control control--left control--small blue__glow"
-        >
-          <i class="control__icon control__icon--small far fa-times"></i>
-        </button>
-        <span class="window__title blue__glow">MAIL</span>
-        <button class="control control--right control--small blue__glow">
-          <i class="control__icon control__icon--small far fa-bars"></i>
-        </button>
-      </div>
-      <p class="blue__glow window__message">MAIL SERVICE OFFLINE</p>
-    </div>
-
-    <div id="profile-window" class="window grid grid--r bordered draggable">
-      <div
-        class="window__title__bar grid grid--c grid--c--split grid--c--split--3"
-      >
-        <button
-          id="profile-window-close"
-          class="control control--left control--small blue__glow"
-        >
-          <i class="control__icon control__icon--small far fa-times"></i>
-        </button>
-        <span class="window__title blue__glow">PROFILE</span>
-        <button class="control control--right control--small blue__glow">
-          <i class="control__icon control__icon--small far fa-bars"></i>
-        </button>
-      </div>
-      <p class="blue__glow window__message">PROFILE SERVICE OFFLINE</p>
-      <form
-        style="display: none"
-        class="form form--fluid grid grid--r"
-        id="signInForm"
-      >
-        <input
-          class="input input--center bordered blue"
-          id="signInUsername"
-          type="text"
-          autocomplete="off"
-          placeholder="CALL SIGN"
-        />
-        <input
-          class="input input--center bordered blue"
-          id="signInPassword"
-          type="password"
-          placeholder="PASSWORD"
-        />
-        <button class="control bordered blue__glow padded--light">
-          SIGN IN
-        </button>
-        <span id="formError" class="form__error red__glow"></span>
-      </form>
-    </div>
-
-    <div
-      id="users-window"
-      class="window window--narrow grid grid--r bordered draggable"
-    >
-      <div
-        class="window__title__bar grid grid--c grid--c--split grid--c--split--3"
-      >
-        <button
-          id="users-window-close"
-          class="control control--left control--small blue__glow"
-        >
-          <i class="control__icon control__icon--small far fa-times"></i>
-        </button>
-        <span class="window__title blue__glow">USERS</span>
-        <button class="control control--right control--small blue__glow">
-          <i class="control__icon control__icon--small far fa-bars"></i>
-        </button>
-      </div>
-      <div class="inbox__people bordered padded"></div>
-    </div>
-
-    <div id="game" class="grid padded bordered--">
-      <div id="top_menu" class="bordered-- menu padded-- grid grid--c">
-        <button id="clear" class="control bordered padded--lighter blue__glow">
-          CLR
-        </button>
-      </div>
-      <div id="view" class="bordered--">
-        <div id="loading_text" class="pulse">
-          <span>LOADING</span>
-        </div>
-        <div id="error_text">
-          <span id="error_text_text" class="red__glow"></span>
-        </div>
-        <div id="local_view" class="bordered hidden">
-          <span id="local_view_title" class="blue__glow local__map__text"
-            >SYS:...<br />BDS:...</span
-          >
-          <div class="local__view__wrapper" id="local_view_loader">
-            <span class="blue__glow local__view__text">SCANNING SYSTEM</span>
-          </div>
-        </div>
-      </div>
-      <div id="side_menu" class="bordered-- menu padded-- flex"></div>
-      <div
-        id="bottom_menu"
-        class="bordered-- menu padded-- grid grid--c grid--c--split"
-      >
-        <div>
           <button
-            id="get_destinations"
-            class="control bordered blue__glow padded--light"
+            id="users-window-close"
+            class="control control--left control--small blue__glow"
           >
-            RNG
+            <i class="control__icon control__icon--small far fa-times"></i>
+          </button>
+          <span class="window__title blue__glow">USERS</span>
+          <button class="control control--right control--small blue__glow">
+            <i class="control__icon control__icon--small far fa-bars"></i>
           </button>
         </div>
+        <div class="inbox__people bordered padded"></div>
+      </div>
+    </div>
+
+    <div id="view" class="">
+      <div id="loading_text" class="pulse">
+        <span>LOADING</span>
+      </div>
+      <div id="error_text">
+        <span id="error_text_text" class="red__glow"></span>
       </div>
     </div>
     <script src="./init.js"></script>

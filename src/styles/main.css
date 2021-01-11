@@ -1,0 +1,104 @@
+/* FONTS */
+@font-face {
+  font-family: "Inconsolata";
+  src: url("../assets/fonts/Inconsolata-Bold.ttf") format("truetype");
+  font-weight: 700;
+}
+
+@font-face {
+  font-family: "Inconsolata";
+  src: url("../assets/fonts/Inconsolata-Regular.ttf") format("truetype");
+  font-weight: 400;
+}
+
+/* VARIABLES */
+:root {
+  --blue: #70ffe9;
+  --blue90: rgba(112, 255, 255, 0.9);
+  --blue80: rgba(112, 255, 255, 0.8);
+  --blue50: rgba(112, 255, 255, 0.5);
+  --white90: rgba(255, 255, 255, 0.9);
+  --white80: rgba(255, 255, 255, 0.8);
+  --white50: rgba(255, 255, 255, 0.5);
+  --pink: #f7567c;
+  --pink90: rgba(247, 86, 124, 0.9);
+  --pink80: rgba(247, 86, 124, 0.8);
+  --black: #120114;
+  --purple: #190b28;
+  --yellow: #f9e784;
+  --borderWidth: 2px;
+  --borderRadius: 0px;
+  --fontSize: 2rem;
+  --fontSizeSmall: 1.4rem;
+  --fontSizeSmaller: 1.2rem;
+  --fontSizeSmallest: 0.8rem;
+  --padding: 5px;
+  --windowPadding: 20px 5px 5px 5px;
+  --gap: 5px;
+  --columnGap: 5px;
+  --rowGap: 5px;
+}
+
+/* GLOBAL */
+* {
+  box-sizing: border-box;
+  font-family: "Inconsolata", monospace;
+  letter-spacing: 2px;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+}
+
+/* HTML & BODY */
+html {
+  font-size: 10px;
+}
+
+html,
+body {
+  overflow: hidden;
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--black);
+  font-family: "Inconsolata";
+  position: relative;
+}
+
+/* BORDERS */
+.bordered {
+  border-radius: var(--borderRadius);
+  border: var(--borderWidth) solid var(--blue90) !important;
+  box-shadow: inset 0 0 10px var(--blue50), 0 0 10px var(--blue50);
+}
+
+.bordered--white {
+  border-radius: var(--borderRadius);
+  border: var(--borderWidth) solid var(--white90) !important;
+  box-shadow: inset 0 0 10px var(--white50), 0 0 10px var(--white50);
+}
+
+/* TEXT */
+
+.blue__glow {
+  color: var(--blue90);
+  text-shadow: 0px 0px 6px var(--blue80);
+}
+
+.red__glow {
+  color: var(--pink90);
+  text-shadow: 0px 0px 6px var(--pink80);
+}
+
+.white__glow {
+  color: var(--white90);
+  text-shadow: 0px 0px 6px var(--white80);
+}
+
+/* PADDING */
+.padded {
+  padding: var(--padding);
+}

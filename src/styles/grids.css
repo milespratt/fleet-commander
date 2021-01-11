@@ -1,0 +1,28 @@
+/* GRIDS */
+.grid {
+  display: grid;
+  grid-gap: var(--gap);
+}
+
+.grid--nogap {
+  grid-gap: 0px;
+}
+
+.grid--c {
+  grid-auto-flow: column;
+  justify-content: start;
+}
+
+.grid--r {
+  grid-auto-flow: row;
+  align-content: start;
+}
+
+.grid--r--split {
+  align-content: space-between;
+}
+
+.grid--c--split {
+  justify-content: space-between;
+  align-items: center;
+}

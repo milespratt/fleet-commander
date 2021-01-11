@@ -1,0 +1,41 @@
+/* WINDOWS */
+.window {
+  position: absolute;
+  z-index: 1000;
+  background-color: var(--black);
+  top: 0;
+  left: 0;
+  padding: var(--padding);
+  min-width: 300px;
+  max-width: 500px;
+  min-height: 200px;
+  grid-template-rows: 18px 1fr;
+  transition: opacity 250ms ease;
+  pointer-events: all;
+  opacity: 0.25;
+}
+
+.window--active {
+  /* z-index: 1005 !important; */
+  opacity: 1;
+}
+
+.window--narrow {
+  min-width: 150px;
+}
+
+.window__title__bar {
+  pointer-events: none !important;
+  grid-template-columns: 30px 1fr 30px;
+  /* padding: 0px 3px; */
+}
+
+.window__title {
+  text-align: center;
+  width: 100%;
+}
+
+.window__message {
+  align-self: center;
+  justify-self: center;
+}

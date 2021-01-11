@@ -21,7 +21,7 @@ function deactivateWindows() {
 
 function fadeWindow(control, windowElement) {
   control.classList.add("control--faded");
-  control.classList.remove("global--active");
+  control.classList.remove("toggle--active");
   if (windowElement) {
     windowElement.classList.add("faded");
   }
@@ -30,9 +30,9 @@ function fadeWindow(control, windowElement) {
 function showWindow(control, windowElement) {
   control.classList.remove("control--faded");
   document
-    .querySelectorAll(".global")
-    .forEach((global) => global.classList.remove("global--active"));
-  control.classList.add("global--active");
+    .querySelectorAll(".toggle")
+    .forEach((toggle) => toggle.classList.remove("toggle--active"));
+  control.classList.add("toggle--active");
   if (windowElement) {
     bringToFront(windowElement);
     windowElement.classList.remove("faded");
@@ -63,15 +63,17 @@ function makeControl(control) {
   const classes = [
     "control",
     "control--faded",
-    "global",
+    "toggle",
+    // "pic__control",
     "bordered",
     "blue__glow",
-    "padded--light",
-    // "control--notify",
+    "padded",
+    "control--notify",
+    "toggle",
   ];
   newControl.classList.add(...classes);
-  newControl.innerHTML = ` <i class="fal ${control.icon}"></i>
-	<span class="global__label">${control.name}</span>`;
+  newControl.innerHTML = ` <i class="fal ${control.icon} control__icon"></i>
+	<span class="toggle__label">${control.name}</span>`;
   newControl.id = `${control.windowID}-control`;
   if (windowElement) {
     newControl.addEventListener("click", () => {
@@ -113,8 +115,26 @@ function makeControlGroup(group, container) {
 }
 
 export default () => {
-  const globalContainer = document.getElementById("globals");
+  const toggleContainer = document.getElementById("toggles");
   controls.categories.forEach((category) => {
-    makeControlGroup(category, globalContainer);
+    makeControlGroup(category, toggleContainer);
+  });
+  const domControls = document.querySelectorAll(".control");
+  domControls.forEach((domControl) => {
+    domControl.addEventListener("pointerdown", (ev) => {
+      // domControl.classList.add("bordered--white");
+      // domControl.classList.add("white__glow");
+      domControl.classList.add("control--active");
+    });
+    domControl.addEventListener("pointerup", (ev) => {
+      // domControl.classList.remove("bordered--white");
+      // domControl.classList.remove("white__glow");
+      domControl.classList.remove("control--active");
+    });
+    domControl.addEventListener("pointerout", (ev) => {
+      // domControl.classList.remove("bordered--white");
+      // domControl.classList.remove("white__glow");
+      domControl.classList.remove("control--active");
+    });
   });
 };

@@ -69,11 +69,11 @@ export default () => {
         event.target.style.zIndex = index + 5;
         event.target.classList.add("window--active");
         document
-          .querySelectorAll(".global")
-          .forEach((global) => global.classList.remove("global--active"));
+          .querySelectorAll(".toggle")
+          .forEach((toggle) => toggle.classList.remove("toggle--active"));
         document
           .getElementById(`${draggableWindow.id}-control`)
-          .classList.add("global--active");
+          .classList.add("toggle--active");
       }
     });
     window.addEventListener("pointermove", function (event) {

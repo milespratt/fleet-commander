@@ -39,10 +39,7 @@ export default (universe) => {
   // BUTTONS
   const deselect = document.getElementById("deselect");
   const scan = document.getElementById("scan");
-  const newDestination = document.getElementById("new_destination");
-  const getDestinations = document.getElementById("get_destinations");
   const launch = document.getElementById("launch");
-  const clear = document.getElementById("clear");
   // BUTTONS
 
   // DOM
@@ -53,13 +50,6 @@ export default (universe) => {
   const loadingText = document.getElementById("loading_text");
   const errorText = document.getElementById("error_text");
   const errorTextText = document.getElementById("error_text_text");
-  //   const signInForm = document.getElementById("signInForm");
-  //   // DOM
-  //
-  //   signInForm.addEventListener("submit", (ev) => {
-  //     ev.preventDefault();
-  //     console.log(ev);
-  //   });
 
   // ERROR LINE
   const errorLine = new PIXI.Graphics();
@@ -69,19 +59,19 @@ export default (universe) => {
 
   // APPS
   const app = createApp(null, null, "view");
-  const localApp = createApp(400, 400, "local_view");
+  // const localApp = createApp(400, 400, "local_view");
   // APPS
 
   // VIEWPORTS
   app.viewport = createViewport(app, null, { minScale: 0.25, maxScale: 2 });
-  localApp.viewport = createViewport(localApp, {
-    worldHeight: 400,
-    worldWidth: 400,
-    screenHeight: 400,
-    screenWidth: 400,
-  });
+  // localApp.viewport = createViewport(localApp, {
+  //   worldHeight: 400,
+  //   worldWidth: 400,
+  //   screenHeight: 400,
+  //   screenWidth: 400,
+  // });
   viewContainer.appendChild(app.view);
-  localViewContainer.appendChild(localApp.view);
+  // localViewContainer.appendChild(localApp.view);
 
   // handle viewport resize
   function updateViewportSize() {
@@ -127,7 +117,7 @@ export default (universe) => {
   app.viewport.addChild(indicatorContainer);
   app.viewport.addChild(selectionContainer);
   app.viewport.addChild(textContainer);
-  localApp.viewport.addChild(localMapContainer);
+  // localApp.viewport.addChild(localMapContainer);
 
   // GRIDS
   const gridLines = new PIXI.Graphics();
@@ -154,10 +144,7 @@ export default (universe) => {
       fontSize: 100,
       fill: "0x70ffe9",
     });
-    // sectorLabel.visible = true;
     sectorLabel.position.set(
-      // center.x - sectorLabel.width / 2,
-      // center.y - sectorLabel.height / 2
       center.x - sectorGrid.delimiter / 2 + 20,
       center.y - sectorGrid.delimiter / 2 + 15
     );
@@ -189,70 +176,70 @@ export default (universe) => {
   // GRIDS
 
   // ORBIT MAP
-  const orbits = new PIXI.Graphics();
-  localMapContainer.addChild(orbits);
-  const selectionLine = new PIXI.Graphics();
-  selectionLine.filters = [
-    new GlowFilter({
-      quality: 1,
-      color: colors.blueGlow,
-      distance: 10,
-      outerStrength: 1,
-    }),
-  ];
+  // const orbits = new PIXI.Graphics();
+  // localMapContainer.addChild(orbits);
+  // const selectionLine = new PIXI.Graphics();
+  // selectionLine.filters = [
+  //   new GlowFilter({
+  //     quality: 1,
+  //     color: colors.blueGlow,
+  //     distance: 10,
+  //     outerStrength: 1,
+  //   }),
+  // ];
   // ORBIT MAP
 
   // GRAPHICS
   // const scanningLine = new PIXI.Graphics();
   // const scanningCircle = new PIXI.Graphics();
-  selectionContainer.addChild(selectionLine);
+  // selectionContainer.addChild(selectionLine);
   errorContainer.addChild(errorLine);
 
   // lineContainer.addChild(scanningCircle);
   // GRAPHICS
 
   // ORBIT MAP
-  let localStarSprites = null;
-  function clearPlanets() {
-    localViewTitle.innerHTML = `SYS:...<br>BDS:...`;
-    orbits.clear();
-    if (localStarSprites) {
-      localStarSprites.forEach((sprite) => {
-        sprite.destroy();
-      });
-      localStarSprites = null;
-    }
-  }
-  function makePlanets(total, title) {
-    localViewTitle.innerHTML = `SYS:${title}<br>BDS:${total - 1}`;
-    orbits.clear();
-    if (localStarSprites) {
-      localStarSprites.forEach((sprite) => {
-        sprite.destroy();
-      });
-    }
-    localStarSprites = new Array(total).fill(undefined).map((e, i) => {
-      orbits.lineStyle(1, colors.white); //(thickness, color)
-
-      const height = i === 0 ? 14 : 5;
-      const pivot = i === 0 ? 0 : randomIntFromInterval(42, 47) * i;
-      const localStarSprite = new PIXI.Sprite(starTexture);
-      localStarSprite.position.set(442 / 2, 442 / 2);
-      localStarSprite.tint = colors.white;
-      localStarSprite.anchor.set(0.5);
-      localStarSprite.pivot.set(pivot, 0);
-      localStarSprite.height = height;
-      localStarSprite.width = height;
-      localStarSprite.speed = i === 0 ? 0 : 0.1 / pivot;
-      localStarSprite.rotation = randomIntFromInterval(0, 10000);
-      orbits.drawCircle(442 / 2, 442 / 2, pivot * (height / 12)); //(x,y,radius)
-      return localStarSprite;
-    });
-
-    for (const localStarSprite of localStarSprites) {
-      localMapContainer.addChild(localStarSprite);
-    }
-  }
+  //   let localStarSprites = null;
+  //   function clearPlanets() {
+  //     localViewTitle.innerHTML = `SYS:...<br>BDS:...`;
+  //     orbits.clear();
+  //     if (localStarSprites) {
+  //       localStarSprites.forEach((sprite) => {
+  //         sprite.destroy();
+  //       });
+  //       localStarSprites = null;
+  //     }
+  //   }
+  //   function makePlanets(total, title) {
+  //     localViewTitle.innerHTML = `SYS:${title}<br>BDS:${total - 1}`;
+  //     orbits.clear();
+  //     if (localStarSprites) {
+  //       localStarSprites.forEach((sprite) => {
+  //         sprite.destroy();
+  //       });
+  //     }
+  //     localStarSprites = new Array(total).fill(undefined).map((e, i) => {
+  //       orbits.lineStyle(1, colors.white); //(thickness, color)
+  //
+  //       const height = i === 0 ? 14 : 5;
+  //       const pivot = i === 0 ? 0 : randomIntFromInterval(42, 47) * i;
+  //       const localStarSprite = new PIXI.Sprite(starTexture);
+  //       localStarSprite.position.set(442 / 2, 442 / 2);
+  //       localStarSprite.tint = colors.white;
+  //       localStarSprite.anchor.set(0.5);
+  //       localStarSprite.pivot.set(pivot, 0);
+  //       localStarSprite.height = height;
+  //       localStarSprite.width = height;
+  //       localStarSprite.speed = i === 0 ? 0 : 0.1 / pivot;
+  //       localStarSprite.rotation = randomIntFromInterval(0, 10000);
+  //       orbits.drawCircle(442 / 2, 442 / 2, pivot * (height / 12)); //(x,y,radius)
+  //       return localStarSprite;
+  //     });
+  //
+  //     for (const localStarSprite of localStarSprites) {
+  //       localMapContainer.addChild(localStarSprite);
+  //     }
+  //   }
   // ORBIT MAP
 
   // create star info text
@@ -303,23 +290,6 @@ export default (universe) => {
     }
   });
 
-  clear.addEventListener("click", () => {
-    // scanningCircle.clear();
-    scanningLine.clear();
-  });
-
-  newDestination.addEventListener("click", () => {
-    if (selectedShip) {
-      selectedShip.plot();
-    }
-  });
-
-  getDestinations.addEventListener("click", () => {
-    if (selectedShip) {
-      selectedShip.getStarsInRange();
-    }
-  });
-
   launch.addEventListener("click", () => {
     if (selectedShip) {
       selectedShip.launch();
@@ -359,8 +329,8 @@ export default (universe) => {
         (selectedStar && selectedStar.id !== clickedStar.id) ||
         !selectedStar
       ) {
-        clearPlanets();
-        localViewLoader.classList.remove("hidden");
+        // clearPlanets();
+        // localViewLoader.classList.remove("hidden");
         // apiStar = fetch(`${baseAPIurl}/stars/${clickedStar.id}`)
         //   .then((res) => res.json())
         //   .then((jsonData) => {

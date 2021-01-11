@@ -1,0 +1,152 @@
+/* CONTROLS */
+.control {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: var(--fontSizeSmall);
+  font-weight: 400;
+  outline: none;
+  pointer-events: all;
+  position: relative;
+  transition: all 500ms ease-out;
+  padding: 0;
+}
+
+.control--center {
+  justify-self: center;
+}
+
+.control--left {
+  justify-self: start;
+}
+
+.control--right {
+  justify-self: end;
+}
+
+.control--active {
+  transition: none;
+
+  border: var(--borderWidth) solid var(--white90) !important;
+  box-shadow: inset 0 0 20px var(--white50), 0 0 20px var(--white50);
+
+  color: var(--white90);
+  text-shadow: 0px 0px 20px var(--white80);
+}
+
+/* ICONS */
+
+.pic__control {
+  height: 48px;
+  width: 48px;
+  font-size: 2.6rem;
+  transition: box-shadow 100ms ease-out, color 100ms ease-out,
+    text-shadow 100ms ease-out, border 100ms ease-out, transform 100ms ease !important;
+  border: none !important;
+  box-shadow: none !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  position: relative;
+}
+
+.control__icon {
+}
+
+.control__icon--small {
+  font-size: 18px;
+}
+
+/* TOGGLES */
+
+.toggles {
+  z-index: 1000000;
+  position: fixed;
+  bottom: 6px;
+  left: 6px;
+  grid-gap: 15px;
+}
+
+.toggle {
+  background: var(--black);
+  height: 48px;
+  width: 48px;
+  font-size: 2.6rem;
+  transition: box-shadow 100ms ease-out, color 100ms ease-out,
+    text-shadow 100ms ease-out, border 100ms ease-out, transform 100ms ease !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  position: relative;
+}
+
+.toggle__label {
+  font-size: var(--fontSizeSmaller);
+  position: absolute;
+  top: -20px;
+  opacity: 0;
+  transition: opacity 100ms ease;
+  white-space: nowrap;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.toggle:hover,
+.toggle--active {
+  transform: translateY(-10px);
+  opacity: 1 !important;
+}
+
+.toggle:hover .toggle__label {
+  opacity: 1;
+}
+
+/* FIX */
+
+.control--inactive {
+  opacity: 0.5;
+  pointer-events: none;
+  cursor: default;
+}
+
+.control--faded {
+  border: var(--borderWidth) solid rgba(112, 255, 255, 0.25);
+  box-shadow: inset 0 0 10px rgba(112, 255, 255, 0),
+    0 0 10px rgba(112, 255, 255, 0);
+}
+
+.control--faded svg {
+  color: rgba(112, 255, 255, 0.25);
+}
+
+.control--faded:hover svg {
+  color: rgba(112, 255, 255, 0.9);
+}
+
+.control--notify:after {
+  content: "";
+  background-color: var(--pink);
+  border-radius: 50%;
+  height: 4px;
+  width: 4px;
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  animation: pulseFast 1000ms infinite;
+  transition: opacity 100ms ease;
+}
+
+.control__divider {
+  height: 100%;
+  width: 0px;
+}
+.control__group__controls,
+.control__group {
+}
+.control__group__label {
+  text-transform: uppercase;
+  padding-top: 3px;
+  border-top: 1px solid rgba(112, 255, 255, 0.9);
+}
