@@ -100,12 +100,12 @@ async function init() {
       hour12: false,
       timeZone: "UTC",
     });
-
+    // <p class="message__time__stamp"><span>[GLOBAL]</span><span>[${user}]</span> - ${formattedTime}</p>
     const receivedMsg = `
     <div class="incoming__message message blue__glow">
       <div class="received__message">
-        <p class="message__time__stamp">${user} - ${formattedTime}</p>
-        <p>${message}</p>
+        <p class="message__time__stamp"><span class="message__user">[${user}]</span></p>
+        <p class="message__body">${message}</p>
       </div>
     </div>`;
 
@@ -118,8 +118,8 @@ async function init() {
     const myMsg = `
     <div class="outgoing__message message white__glow">
       <div class="sent__message">
-        <p class="message__time__stamp">${user} - ${formattedTime}</p>
-        <p>${message}</p>
+        <p class="message__time__stamp"><span class="message__user">[${user}]</span></p>
+        <p class="message__body">${message}</p>
       </div>
     </div>`;
 

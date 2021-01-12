@@ -32,13 +32,13 @@ export default () => {
     return element.classList.contains("draggable");
   }
   windows.forEach((draggableWindow, index) => {
-    draggableWindow.style.top = `${
-      window.innerHeight / 2 -
-      draggableWindow.getBoundingClientRect().height / 2
-    }px`;
-    draggableWindow.style.left = `${
-      window.innerWidth / 2 - draggableWindow.getBoundingClientRect().width / 2
-    }px`;
+    // draggableWindow.style.top = `${
+    //   window.innerHeight / 2 -
+    //   draggableWindow.getBoundingClientRect().height / 2
+    // }px`;
+    // draggableWindow.style.left = `${
+    //   window.innerWidth / 2 - draggableWindow.getBoundingClientRect().width / 2
+    // }px`;
     draggableWindow.style.zIndex = 1000;
     draggableWindow.addEventListener("pointerdown", function (event) {
       event.stopPropagation();

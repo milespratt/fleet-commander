@@ -4,6 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <link rel="manifest" href="./manifest.json" />
     <link rel="stylesheet" href="./styles/main.css" />
     <link rel="stylesheet" href="./styles/audio.css" />
     <link rel="stylesheet" href="./styles/controls.css" />
@@ -44,9 +47,13 @@
       <!-- WILL BE FILLED WITH CONTROLS PROGRAMMATICALLY -->
     </div>
 
-    <div id="windows">
+    <div id="windows" class="padded--">
       <!-- SHOULD BE FILLED WITH WINDOWS PROGRAMMATICALLY -->
-      <div id="chat-window" class="window grid grid--r bordered draggable">
+      <div
+        id="chat-window"
+        style="grid-row: span 2"
+        class="window window--tall window--wide grid grid--r bordered draggable"
+      >
         <div
           class="window__title__bar grid grid--c grid--c--split grid--c--split--3"
         >
@@ -62,7 +69,7 @@
           </button>
         </div>
         <div id="chat__menu" class="chat blue__glow">
-          <div class="inbox bordered padded" id="inbox">
+          <div class="inbox bordered bordered--thin padded" id="inbox">
             <div class="inbox__messages grid grid--r">
               <div class="messages__history grid grid--r"></div>
               <div class="fallback"></div>
@@ -71,37 +78,19 @@
 
           <form class="message_form">
             <span
-              class="input input--fluid bordered blue__glow span__input"
+              class="input input--fluid bordered bordered--thin blue__glow span__input"
               id="message_form_input"
               role="textbox"
               contenteditable
             ></span>
-            <button class="control bordered blue__glow padded" type="submit">
-              SEND
+            <button
+              class="control bordered blue__glow padded pic__control pic__control--small"
+              type="submit"
+            >
+              <i class="fal fa-paper-plane"></i>
             </button>
           </form>
         </div>
-      </div>
-
-      <div
-        id="encyclopedia-window"
-        class="window grid grid--r bordered draggable"
-      >
-        <div
-          class="window__title__bar grid grid--c grid--c--split grid--c--split--3"
-        >
-          <button
-            id="encyclopedia-window-close"
-            class="control control--left control--small blue__glow"
-          >
-            <i class="control__icon control__icon--small far fa-times"></i>
-          </button>
-          <span class="window__title blue__glow">ENCYCLOPEDIA</span>
-          <button class="control control--right control--small blue__glow">
-            <i class="control__icon control__icon--small far fa-bars"></i>
-          </button>
-        </div>
-        <p class="blue__glow window__message">ENCYCLOPEDIA SERVICE OFFLINE</p>
       </div>
 
       <div id="sector-window" class="window grid grid--r bordered draggable">
@@ -214,6 +203,27 @@
             DESELECT SHIP
           </button>
         </div>
+      </div>
+
+      <div
+        id="encyclopedia-window"
+        class="window window--tall grid grid--r bordered draggable"
+      >
+        <div
+          class="window__title__bar grid grid--c grid--c--split grid--c--split--3"
+        >
+          <button
+            id="encyclopedia-window-close"
+            class="control control--left control--small blue__glow"
+          >
+            <i class="control__icon control__icon--small far fa-times"></i>
+          </button>
+          <span class="window__title blue__glow">ENCYCLOPEDIA</span>
+          <button class="control control--right control--small blue__glow">
+            <i class="control__icon control__icon--small far fa-bars"></i>
+          </button>
+        </div>
+        <p class="blue__glow window__message">ENCYCLOPEDIA SERVICE OFFLINE</p>
       </div>
 
       <div id="mail-window" class="window grid grid--r bordered draggable">

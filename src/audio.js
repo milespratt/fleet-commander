@@ -148,7 +148,7 @@ export default () => {
     play();
     fadeUp();
 
-    audioWrapper.style.opacity = 1;
+    // audioWrapper.style.opacity = 1;
     document.body.removeEventListener("click", initialPlay);
   }
   document.body.addEventListener("click", initialPlay);

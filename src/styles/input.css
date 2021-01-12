@@ -107,6 +107,7 @@
   grid-template-rows: 1fr min-content;
   grid-auto-flow: row;
   grid-gap: var(--gap);
+  max-height: calc(50vh - 43px);
 }
 
 .form {
@@ -125,25 +126,21 @@
 .span__input {
   /* word-break: break-word; */
   /* overflow-wrap: break-word; */
-  height: 100%;
-  overflow: scroll;
+  /* height: 100%; */
+  overflow: scroll !important;
   display: inline-block;
-}
-
-.span__input * {
-  /* word-break: break-word; */
-  /* overflow: scroll; */
+  max-height: 60px;
 }
 
 .input {
   background: none;
-  font-size: var(--fontSizeSmall);
+  font-size: var(--fontSizeSmaller);
   padding: var(--padding);
   overflow: hidden;
   outline: none;
   pointer-events: all;
-  width: 250px;
-  letter-spacing: 1px;
+  /* width: 250px; */
+  letter-spacing: 0.5px;
   resize: none;
 }
 
@@ -156,8 +153,10 @@
 }
 
 .inbox {
-  width: 300px;
-  height: 350px;
+  /* width: 300px;
+  height: 350px; */
+  /* height: 350px; */
+
   overflow: scroll;
 }
 
@@ -180,8 +179,8 @@
   display: grid;
   grid-template-columns: 1fr min-content;
   grid-gap: var(--gap);
-  width: 300px;
-  max-height: 100px;
+  /* width: 300px; */
+  /* max-height: 100px; */
 }
 .input::placeholder {
   font-size: var(--fontSizeSmall);
@@ -191,17 +190,27 @@
 .message_form__button {
 }
 
-.message p {
+.message__time__stamp {
+  font-weight: 700;
+}
+.message__time__stamp * {
+  letter-spacing: 1px;
+  text-shadow: none;
+}
+.message__channel {
+  opacity: 0.5;
+}
+
+.message__user {
+}
+
+.message__body {
   word-break: break-word;
   letter-spacing: 1px;
 }
 
 .fallback {
   font-style: italic;
-}
-
-.message__time__stamp {
-  font-weight: 700;
 }
 
 .form__error {
