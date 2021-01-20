@@ -53,7 +53,7 @@
 
 .pic__control--small {
   height: 100%;
-  width: auto;
+  width: 18px;
   font-size: 1.4rem;
   align-self: end;
 }
@@ -100,15 +100,18 @@
   text-transform: uppercase;
 }
 
-.toggle:hover,
+/* @media (hover: hover) and (pointer: fine) { */
+/* .toggle:hover, */
 .toggle--active {
   transform: translateY(-10px);
   opacity: 1 !important;
 }
 
-.toggle:hover .toggle__label {
+/* .toggle:hover .toggle__label, */
+.toggle--active .toggle__label {
   opacity: 1;
 }
+/* } */
 
 /* FIX */
 
@@ -128,9 +131,9 @@
   color: rgba(112, 255, 255, 0.25);
 }
 
-.control--faded:hover svg {
+/* .control--faded:hover svg {
   color: rgba(112, 255, 255, 0.9);
-}
+} */
 
 .control--notify:after {
   content: "";
@@ -164,14 +167,16 @@
   }
   .toggles {
     /* grid-gap: 0 !important; */
+    left: calc(var(--gap) / 2);
+    bottom: 50px;
   }
   .control__group__controls {
     /* grid-template-columns: repeat(10, 1fr); */
     /* grid-gap: 0 !important; */
   }
   .toggle {
-    width: calc(100vw / 10 - var(--gap) - 0.65px);
-    height: calc(100vw / 10 - var(--gap) - 0.65px);
+    width: calc(100vw / 10 - var(--gap));
+    height: calc(100vw / 10 - var(--gap));
     font-size: 1.6rem;
   }
 }

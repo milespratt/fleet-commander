@@ -262,13 +262,34 @@ class Universe {
         newStarCoordinate.name = generateStarName();
         // assign it to a sector
         newStarCoordinate.sector = coordinateSector;
+        // GET STAR TYPE
+        let type = null;
+        if (this.stars.length <= 25) {
+          type = "O";
+        } else if (this.stars.length <= 100) {
+          type = "B";
+        } else if (this.stars.length <= 300) {
+          type = "A";
+        } else if (this.stars.length <= 1500) {
+          type = "F";
+        } else if (this.stars.length <= 3800) {
+          type = "G";
+        } else if (this.stars.length <= 6050) {
+          type = "K";
+        } else {
+          type = "M";
+        }
+        // else if (classNumber > 7645) {
+        // }
+        // GET STAR TYPE
         // create a Star object
         const newStar = new Star(
           newStarCoordinate.x,
           newStarCoordinate.y,
           newStarCoordinate.name,
           newStarCoordinate._id || newStarCoordinate.name,
-          newStarCoordinate.sector
+          newStarCoordinate.sector,
+          type
         );
 
         // push the coordinate to the list

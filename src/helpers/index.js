@@ -109,22 +109,56 @@ export function renderDistance(distance, pixelsPerLightyear, short) {
 
 // STARS
 
-export function getType() {
-  const rand = Math.random() * (1 - 0.0000003) + 0.0000003;
-  if (rand >= 0.121) {
-    return "M";
-  } else if (rand < 0.121 && rand >= 0.076) {
-    return "K";
-  } else if (rand < 0.076 && rand >= 0.03) {
-    return "G";
-  } else if (rand < 0.03 && rand >= 0.006) {
-    return "F";
-  } else if (rand < 0.006 && rand >= 0.0013) {
-    return "A";
-  } else if (rand < 0.0013 && rand >= 0.0000005) {
-    return "B";
-  } else if (rand < 0.0000003) {
+export function getClass(starClass = null) {
+  // 5 O
+  // 20 B
+  // 60 A
+  // 300 F
+  // 760 G
+  // 1210 K
+  // 7645 M
+  // stars out of 10000 ^
+  const classNumber = randomIntFromInterval(0, 10000);
+  if (classNumber >= 9995) {
     return "O";
+  } else if (classNumber >= 9980) {
+    return "B";
+  } else if (classNumber >= 9940) {
+    return "A";
+  } else if (classNumber >= 9700) {
+    return "F";
+  } else if (classNumber >= 9240) {
+    return "G";
+  } else if (classNumber >= 8790) {
+    return "K";
+  }
+  // if (classNumber > 1210 && classNumber <= 7645) {
+  //   return "M";
+  // }
+  else {
+    return "M";
+  }
+  // if (classNumber > 7645) {
+  // }
+  if (starClass) {
+    return starClass;
+  } else {
+    const rand = Math.random() * (1 - 0.0000003) + 0.0000003;
+    if (rand >= 0.121) {
+      return "M";
+    } else if (rand < 0.121 && rand >= 0.076) {
+      return "K";
+    } else if (rand < 0.076 && rand >= 0.03) {
+      return "G";
+    } else if (rand < 0.03 && rand >= 0.006) {
+      return "F";
+    } else if (rand < 0.006 && rand >= 0.0013) {
+      return "A";
+    } else if (rand < 0.0013 && rand >= 0.0000005) {
+      return "B";
+    } else if (rand < 0.0000003) {
+      return "O";
+    }
   }
 }
 
@@ -136,46 +170,85 @@ export function getStarMass(size) {
   return (size / randomFloatFromInterval(9, 11)).toFixed(2);
 }
 
+// export function getStarSize(starClass, baseStarSize) {
+//   // return 6;
+//   switch (starClass) {
+//     case "I":
+//       return parseInt((baseStarSize * 2.4).toFixed(0));
+//     case "II":
+//       return parseInt((baseStarSize * 2.0).toFixed(0));
+//     case "III":
+//       return parseInt((baseStarSize * 1.6).toFixed(0));
+//     case "IV":
+//       return parseInt((baseStarSize * 1.2).toFixed(0));
+//     case "V":
+//       return parseInt((baseStarSize * 0.8).toFixed(0));
+//     case "D":
+//       return parseInt((baseStarSize * 0.4).toFixed(0));
+//   }
+// }
+
 export function getStarSize(starClass, baseStarSize) {
-  return 6;
+  // TESTING
+  // return 12;
+  // return randomIntFromInterval(100, 200);
+
+  // ORIGINAL
   switch (starClass) {
-    case "I":
-      return parseInt((baseStarSize * 2.4).toFixed(0));
-    case "II":
-      return parseInt((baseStarSize * 2.0).toFixed(0));
-    case "III":
-      return parseInt((baseStarSize * 1.6).toFixed(0));
-    case "IV":
-      return parseInt((baseStarSize * 1.2).toFixed(0));
-    case "V":
-      return parseInt((baseStarSize * 0.8).toFixed(0));
-    case "D":
-      return parseInt((baseStarSize * 0.4).toFixed(0));
-  }
-}
-
-export function getTemp(type) {
-  switch (type) {
     case "O":
-      return randomIntFromInterval(30000, 60000);
+      // return 30;
+      return randomFloatFromInterval(50, 72);
+      return parseInt((baseStarSize * 6).toFixed(0));
     case "B":
-      return randomIntFromInterval(10000, 29999);
+      // return 26;
+      return randomFloatFromInterval(22, 26);
+      return parseInt((baseStarSize * 5).toFixed(0));
     case "A":
-      return randomIntFromInterval(7500, 9999);
+      // return 22;
+      return randomFloatFromInterval(18, 22);
+      return parseInt((baseStarSize * 4).toFixed(0));
     case "F":
-      return randomIntFromInterval(6000, 7499);
+      // return 18;
+      return randomFloatFromInterval(14, 18);
+      return parseInt((baseStarSize * 4).toFixed(0));
     case "G":
-      return randomIntFromInterval(5000, 5999);
+      // return 14;
+      return randomFloatFromInterval(10, 14);
+      return parseInt((baseStarSize * 3).toFixed(0));
     case "K":
-      return randomIntFromInterval(3500, 4999);
+      // return 10;
+      return randomFloatFromInterval(6, 10);
+      return parseInt((baseStarSize * 2).toFixed(0));
     case "M":
-      return randomIntFromInterval(2000, 3499);
+      // return 6;
+      return randomFloatFromInterval(4, 6);
+      return parseInt((baseStarSize * 0.5).toFixed(0));
   }
 }
 
-export function getClass() {
-  const starClasses = ["I", "II", "III", "IV", "V", "D"];
-  return starClasses[randomIntFromInterval(0, starClasses.length - 1)];
+export function getTemp(starClass) {
+  switch (starClass) {
+    case "O":
+      return randomFloatFromInterval(30000, 210000);
+    case "B":
+      return randomFloatFromInterval(10000, 29999);
+    case "A":
+      return randomFloatFromInterval(7500, 9999);
+    case "F":
+      return randomFloatFromInterval(6000, 7499);
+    case "G":
+      return randomFloatFromInterval(5200, 5999);
+    case "K":
+      return randomFloatFromInterval(3700, 5199);
+    case "M":
+      return randomFloatFromInterval(2400, 3699);
+  }
+}
+
+export function getType() {
+  const starTypes = ["I", "II", "III", "IV", "V", "D"];
+
+  return starTypes[randomIntFromInterval(0, starTypes.length - 1)];
 }
 
 export function generateStarName() {

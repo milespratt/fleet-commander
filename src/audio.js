@@ -21,7 +21,7 @@ export default () => {
 
   audioPlayer.controls = true;
   audioPlayer.volume = 0.0;
-  // document.body.appendChild(audioPlayer);
+  document.body.appendChild(audioPlayer);
 
   function getCurrentTrackIndex() {
     let currentTrack;
@@ -95,14 +95,12 @@ export default () => {
 
   let fading = false;
   function fadeUp(startingVolume = 0) {
-    console.log("fade up");
     fading = true;
     setVolume(startingVolume);
     const volumeFader = window.setInterval(() => {
       const newVolume = audioPlayer.volume + 5 / 1000;
-      if (newVolume >= 1) {
-        console.log("max!");
-        setVolume(1);
+      if (newVolume >= 0.5) {
+        setVolume(0.5);
         window.clearInterval(volumeFader);
         fading = false;
       } else {
@@ -112,12 +110,10 @@ export default () => {
   }
 
   function fadeDown() {
-    console.log("fade down");
     fading = true;
     const volumeFader = window.setInterval(() => {
-      const newVolume = audioPlayer.volume - 5 / 1000;
+      const newVolume = audioPlayer.volume - 10 / 1000;
       if (newVolume <= 0) {
-        console.log("min!");
         setVolume(0);
         window.clearInterval(volumeFader);
         next();
@@ -136,7 +132,7 @@ export default () => {
   // audioPlayer.addEventListener("ended", next);
   audioPlayer.addEventListener("timeupdate", (ev) => {
     const timeLeft = ev.target.duration - ev.target.currentTime;
-    if (timeLeft <= 20 && !fading) {
+    if (timeLeft <= 10 && !fading) {
       console.log("track ending");
       fadeDown();
     }
@@ -148,7 +144,7 @@ export default () => {
     play();
     fadeUp();
 
-    // audioWrapper.style.opacity = 1;
+    audioWrapper.style.opacity = 1;
     document.body.removeEventListener("click", initialPlay);
   }
   document.body.addEventListener("click", initialPlay);

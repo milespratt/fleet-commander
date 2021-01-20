@@ -10,8 +10,8 @@
   z-index: 10000;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(calc(100vw / 9), 1fr));
-
-  grid-auto-rows: calc(12.5vh - var(--gap));
+  padding-bottom: 102px;
+  grid-auto-rows: calc(12.5% - var(--gap));
   grid-gap: var(--gap);
   pointer-events: none;
 }
@@ -63,11 +63,18 @@
 }
 
 @media (max-width: 639px) {
+  .window__title__bar {
+    display: none;
+  }
   .window {
     /* background: tomato; */
+    grid-template-rows: 1fr;
+    box-shadow: none !important;
     position: fixed;
     top: 0;
     left: 0;
+    border: none !important;
+    padding-bottom: calc(50px + calc(100vw / 10 - var(--gap)) + 50px);
   }
 }
 

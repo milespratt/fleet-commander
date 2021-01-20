@@ -92,6 +92,10 @@ body {
   text-shadow: 0px 0px 6px var(--blue80);
 }
 
+.blue {
+  color: var(--blue90);
+}
+
 .red__glow {
   color: var(--pink90);
   text-shadow: 0px 0px 6px var(--pink80);
@@ -100,6 +104,10 @@ body {
 .white__glow {
   color: var(--white90);
   text-shadow: 0px 0px 6px var(--white80);
+}
+
+.white {
+  color: var(--white90);
 }
 
 /* PADDING */

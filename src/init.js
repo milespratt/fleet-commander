@@ -102,7 +102,7 @@ async function init() {
     });
     // <p class="message__time__stamp"><span>[GLOBAL]</span><span>[${user}]</span> - ${formattedTime}</p>
     const receivedMsg = `
-    <div class="incoming__message message blue__glow">
+    <div class="incoming__message message blue__glow-- blue">
       <div class="received__message">
         <p class="message__time__stamp"><span class="message__user">[${user}]</span></p>
         <p class="message__body">${message}</p>
@@ -116,7 +116,7 @@ async function init() {
     // </div>
 
     const myMsg = `
-    <div class="outgoing__message message white__glow">
+    <div class="outgoing__message message white__glow-- white">
       <div class="sent__message">
         <p class="message__time__stamp"><span class="message__user">[${user}]</span></p>
         <p class="message__body">${message}</p>
@@ -183,9 +183,9 @@ async function init() {
     inbox.scrollTo(0, inbox.scrollHeight);
   }
 
-  inputField.addEventListener("keyup", () => {
-    typing();
-  });
+  // inputField.addEventListener("keyup", () => {
+  //   typing();
+  // });
 
   inputField.addEventListener("keydown", (ev) => {
     if (ev.keyCode === 13) {

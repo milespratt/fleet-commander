@@ -55,7 +55,7 @@ class Ship {
     // SPEED
     this.speed = 0;
     // this.speed = (lightSpeed / lightYear) * (447040 / lightSpeed); // 447040m/s
-    this.maxSpeed = (lightSpeed / lightYear) * 100000; // 80% the speed of light
+    this.maxSpeed = (lightSpeed / lightYear) * 10000000; // 80% the speed of light
     // this.maxSpeed = (lightSpeed / lightYear) * (447040 / lightSpeed); // 447040m/s
     this.warpSpeed = (lightSpeed / lightYear) * 1;
 

@@ -122,7 +122,7 @@ export default (universe) => {
   // GRIDS
   const gridLines = new PIXI.Graphics();
   gridContainer.addChild(gridLines);
-  gridLines.lineStyle(2, colors.blue); //(thickness, color)
+  gridLines.lineStyle(2, colors.blue, 1); //(thickness, color)
   for (
     let i = universe.sectorGrid.delimiter;
     i <= universe.size - universe.sectorGrid.delimiter;
@@ -144,8 +144,9 @@ export default (universe) => {
       fontSize: 100,
       fill: "0x70ffe9",
     });
+    console.log(sectorGrid);
     sectorLabel.position.set(
-      center.x - sectorGrid.delimiter / 2 + 20,
+      center.x - sectorGrid.delimiter * 1.5 + 20,
       center.y - sectorGrid.delimiter / 2 + 15
     );
     gridContainer.addChild(sectorLabel);
@@ -162,6 +163,7 @@ export default (universe) => {
       adjacentSectors
     );
     console.log(``);
+    console.log("SECTOR INFORMATION");
     console.log(`Row: ${row}`);
     console.log(`Column: ${column}`);
     console.log(`Sector: ${sector}`);
@@ -307,13 +309,30 @@ export default (universe) => {
     shipInfoText.visible = false;
   });
   // add stars to container
+  const hitAreaGraphics = new PIXI.Graphics();
+  hitAreaGraphics.lineStyle(2, colors.pink, 0.0); //(thickness, color, alpha)
+  starContainer.addChild(hitAreaGraphics);
   for (const star of universe.stars) {
     const starSprite = star.createSprite();
+    const hitAreaSize = star.hitAreaSize * (star.size / 72);
+    // hitAreaGraphics.drawCircle(
+    //   star.position.x,
+    //   star.position.y,
+    //   star.hitAreaSize
+    // );
+    hitAreaGraphics.drawRect(
+      star.position.x - hitAreaSize / 2,
+      star.position.y - hitAreaSize / 2,
+      hitAreaSize,
+      hitAreaSize
+    );
     // add star event handlers
     starSprite.on("mouseover", (ev) => {
       // only handle hover if the hovered star is not already selected
       if (!selectedStar || selectedStar.id !== ev.target.star.id) {
         hoverRingSprite.position.set(ev.target.x, ev.target.y);
+        hoverRingSprite.height = hitAreaSize;
+        hoverRingSprite.width = hitAreaSize;
         hoverRingSprite.visible = true;
       }
     });
@@ -323,7 +342,7 @@ export default (universe) => {
     starSprite.on("pointerdown", async (ev) => {
       ev.stopPropagation();
       const clickedStar = ev.target.star;
-
+      clickedStar.getInfo();
       // let apiStar;
       if (
         (selectedStar && selectedStar.id !== clickedStar.id) ||
@@ -342,6 +361,8 @@ export default (universe) => {
 
       hoverRingSprite.visible = false;
       selectionRingSprite.visible = true;
+      selectionRingSprite.height = hitAreaSize - 14;
+      selectionRingSprite.width = hitAreaSize - 14;
       selectionRingSprite.position.set(
         clickedStar.position.x,
         clickedStar.position.y
@@ -368,7 +389,8 @@ export default (universe) => {
 
       starText.visible = true;
       starText.position.set(
-        clickedStar.position.x - 22 - starText.width,
+        // clickedStar.position.x - 22 - starText.width,
+        clickedStar.position.x - hitAreaSize / 2 - starText.width,
         clickedStar.position.y - starText.height / 2 + 1.8
       );
 
