@@ -14,7 +14,7 @@ async function init() {
   const universe = await loadData();
   await fontLoader();
   windows();
-  loadAudio();
+  // loadAudio();
   loadControls();
   loadRenderer(universe);
 
@@ -60,9 +60,12 @@ async function init() {
         if (error) {
           formError.innerText = `ERROR: ${error}`;
         } else {
+          document.activeElement.blur();
           formError.innerText = "";
           signInUsername.value = "";
           signInPassword.value = "";
+          console.log(jsonRes);
+          localStorage.setItem("token", jsonRes.token);
         }
       });
   });

@@ -144,7 +144,7 @@ export default (universe) => {
       fontSize: 100,
       fill: "0x70ffe9",
     });
-    console.log(sectorGrid);
+    // console.log(sectorGrid);
     sectorLabel.position.set(
       center.x - sectorGrid.delimiter * 1.5 + 20,
       center.y - sectorGrid.delimiter / 2 + 15

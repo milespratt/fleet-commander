@@ -251,12 +251,17 @@ export function getType() {
   return starTypes[randomIntFromInterval(0, starTypes.length - 1)];
 }
 
-export function generateStarName() {
-  return `${generateRandomString(3, ["A", "Z"])}-${generateRandomString(
+export function generateStarName(sector, stars) {
+  // return `${generateRandomString(3, ["A", "Z"])}-${generateRandomString(
+  //   4,
+  //   ["G", "K"],
+  //   ["0", "9"]
+  // )}-${generateRandomString(2, ["A", "Z"])}`;
+  return `${sector}-${stars}-${generateRandomString(
     4,
     ["G", "K"],
     ["0", "9"]
-  )}-${generateRandomString(2, ["A", "Z"])}`;
+  )}`;
 }
 
 export function getStarAge(type) {

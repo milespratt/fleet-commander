@@ -258,10 +258,15 @@ class Universe {
 
       // finalize the coordinate if it didn't get thrown out
       if (newStarCoordinate !== null) {
-        // give it a name
-        newStarCoordinate.name = generateStarName();
+        const sectorStarCount = this.sectorGrid.sectors[coordinateSector].stars
+          .length;
         // assign it to a sector
         newStarCoordinate.sector = coordinateSector;
+        // give it a name
+        newStarCoordinate.name = generateStarName(
+          coordinateSector,
+          sectorStarCount
+        );
         // GET STAR TYPE
         let type = null;
         if (this.stars.length <= 25) {

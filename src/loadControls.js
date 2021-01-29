@@ -44,11 +44,12 @@ function toggleWindow(control, windowElement) {
   if (control.classList.contains("control--faded")) {
     showWindow(control, windowElement);
   } else {
-    if (windowElement.classList.contains("window--active")) {
-      fadeWindow(control, windowElement);
-    } else {
-      showWindow(control, windowElement);
-    }
+    fadeWindow(control, windowElement);
+    // if (windowElement.classList.contains("window--active")) {
+    //   fadeWindow(control, windowElement);
+    // } else {
+    //   showWindow(control, windowElement);
+    // }
   }
 }
 
@@ -68,7 +69,7 @@ function makeControl(control) {
     "bordered",
     "blue__glow",
     "padded",
-    "control--notify",
+    // "control--notify",
     "toggle",
   ];
   newControl.classList.add(...classes);
