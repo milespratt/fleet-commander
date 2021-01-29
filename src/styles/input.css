@@ -107,7 +107,7 @@
   grid-template-rows: 1fr min-content;
   grid-auto-flow: row;
   grid-gap: var(--gap);
-  max-height: calc(50vh - 43px);
+  max-height: calc(50vh - 94px);
 }
 
 .form {

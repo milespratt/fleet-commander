@@ -1,8 +1,26 @@
 #audio__player {
-  position: fixed;
-  z-index: 1000000;
-  bottom: 20px;
-  right: 20px;
-  opacity: 0;
+  /* opacity: 0; */
+  justify-content: center;
+  align-content: center;
   transition: opacity 2000ms ease-out;
+  grid-row-gap: 20px;
+  justify-items: center;
+}
+
+.audio__progress {
+  width: 100%;
+  background: var(--blue);
+  height: 1px;
+  position: relative;
+  cursor: pointer;
+}
+
+.audio__progress__indicator {
+  height: 10px;
+  width: 10px;
+  border-radius: 50%;
+  background: var(--blue);
+  content: "";
+  position: absolute;
+  top: -5px;
 }

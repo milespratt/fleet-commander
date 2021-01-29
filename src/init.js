@@ -10,6 +10,56 @@ import windows from "./windows";
 import loadControls from "./loadControls";
 import loadAudio from "./audio";
 
+const apiEndpoint =
+  process.env.NODE_ENV === "dev"
+    ? "http://192.168.1.30"
+    : "https://api.fltcmdr.com";
+
+var profileApp = new Vue({
+  el: "#profile-window",
+  data: {
+    message: "Hello Vue!",
+    user: false,
+    username: null,
+    password: null,
+    error: null,
+  },
+  methods: {
+    clearError: function () {
+      if (this.error) {
+        this.error = null;
+      }
+    },
+    signIn: function (ev) {
+      ev.preventDefault();
+      fetch(`${apiEndpoint}/users/signin`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          callSign: this.username,
+          password: this.password,
+        }),
+      })
+        .then((res) => res.json())
+        .then((jsonRes) => {
+          const { error } = jsonRes;
+          if (error) {
+            this.error = `ERROR: ${error}`;
+          } else {
+            document.activeElement.blur();
+            this.username = null;
+            this.password = null;
+            this.error = null;
+            this.user = jsonRes.userRecord;
+            localStorage.setItem("token", jsonRes.token);
+          }
+        });
+    },
+  },
+});
+
 async function init() {
   const universe = await loadData();
   await fontLoader();
@@ -18,10 +68,10 @@ async function init() {
   loadControls();
   loadRenderer(universe);
 
-  const apiEndpoint =
-    process.env.NODE_ENV === "dev"
-      ? "http://192.168.1.30"
-      : "https://api.fltcmdr.com";
+  // const apiEndpoint =
+  //   process.env.NODE_ENV === "dev"
+  //     ? "http://192.168.1.30"
+  //     : "https://api.fltcmdr.com";
 
   // sockets and chat
   // /*
@@ -41,34 +91,34 @@ async function init() {
 
   let userName = "";
 
-  signInForm.addEventListener("submit", (ev) => {
-    ev.preventDefault();
-    // formError.innerText = `ERROR: CALL SIGN NOT FOUND`;
-    fetch(`${apiEndpoint}/users/signin`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name: signInUsername.value,
-        password: signInPassword.value,
-      }),
-    })
-      .then((res) => res.json())
-      .then((jsonRes) => {
-        const { error } = jsonRes;
-        if (error) {
-          formError.innerText = `ERROR: ${error}`;
-        } else {
-          document.activeElement.blur();
-          formError.innerText = "";
-          signInUsername.value = "";
-          signInPassword.value = "";
-          console.log(jsonRes);
-          localStorage.setItem("token", jsonRes.token);
-        }
-      });
-  });
+  // signInForm.addEventListener("submit", (ev) => {
+  //   ev.preventDefault();
+  //   // formError.innerText = `ERROR: CALL SIGN NOT FOUND`;
+  //   fetch(`${apiEndpoint}/users/signin`, {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify({
+  //       name: signInUsername.value,
+  //       password: signInPassword.value,
+  //     }),
+  //   })
+  //     .then((res) => res.json())
+  //     .then((jsonRes) => {
+  //       const { error } = jsonRes;
+  //       if (error) {
+  //         formError.innerText = `ERROR: ${error}`;
+  //       } else {
+  //         document.activeElement.blur();
+  //         formError.innerText = "";
+  //         signInUsername.value = "";
+  //         signInPassword.value = "";
+  //         console.log(jsonRes);
+  //         localStorage.setItem("token", jsonRes.token);
+  //       }
+  //     });
+  // });
 
   const newUserConnected = (user) => {
     userName = user || `User${Math.floor(Math.random() * 1000000)}`;

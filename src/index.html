@@ -37,9 +37,12 @@
     <link rel="stylesheet" href="./styles/grids.css" />
     <link rel="stylesheet" href="./styles/input.css" />
     <link rel="stylesheet" href="./styles/overlay.css" />
+    <link rel="stylesheet" href="./styles/spinner.css" />
     <link rel="stylesheet" href="./styles/utility.css" />
     <link rel="stylesheet" href="./styles/viewports.css" />
     <link rel="stylesheet" href="./styles/windows.css" />
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
+
     <script
       src="https://kit.fontawesome.com/cacada40d0.js"
       crossorigin="anonymous"
@@ -47,26 +50,6 @@
     <title>Fleet Commander</title>
   </head>
   <body>
-    <div id="audio__player" class="grid grid--c">
-      <button
-        id="audioPrevious"
-        class="control pic__control bordered-- padded blue__glow"
-      >
-        <i class="control__icon fal fa-backward"></i>
-      </button>
-      <button
-        id="audioPlay"
-        class="control pic__control bordered-- padded blue__glow"
-      >
-        <i class="control__icon fal fa-play"></i>
-      </button>
-      <button
-        id="audioNext"
-        class="control pic__control bordered-- padded blue__glow"
-      >
-        <i class="control__icon fal fa-forward"></i>
-      </button>
-    </div>
     <div id="toggles" class="toggles grid grid--c">
       <!-- WILL BE FILLED WITH CONTROLS PROGRAMMATICALLY -->
     </div>
@@ -117,82 +100,140 @@
         </div>
       </div>
 
-      <div id="sector-window" class="window grid grid--r bordered draggable">
+      <div id="audio-window" class="window grid grid--r bordered draggable">
         <div
           class="window__title__bar grid grid--c grid--c--split grid--c--split--3"
         >
           <button
-            id="sector-window-close"
+            id="audio-window-close"
             class="control control--left control--small blue__glow"
           >
             <i class="control__icon control__icon--small far fa-times"></i>
           </button>
-          <span class="window__title blue__glow">SECTOR</span>
+          <span class="window__title blue__glow">AUDIO</span>
           <button class="control control--right control--small blue__glow">
             <i class="control__icon control__icon--small far fa-bars"></i>
           </button>
         </div>
-        <p class="blue__glow window__message">SECTOR INFORMATION OFFLINE</p>
+        <div id="audio__player" class="grid grid--r">
+          <div class="audio__controls grid grid--c">
+            <button
+              id="audioPrevious"
+              v-on:click="previous"
+              class="control pic__control bordered-- padded blue__glow"
+            >
+              <i class="control__icon fal fa-backward"></i>
+            </button>
+            <button
+              id="audioPlay"
+              class="control pic__control bordered-- padded blue__glow"
+              v-on:click="play"
+              v-show="!playing"
+            >
+              <i class="control__icon fal fa-play"></i>
+            </button>
+            <button
+              id="audioPause"
+              class="control pic__control bordered-- padded blue__glow"
+              v-on:click="pause"
+              v-show="playing"
+            >
+              <i class="control__icon fal fa-pause"></i>
+            </button>
+            <button
+              id="audioNext"
+              class="control pic__control bordered-- padded blue__glow"
+              v-on:click="next"
+            >
+              <i class="control__icon fal fa-forward"></i>
+            </button>
+          </div>
+          <div class="audio__progress">
+            <div
+              id="audio__progress__indicator"
+              class="audio__progress__indicator"
+            ></div>
+          </div>
+          <span class="blue__glow">{{trackName}}</span>
+        </div>
       </div>
 
-      <div
-        id="solar-system-window"
-        class="window grid grid--r bordered draggable"
-      >
-        <div
-          class="window__title__bar grid grid--c grid--c--split grid--c--split--3"
-        >
-          <button
-            id="solar-system-window-close"
-            class="control control--left control--small blue__glow"
+      <!-- <div id="sector-window" class="window grid grid--r bordered draggable">
+          <div
+            class="window__title__bar grid grid--c grid--c--split grid--c--split--3"
           >
-            <i class="control__icon control__icon--small far fa-times"></i>
-          </button>
-          <span class="window__title blue__glow">SOLAR SYSTEM</span>
-          <button class="control control--right control--small blue__glow">
-            <i class="control__icon control__icon--small far fa-bars"></i>
-          </button>
-        </div>
-        <p class="blue__glow window__message">
-          SOLAR SYSTEM INFORMATION OFFLINE
-        </p>
-      </div>
+            <button
+              id="sector-window-close"
+              class="control control--left control--small blue__glow"
+            >
+              <i class="control__icon control__icon--small far fa-times"></i>
+            </button>
+            <span class="window__title blue__glow">SECTOR</span>
+            <button class="control control--right control--small blue__glow">
+              <i class="control__icon control__icon--small far fa-bars"></i>
+            </button>
+          </div>
+          <p class="blue__glow window__message">SECTOR INFORMATION OFFLINE</p>
+        </div> -->
 
-      <div id="star-window" class="window grid grid--r bordered draggable">
-        <div
-          class="window__title__bar grid grid--c grid--c--split grid--c--split--3"
+      <!-- <div
+          id="solar-system-window"
+          class="window grid grid--r bordered draggable"
         >
-          <button
-            id="star-window-close"
-            class="control control--left control--small blue__glow"
+          <div
+            class="window__title__bar grid grid--c grid--c--split grid--c--split--3"
           >
-            <i class="control__icon control__icon--small far fa-times"></i>
-          </button>
-          <span class="window__title blue__glow">STAR</span>
-          <button class="control control--right control--small blue__glow">
-            <i class="control__icon control__icon--small far fa-bars"></i>
-          </button>
-        </div>
-        <p class="blue__glow window__message">STAR INFORMATION OFFLINE</p>
-      </div>
+            <button
+              id="solar-system-window-close"
+              class="control control--left control--small blue__glow"
+            >
+              <i class="control__icon control__icon--small far fa-times"></i>
+            </button>
+            <span class="window__title blue__glow">SOLAR SYSTEM</span>
+            <button class="control control--right control--small blue__glow">
+              <i class="control__icon control__icon--small far fa-bars"></i>
+            </button>
+          </div>
+          <p class="blue__glow window__message">
+            SOLAR SYSTEM INFORMATION OFFLINE
+          </p>
+        </div> -->
 
-      <div id="planet-window" class="window grid grid--r bordered draggable">
-        <div
-          class="window__title__bar grid grid--c grid--c--split grid--c--split--3"
-        >
-          <button
-            id="planet-window-close"
-            class="control control--left control--small blue__glow"
+      <!-- <div id="star-window" class="window grid grid--r bordered draggable">
+          <div
+            class="window__title__bar grid grid--c grid--c--split grid--c--split--3"
           >
-            <i class="control__icon control__icon--small far fa-times"></i>
-          </button>
-          <span class="window__title blue__glow">PLANET</span>
-          <button class="control control--right control--small blue__glow">
-            <i class="control__icon control__icon--small far fa-bars"></i>
-          </button>
-        </div>
-        <p class="blue__glow window__message">PLANET INFORMATION OFFLINE</p>
-      </div>
+            <button
+              id="star-window-close"
+              class="control control--left control--small blue__glow"
+            >
+              <i class="control__icon control__icon--small far fa-times"></i>
+            </button>
+            <span class="window__title blue__glow">STAR</span>
+            <button class="control control--right control--small blue__glow">
+              <i class="control__icon control__icon--small far fa-bars"></i>
+            </button>
+          </div>
+          <p class="blue__glow window__message">STAR INFORMATION OFFLINE</p>
+        </div> -->
+
+      <!-- <div id="planet-window" class="window grid grid--r bordered draggable">
+          <div
+            class="window__title__bar grid grid--c grid--c--split grid--c--split--3"
+          >
+            <button
+              id="planet-window-close"
+              class="control control--left control--small blue__glow"
+            >
+              <i class="control__icon control__icon--small far fa-times"></i>
+            </button>
+            <span class="window__title blue__glow">PLANET</span>
+            <button class="control control--right control--small blue__glow">
+              <i class="control__icon control__icon--small far fa-bars"></i>
+            </button>
+          </div>
+          <p class="blue__glow window__message">PLANET INFORMATION OFFLINE</p>
+        </div> -->
 
       <div id="ship-window" class="window grid grid--r bordered draggable">
         <div
@@ -229,44 +270,44 @@
         </div>
       </div>
 
-      <div
-        id="encyclopedia-window"
-        class="window window--tall grid grid--r bordered draggable"
-      >
-        <div
-          class="window__title__bar grid grid--c grid--c--split grid--c--split--3"
+      <!-- <div
+          id="encyclopedia-window"
+          class="window window--tall grid grid--r bordered draggable"
         >
-          <button
-            id="encyclopedia-window-close"
-            class="control control--left control--small blue__glow"
+          <div
+            class="window__title__bar grid grid--c grid--c--split grid--c--split--3"
           >
-            <i class="control__icon control__icon--small far fa-times"></i>
-          </button>
-          <span class="window__title blue__glow">ENCYCLOPEDIA</span>
-          <button class="control control--right control--small blue__glow">
-            <i class="control__icon control__icon--small far fa-bars"></i>
-          </button>
-        </div>
-        <p class="blue__glow window__message">ENCYCLOPEDIA SERVICE OFFLINE</p>
-      </div>
+            <button
+              id="encyclopedia-window-close"
+              class="control control--left control--small blue__glow"
+            >
+              <i class="control__icon control__icon--small far fa-times"></i>
+            </button>
+            <span class="window__title blue__glow">ENCYCLOPEDIA</span>
+            <button class="control control--right control--small blue__glow">
+              <i class="control__icon control__icon--small far fa-bars"></i>
+            </button>
+          </div>
+          <p class="blue__glow window__message">ENCYCLOPEDIA SERVICE OFFLINE</p>
+        </div> -->
 
-      <div id="mail-window" class="window grid grid--r bordered draggable">
-        <div
-          class="window__title__bar grid grid--c grid--c--split grid--c--split--3"
-        >
-          <button
-            id="mail-window-close"
-            class="control control--left control--small blue__glow"
+      <!-- <div id="mail-window" class="window grid grid--r bordered draggable">
+          <div
+            class="window__title__bar grid grid--c grid--c--split grid--c--split--3"
           >
-            <i class="control__icon control__icon--small far fa-times"></i>
-          </button>
-          <span class="window__title blue__glow">MAIL</span>
-          <button class="control control--right control--small blue__glow">
-            <i class="control__icon control__icon--small far fa-bars"></i>
-          </button>
-        </div>
-        <p class="blue__glow window__message">MAIL SERVICE OFFLINE</p>
-      </div>
+            <button
+              id="mail-window-close"
+              class="control control--left control--small blue__glow"
+            >
+              <i class="control__icon control__icon--small far fa-times"></i>
+            </button>
+            <span class="window__title blue__glow">MAIL</span>
+            <button class="control control--right control--small blue__glow">
+              <i class="control__icon control__icon--small far fa-bars"></i>
+            </button>
+          </div>
+          <p class="blue__glow window__message">MAIL SERVICE OFFLINE</p>
+        </div> -->
 
       <div id="profile-window" class="window grid grid--r bordered draggable">
         <div
@@ -284,23 +325,39 @@
           </button>
         </div>
         <!-- <p class="blue__glow window__message">PROFILE SERVICE OFFLINE</p> -->
-        <form class="form form--fluid padded" id="signInForm">
+        <form
+          v-on:submit="signIn"
+          class="form form--fluid padded"
+          id="signInForm"
+          v-if="!user"
+        >
           <input
             class="input input--center bordered blue"
             id="signInUsername"
             type="text"
             autocomplete="off"
             placeholder="CALL SIGN"
+            v-model="username"
+            v-on:keydown="clearError"
           />
           <input
             class="input input--center bordered blue"
             id="signInPassword"
             type="password"
             placeholder="PASSWORD"
+            v-model="password"
+            v-on:keydown="clearError"
           />
           <button class="control bordered blue__glow padded">SIGN IN</button>
-          <span id="formError" class="form__error red__glow"></span>
+          <span id="formError" class="form__error red__glow">{{error}}</span>
         </form>
+        <div class="spinner" v-else-if="user">
+          <div class="rect1"></div>
+          <div class="rect2"></div>
+          <div class="rect3"></div>
+          <div class="rect4"></div>
+          <div class="rect5"></div>
+        </div>
       </div>
 
       <div
