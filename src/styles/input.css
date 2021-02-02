@@ -7,14 +7,15 @@
   text-transform: uppercase;
 }
 .checkmark__container {
+  pointer-events: all !important;
   display: flex;
   align-items: center;
   height: 50px;
   position: relative;
-  padding-left: 60px;
+  /* padding-left: 60px; */
   /* margin-bottom: 12px; */
   cursor: pointer;
-  font-size: var(--fontSize);
+  /* font-size: var(--fontSize); */
 
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -33,12 +34,14 @@
 
 /* Create a custom checkbox */
 .checkmark {
-  position: absolute;
+  /* position: absolute; */
   box-sizing: border-box;
   top: 0;
-  left: 0;
-  height: 50px;
-  width: 50px;
+  height: 20px;
+  width: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* On mouse-over, add a grey background color */
@@ -58,15 +61,15 @@
 /* When the checkbox is checked, add a blue background */
 .checkmark__container input:checked ~ .checkmark {
   /* background-color: #2196f3; */
-  border: var(--borderWidth) solid rgba(255, 255, 255, 1) !important;
-  box-shadow: inset 0 0 10px rgba(255, 255, 255, 1),
-    0 0 10px rgba(255, 255, 255, 1) !important;
+  /* border: var(--borderWidth) solid rgba(255, 255, 255, 1) !important; */
+  /* box-shadow: inset 0 0 10px rgba(255, 255, 255, 1),
+    0 0 10px rgba(255, 255, 255, 1) !important; */
 }
 
 /* Create the checkmark/indicator (hidden when not checked) */
 .checkmark:after {
   content: "";
-  position: absolute;
+  /* position: absolute; */
   display: none;
 }
 
@@ -77,19 +80,19 @@
 
 /* Style the checkmark/indicator */
 .checkmark__container .checkmark:after {
-  left: 5px;
-  top: 5px;
-  width: 32px;
-  height: 32px;
+  /* left: 6px;
+  top: 6px; */
+  width: 12px;
+  height: 12px;
   /* border: solid white;
   border-width: 0 3px 3px 0;
   -webkit-transform: rotate(45deg);
   -ms-transform: rotate(45deg);
   transform: rotate(45deg); */
 
-  background-color: white;
-  box-shadow: inset 0 0 10px rgba(255, 255, 255, 1),
-    0 0 10px rgba(255, 255, 255, 1) !important;
+  background-color: var(--blue);
+  /* box-shadow: inset 0 0 10px rgba(255, 255, 255, 1),
+    0 0 10px rgba(255, 255, 255, 1) !important; */
 
   /* color: rgba(112, 255, 255, 0.9);
   text-shadow: 0px 0px 6px rgba(112, 255, 255, 0.8); */

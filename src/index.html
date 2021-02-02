@@ -56,7 +56,7 @@
 
     <div id="windows" class="padded--">
       <!-- SHOULD BE FILLED WITH WINDOWS PROGRAMMATICALLY -->
-      <div
+      <!-- <div
         id="chat-window"
         style="grid-row: span 2"
         class="window window--tall window--wide grid grid--r bordered draggable"
@@ -90,17 +90,106 @@
               role="textbox"
               contenteditable
             ></span>
-            <!-- <button
-              class="control bordered blue__glow padded pic__control pic__control--small"
-              type="submit"
-            >
-              <i class="fal fa-paper-plane"></i>
-            </button> -->
           </form>
         </div>
+      </div> -->
+
+      <div
+        id="generation-window"
+        class="window grid grid--r bordered draggable"
+      >
+        <div
+          class="window__title__bar grid grid--c grid--c--split grid--c--split--3"
+        >
+          <button
+            id="generation-window-close"
+            class="control control--left control--small blue__glow"
+          >
+            <i class="control__icon control__icon--small far fa-times"></i>
+          </button>
+          <span class="window__title blue__glow">WORLD GENERATION</span>
+          <button class="control control--right control--small blue__glow">
+            <i class="control__icon control__icon--small far fa-bars"></i>
+          </button>
+        </div>
+        <form
+          class="form form--fluid padded"
+          id="generationForm"
+          v-on:submit="generate"
+        >
+          <label class="blue__glow" for="generation_size">Universe Size</label>
+          <input
+            class="input input--center bordered blue"
+            id="generation_size"
+            name="generation_size"
+            type="number"
+            min="1000"
+            max="100000"
+            autocomplete="off"
+            v-model="size"
+          />
+          <label class="blue__glow" for="generation_maxStars">Max Stars</label>
+          <input
+            class="input input--center bordered blue"
+            id="generation_maxStars"
+            name="generation_maxStars"
+            type="number"
+            min="1"
+            max="100000"
+            autocomplete="off"
+            v-model="maxStars"
+          />
+          <label class="blue__glow" for="generation_maxStars"
+            >Minimum Star Distance</label
+          >
+          <input
+            class="input input--center bordered blue"
+            id="generation_minStarDistance"
+            name="generation_minStarDistance"
+            type="number"
+            min="1"
+            max="1000"
+            autocomplete="off"
+            v-model="minimumStarDistance"
+          />
+          <label class="blue__glow" for="generation_maxStars"
+            >Star Edge Distance</label
+          >
+          <input
+            class="input input--center bordered blue"
+            id="generation_starEdgeDistance"
+            name="generation_starEdgeDistance"
+            type="number"
+            min="1"
+            max="100"
+            autocomplete="off"
+            v-model="edgeDistance"
+          />
+          <label
+            class="blue__glow checkmark__container"
+            for="generation_radialUniverse"
+            >Radial
+            <input
+              id="generation_radialUniverse"
+              name="generation_radialUniverse"
+              type="checkbox"
+              v-model="radial"
+            />
+            <span class="checkmark bordered"></span>
+          </label>
+          <button class="control bordered blue__glow padded" v-on:click="reset">
+            RESET
+          </button>
+          <button
+            style="margin-top: 10px"
+            class="control bordered blue__glow padded"
+          >
+            GENERATE
+          </button>
+        </form>
       </div>
 
-      <div id="audio-window" class="window grid grid--r bordered draggable">
+      <!-- <div id="audio-window" class="window grid grid--r bordered draggable">
         <div
           class="window__title__bar grid grid--c grid--c--split grid--c--split--3"
         >
@@ -116,10 +205,6 @@
           </button>
         </div>
         <div id="audio__player" class="grid grid--r">
-          <!-- <button class="control pic__control bordered-- padded blue__glow">
-            <i class="control__icon fab fa-spotify"></i>
-          </button> -->
-
           <div class="audio__controls grid grid--c">
             <button
               id="audioPrevious"
@@ -160,7 +245,7 @@
           </div>
           <span class="blue__glow">{{trackName}}</span>
         </div>
-      </div>
+      </div> -->
 
       <!-- <div id="sector-window" class="window grid grid--r bordered draggable">
           <div
@@ -239,7 +324,11 @@
           <p class="blue__glow window__message">PLANET INFORMATION OFFLINE</p>
         </div> -->
 
-      <div id="ship-window" class="window grid grid--r bordered draggable">
+      <div
+        style="display: none"
+        id="ship-window"
+        class="window grid grid--r bordered draggable"
+      >
         <div
           class="window__title__bar grid grid--c grid--c--split grid--c--split--3"
         >
@@ -313,7 +402,7 @@
           <p class="blue__glow window__message">MAIL SERVICE OFFLINE</p>
         </div> -->
 
-      <div id="profile-window" class="window grid grid--r bordered draggable">
+      <!-- <div id="profile-window" class="window grid grid--r bordered draggable">
         <div
           class="window__title__bar grid grid--c grid--c--split grid--c--split--3"
         >
@@ -328,7 +417,6 @@
             <i class="control__icon control__icon--small far fa-bars"></i>
           </button>
         </div>
-        <!-- <p class="blue__glow window__message">PROFILE SERVICE OFFLINE</p> -->
         <form
           v-on:submit="signIn"
           class="form form--fluid padded"
@@ -362,9 +450,9 @@
           <div class="rect4"></div>
           <div class="rect5"></div>
         </div>
-      </div>
+      </div> -->
 
-      <div
+      <!-- <div
         id="users-window"
         class="window window--narrow grid grid--r bordered draggable"
       >
@@ -383,7 +471,7 @@
           </button>
         </div>
         <div class="inbox__people bordered padded"></div>
-      </div>
+      </div>-->
     </div>
 
     <div id="view" class="">

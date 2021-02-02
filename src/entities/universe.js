@@ -126,7 +126,7 @@ class Universe {
   }
   // generate universe sector grid
   generateSectorGrid(delimiter) {
-    const rowsAndColumns = this.size / delimiter;
+    const rowsAndColumns = Math.ceil(this.size / delimiter);
     const sectorGrid = {
       delimiter,
       size: this.size,
@@ -182,7 +182,8 @@ class Universe {
     };
 
     // create sector grid
-    this.generateSectorGrid(2000);
+    // this.generateSectorGrid(2000);
+    this.generateSectorGrid(Math.ceil(this.size / 26));
 
     // generation loop
     // keep generating until one threshold is hit

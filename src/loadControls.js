@@ -8,7 +8,7 @@ function bringToFront(windowElement) {
     indexedWindow.classList.remove("window--active");
   });
   windowElement.style.zIndex = index + 5;
-  // windowElement.classList.add("window--active");
+  windowElement.classList.add("window--active");
 }
 
 function deactivateWindows() {
@@ -45,11 +45,11 @@ function toggleWindow(control, windowElement) {
     showWindow(control, windowElement);
   } else {
     fadeWindow(control, windowElement);
-    // if (windowElement.classList.contains("window--active")) {
-    //   fadeWindow(control, windowElement);
-    // } else {
-    //   showWindow(control, windowElement);
-    // }
+    if (windowElement.classList.contains("window--active")) {
+      fadeWindow(control, windowElement);
+    } else {
+      showWindow(control, windowElement);
+    }
   }
 }
 
@@ -57,7 +57,7 @@ function makeControl(control) {
   const windowElement = document.getElementById(control.windowID);
   let windowCloseButton;
   if (windowElement) {
-    windowElement.classList.add("faded");
+    // windowElement.classList.add("faded");
     windowCloseButton = document.getElementById(`${control.windowID}-close`);
   }
   const newControl = document.createElement("BUTTON");

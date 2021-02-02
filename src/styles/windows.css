@@ -14,19 +14,24 @@
   grid-auto-rows: calc(12.5% - var(--gap));
   grid-gap: var(--gap);
   pointer-events: none;
+  display: flex;
+  align-items: flex-start;
 }
 
 .window {
   z-index: 1000;
   background-color: var(--black);
   padding: var(--padding);
-  height: 100%;
+  /* height: 100%; */
   width: 100%;
   grid-template-rows: 18px 1fr;
   transition: opacity 250ms ease;
   pointer-events: all;
   grid-row: span 2;
   grid-column: span 2;
+  min-height: 200px;
+  width: 300px;
+  /* opacity: 0.5; */
 }
 
 .window--tall {

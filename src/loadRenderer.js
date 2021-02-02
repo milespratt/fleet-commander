@@ -113,6 +113,11 @@ export default (universe) => {
   const gridContainer = new PIXI.Container();
   const shipContainer = new PIXI.Container();
   const starContainer = new PIXI.Container();
+  // const starContainer = new PIXI.ParticleContainer(50000, {
+  //   vertices: true,
+  //   position: true,
+  //   tint: true,
+  // });
   const indicatorContainer = new PIXI.Container();
   const textContainer = new PIXI.Container();
   const errorContainer = new PIXI.Container();
@@ -146,7 +151,7 @@ export default (universe) => {
   // GRIDS
   const gridLines = new PIXI.Graphics();
   gridContainer.addChild(gridLines);
-  gridLines.lineStyle(2, colors.blue, 1); //(thickness, color)
+  gridLines.lineStyle(1, colors.blue, 1); //(thickness, color)
   for (
     let i = universe.sectorGrid.delimiter;
     i <= universe.size - universe.sectorGrid.delimiter;
@@ -154,10 +159,10 @@ export default (universe) => {
   ) {
     gridLines.moveTo(i, 0);
     gridLines.lineTo(i, universe.size);
-
     gridLines.moveTo(0, i);
     gridLines.lineTo(universe.size, i);
   }
+  gridLines.drawRect(0, 0, universe.size, universe.size);
 
   for (const sector in universe.sectorGrid.sectors) {
     const { sectorGrid } = universe;
@@ -165,13 +170,13 @@ export default (universe) => {
     const sectorLabel = new PIXI.Text(sector, {
       ...textStyle,
       strokeThickness: 0,
-      fontSize: 100,
+      fontSize: 20,
       fill: "0x70ffe9",
     });
     // console.log(sectorGrid);
     sectorLabel.position.set(
-      center.x - sectorGrid.delimiter * 1.5 + 20,
-      center.y - sectorGrid.delimiter / 2 + 15
+      center.x - sectorGrid.delimiter * 1.5 + 5,
+      center.y - sectorGrid.delimiter / 2 + 5
     );
     gridContainer.addChild(sectorLabel);
   }
@@ -335,7 +340,7 @@ export default (universe) => {
   // add stars to container
   const hitAreaGraphics = new PIXI.Graphics();
   hitAreaGraphics.lineStyle(2, colors.pink, 0.0); //(thickness, color, alpha)
-  starContainer.addChild(hitAreaGraphics);
+  // starContainer.addChild(hitAreaGraphics);
   for (const star of universe.stars) {
     const starSprite = star.createSprite();
     starSprite.cursor = "star";

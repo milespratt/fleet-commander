@@ -49,7 +49,7 @@ export const generationParameters = {
   // numbers below in pixels
   size: worldSize,
   minimumStarDistance: 100, // 100 default
-  radial: false,
+  radial: true,
 };
 
 export const shipTypes = [

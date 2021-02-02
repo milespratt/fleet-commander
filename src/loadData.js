@@ -13,6 +13,65 @@ import {
 
 export default () => {
   return new Promise(async (resolve, reject) => {
+    const baseGenerationParameters = { ...generationParameters };
+    const storedGenerationParameters = localStorage.getItem(
+      "generation_parameters"
+    );
+    if (storedGenerationParameters) {
+      const parsedGenerationParameters = JSON.parse(storedGenerationParameters);
+      generationParameters.size = parsedGenerationParameters.size;
+      generationParameters.maxStars = parsedGenerationParameters.maxStars;
+      generationParameters.minimumStarDistance =
+        parsedGenerationParameters.minimumStarDistance;
+      generationParameters.edgeDistance =
+        parsedGenerationParameters.edgeDistance;
+      generationParameters.radial = parsedGenerationParameters.radial;
+    }
+    localStorage.setItem(
+      "generation_parameters",
+      JSON.stringify(generationParameters)
+    );
+    var generationApp = new Vue({
+      el: "#generation-window",
+      data: {
+        size: generationParameters.size,
+        maxStars: generationParameters.maxStars,
+        minimumStarDistance: generationParameters.minimumStarDistance,
+        edgeDistance: generationParameters.edgeDistance,
+        radial: generationParameters.radial,
+      },
+      methods: {
+        generate: function (ev) {
+          ev.preventDefault();
+          const newGenerationParameters = {
+            size: this.size,
+            maxStars: this.maxStars,
+            minimumStarDistance: this.minimumStarDistance,
+            edgeDistance: this.edgeDistance,
+            radial: this.radial,
+          };
+          localStorage.setItem(
+            "generation_parameters",
+            JSON.stringify(newGenerationParameters)
+          );
+          location.reload();
+        },
+        reset: function (ev) {
+          ev.preventDefault();
+          this.size = baseGenerationParameters.size;
+          this.maxStars = baseGenerationParameters.maxStars;
+          this.minimumStarDistance =
+            baseGenerationParameters.minimumStarDistance;
+          this.edgeDistance = baseGenerationParameters.edgeDistance;
+          this.radial = baseGenerationParameters.radial;
+          localStorage.setItem(
+            "generation_parameters",
+            JSON.stringify(baseGenerationParameters)
+          );
+        },
+      },
+    });
+
     // GENERATION
     const newUniverse = new Universe();
     newUniverse.generate(generationParameters);
@@ -46,7 +105,7 @@ export default () => {
     //   },
     // ];
     // const shipList = shipNames.map((name, i) => {
-    const shipList = new Array(1).fill(undefined).map((e, i) => {
+    const shipList = new Array(0).fill(undefined).map((e, i) => {
       return {
         name: `Ship-${i + 1}`,
         // name,
