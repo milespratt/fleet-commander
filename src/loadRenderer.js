@@ -8,6 +8,9 @@ import hoverRingPNG from "./assets/images/star-hover-ring.png";
 
 // ASSETS
 import starPNG from "./assets/images/star-indicator.png";
+import mousePNG from "./assets/images/mouse.png";
+import starMousePNG from "./assets/images/starMouse.png";
+import shipMousePNG from "./assets/images/shipMouse.png";
 
 // CONFIG
 import {
@@ -62,6 +65,17 @@ export default (universe) => {
   // const localApp = createApp(400, 400, "local_view");
   // APPS
 
+  // const defaultIcon = `url(${mousePNG}),auto`;
+  // const mouseTexture = PIXI.Texture.from(mousePNG);
+  // const mouseSprite = new PIXI.Sprite(mouseTexture);
+  // mouseSprite.anchor.set(0.5);
+  // mouseSprite.visible = true;
+  // mouseSprite.interactive = false;
+  // mouseSprite.position.set(25000, 25000);
+  app.renderer.plugins.interaction.cursorStyles.default = `url(${mousePNG}) 20 20,auto`;
+  app.renderer.plugins.interaction.cursorStyles.star = `url(${starMousePNG}) 25 25,auto`;
+  app.renderer.plugins.interaction.cursorStyles.ship = `url(${shipMousePNG}) 25 25,auto`;
+
   // VIEWPORTS
   app.viewport = createViewport(app, null, { minScale: 0.25, maxScale: 2 });
   // localApp.viewport = createViewport(localApp, {
@@ -106,6 +120,16 @@ export default (universe) => {
   const voyageContainer = new PIXI.Container();
   const selectionContainer = new PIXI.Container();
   const localMapContainer = new PIXI.Container();
+  // gridContainer.addChild(mouseSprite);
+  // gridContainer.interactive = true;
+  // gridContainer.on("pointermove", (e) => {
+  //   console.log(e);
+  //   console.log(app.viewport);
+  //   mouseSprite.position.set(
+  //     e.data.global.x + app.viewport.hitArea.x,
+  //     e.data.global.y + app.viewport.hitArea.y
+  //   );
+  // });
 
   // add containers to viewports
   app.viewport.addChild(errorContainer);
@@ -314,6 +338,8 @@ export default (universe) => {
   starContainer.addChild(hitAreaGraphics);
   for (const star of universe.stars) {
     const starSprite = star.createSprite();
+    starSprite.cursor = "star";
+    starSprite.interactive = true;
     const hitAreaSize = star.hitAreaSize * (star.size / 72);
     // hitAreaGraphics.drawCircle(
     //   star.position.x,
@@ -367,7 +393,7 @@ export default (universe) => {
         clickedStar.position.x,
         clickedStar.position.y
       );
-      if (selectedStar && selectedStar.id === clickedStar.id && !selectedShip) {
+      if (selectedStar && selectedStar.id === clickedStar.id) {
         app.viewport.snap(clickedStar.position.x, clickedStar.position.y, {
           time: 500,
           removeOnComplete: true,
@@ -443,6 +469,8 @@ export default (universe) => {
   let selectedShip;
   for (const ship of universe.ships) {
     const shipSprite = ship.createSprite();
+    shipSprite.cursor = "ship";
+    shipSprite.interactive = true;
     shipContainer.addChild(shipSprite);
     voyageContainer.addChild(ship.voyageGraphics);
     // voyageContainer.addChild(ship.pathLine);

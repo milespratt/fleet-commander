@@ -95,7 +95,7 @@ var audioApp = new Vue({
     // this.fadeUp();
 
     this.audioPlayer.addEventListener("timeupdate", (ev) => {
-      const timeLeft = ev.target.duration - ev.target.currentTime;
+      const timeLeft = this.audioPlayer.duration - this.audioPlayer.currentTime;
       if (timeLeft <= 0) {
         this.next();
       }
