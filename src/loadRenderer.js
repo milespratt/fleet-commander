@@ -77,7 +77,8 @@ export default (universe) => {
   app.renderer.plugins.interaction.cursorStyles.ship = `url(${shipMousePNG}) 25 25,auto`;
 
   // VIEWPORTS
-  app.viewport = createViewport(app, null, { minScale: 0.25, maxScale: 2 });
+  // app.viewport = createViewport(app, null, { minScale: 0.25, maxScale: 2 });
+  app.viewport = createViewport(app, null, { minScale: 0.1, maxScale: 2 });
   // localApp.viewport = createViewport(localApp, {
   //   worldHeight: 400,
   //   worldWidth: 400,
@@ -154,7 +155,7 @@ export default (universe) => {
   gridLines.lineStyle(1, colors.blue, 1); //(thickness, color)
   for (
     let i = universe.sectorGrid.delimiter;
-    i <= universe.size - universe.sectorGrid.delimiter;
+    i < universe.size;
     i += universe.sectorGrid.delimiter
   ) {
     gridLines.moveTo(i, 0);
@@ -163,6 +164,29 @@ export default (universe) => {
     gridLines.lineTo(universe.size, i);
   }
   gridLines.drawRect(0, 0, universe.size, universe.size);
+  const gridToggle = document.getElementById("grid_toggle");
+  gridToggle.addEventListener("click", () => {
+    gridContainer.visible = !gridContainer.visible;
+    gridToggle.innerText = gridContainer.visible ? "HIDE GRID" : "SHOW GRID";
+  });
+  gridToggle.innerText = gridContainer.visible ? "HIDE GRID" : "SHOW GRID";
+
+  const gridCenter = document.getElementById("grid_center");
+  gridCenter.addEventListener("click", () => {
+    app.viewport.snapZoom({
+      width: app.viewport.initialWidth,
+      time: 750,
+      removeOnComplete: true,
+      removeOnInterrupt: true,
+      forceStart: true,
+    });
+    app.viewport.snap(universe.size / 2, universe.size / 2, {
+      time: 500,
+      removeOnComplete: true,
+      removeOnInterrupt: true,
+      forceStart: true,
+    });
+  });
 
   for (const sector in universe.sectorGrid.sectors) {
     const { sectorGrid } = universe;

@@ -27,13 +27,15 @@ export function createViewport(app, options, clamps) {
     divWheel: document.getElementById("view"),
   };
   viewportOptions.interaction = app.renderer.plugins.interaction;
-  const newViewport = new Viewport(viewportOptions)
-    .moveCenter(generationParameters.size / 2, generationParameters.size / 2)
-    .clamp({ direction: "all", underflow: "center" });
+  const newViewport = new Viewport(viewportOptions).moveCenter(
+    generationParameters.size / 2,
+    generationParameters.size / 2
+  );
+  // .clamp({ direction: "all", underflow: "center" });
 
   if (clamps) {
     newViewport
-      .clamp({ direction: "all", underflow: "center" })
+      // .clamp({ direction: "all", underflow: "center" })
       .clampZoom(clamps)
       .drag()
       .pinch()

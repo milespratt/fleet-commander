@@ -173,7 +173,7 @@ class Universe {
       maxGenTime,
       radial,
     } = options;
-    this.size = size;
+    this.size = parseInt(size);
 
     // center center of universe
     const center = {
@@ -230,7 +230,8 @@ class Universe {
       if (radial && percentOfMaxDistance > 1) {
         // throw away coordinates that are outside the radial limit
         newStarCoordinate = null;
-      } else if (this.starCoordinates.length === 0) {
+        // } else if (this.starCoordinates.length === 0) {
+      } else if (false) {
         // place first coordinate at the center
         newStarCoordinate = center;
         coordinateSector = this.getGridSector(

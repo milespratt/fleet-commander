@@ -13,7 +13,17 @@ import {
 
 export default () => {
   return new Promise(async (resolve, reject) => {
-    const baseGenerationParameters = { ...generationParameters };
+    const baseGenerationParameters = {
+      // maxExtraGenerationLoops: 1000000,
+      maxStars: 50000, // 50,000
+      // maxGenTime: 1000 * 10, // milliseconds base
+      edgeDistance: 100, // pixels from edge
+      // 100 pixels per light year
+      // numbers below in pixels
+      size: 50000,
+      minimumStarDistance: 100, // 100 default
+      radial: false,
+    };
     const storedGenerationParameters = localStorage.getItem(
       "generation_parameters"
     );
@@ -57,6 +67,7 @@ export default () => {
           location.reload();
         },
         reset: function (ev) {
+          console.log(baseGenerationParameters);
           ev.preventDefault();
           this.size = baseGenerationParameters.size;
           this.maxStars = baseGenerationParameters.maxStars;
@@ -68,6 +79,7 @@ export default () => {
             "generation_parameters",
             JSON.stringify(baseGenerationParameters)
           );
+          // location.reload();
         },
       },
     });

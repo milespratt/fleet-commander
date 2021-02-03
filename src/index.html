@@ -50,6 +50,14 @@
     <title>Fleet Commander</title>
   </head>
   <body>
+    <button class="control bordered blue__glow padded" id="grid_toggle">
+      TOGGLE GRID
+    </button>
+    grid_center
+
+    <button class="control bordered blue__glow padded" id="grid_center">
+      RECENTER
+    </button>
     <div id="toggles" class="toggles grid grid--c">
       <!-- WILL BE FILLED WITH CONTROLS PROGRAMMATICALLY -->
     </div>
@@ -147,7 +155,7 @@
             id="generation_minStarDistance"
             name="generation_minStarDistance"
             type="number"
-            min="1"
+            min="0"
             max="1000"
             autocomplete="off"
             v-model="minimumStarDistance"
@@ -160,7 +168,7 @@
             id="generation_starEdgeDistance"
             name="generation_starEdgeDistance"
             type="number"
-            min="1"
+            min="0"
             max="100"
             autocomplete="off"
             v-model="edgeDistance"
@@ -177,15 +185,20 @@
             />
             <span class="checkmark bordered"></span>
           </label>
-          <button class="control bordered blue__glow padded" v-on:click="reset">
+          <button
+            type="button"
+            class="control bordered blue__glow padded"
+            v-on:click="reset"
+          >
             RESET
           </button>
-          <button
+
+          <input
+            type="submit"
             style="margin-top: 10px"
             class="control bordered blue__glow padded"
-          >
-            GENERATE
-          </button>
+            value="GENERATE"
+          />
         </form>
       </div>
 
