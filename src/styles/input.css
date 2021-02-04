@@ -119,6 +119,21 @@
   flex-direction: column;
 }
 
+.data__form__container {
+  /* display: flex; */
+}
+
+.data__form {
+  
+}
+
+.data__form__data {
+  display: flex;
+  flex-direction: column;
+  font-size: 1.2rem;
+  padding: 13px;
+}
+
 .form .input {
   margin-bottom: 10px;
 }

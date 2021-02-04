@@ -118,26 +118,26 @@ export function getClass(starClass = null) {
   // 1210 K
   // 7645 M
   // stars out of 10000 ^
-  const classNumber = randomIntFromInterval(0, 10000);
-  if (classNumber >= 9995) {
-    return "O";
-  } else if (classNumber >= 9980) {
-    return "B";
-  } else if (classNumber >= 9940) {
-    return "A";
-  } else if (classNumber >= 9700) {
-    return "F";
-  } else if (classNumber >= 9240) {
-    return "G";
-  } else if (classNumber >= 8790) {
-    return "K";
-  }
-  // if (classNumber > 1210 && classNumber <= 7645) {
+  // const classNumber = randomIntFromInterval(0, 10000);
+  // if (classNumber >= 9995) {
+  //   return "O";
+  // } else if (classNumber >= 9980) {
+  //   return "B";
+  // } else if (classNumber >= 9940) {
+  //   return "A";
+  // } else if (classNumber >= 9700) {
+  //   return "F";
+  // } else if (classNumber >= 9240) {
+  //   return "G";
+  // } else if (classNumber >= 8790) {
+  //   return "K";
+  // }
+  // // if (classNumber > 1210 && classNumber <= 7645) {
+  // //   return "M";
+  // // }
+  // else {
   //   return "M";
   // }
-  else {
-    return "M";
-  }
   // if (classNumber > 7645) {
   // }
   if (starClass) {
@@ -190,39 +190,39 @@ export function getStarMass(size) {
 
 export function getStarSize(starClass, baseStarSize) {
   // TESTING
-  // return 12;
+  // return 8;
   // return randomIntFromInterval(100, 200);
 
   // ORIGINAL
   switch (starClass) {
     case "O":
       // return 30;
-      return randomFloatFromInterval(50, 72);
-      return parseInt((baseStarSize * 6).toFixed(0));
+      return randomIntFromInterval(56, 64);
+    // return parseInt((baseStarSize * 6).toFixed(0));
     case "B":
       // return 26;
-      return randomFloatFromInterval(22, 26);
-      return parseInt((baseStarSize * 5).toFixed(0));
+      return randomIntFromInterval(48, 54);
+    // return parseInt((baseStarSize * 5).toFixed(0));
     case "A":
       // return 22;
-      return randomFloatFromInterval(18, 22);
-      return parseInt((baseStarSize * 4).toFixed(0));
+      return randomIntFromInterval(36, 44);
+    // return parseInt((baseStarSize * 4).toFixed(0));
     case "F":
       // return 18;
-      return randomFloatFromInterval(14, 18);
-      return parseInt((baseStarSize * 4).toFixed(0));
+      return randomIntFromInterval(28, 34);
+    // return parseInt((baseStarSize * 4).toFixed(0));
     case "G":
       // return 14;
-      return randomFloatFromInterval(10, 14);
-      return parseInt((baseStarSize * 3).toFixed(0));
+      return randomIntFromInterval(20, 26);
+    // return parseInt((baseStarSize * 3).toFixed(0));
     case "K":
       // return 10;
-      return randomFloatFromInterval(6, 10);
-      return parseInt((baseStarSize * 2).toFixed(0));
+      return randomIntFromInterval(12, 18);
+    // return parseInt((baseStarSize * 2).toFixed(0));
     case "M":
       // return 6;
-      return randomFloatFromInterval(4, 6);
-      return parseInt((baseStarSize * 0.5).toFixed(0));
+      return randomIntFromInterval(4, 10);
+    // return parseInt((baseStarSize * 0.5).toFixed(0));
   }
 }
 

@@ -73,7 +73,7 @@ function makeControl(control) {
     "toggle",
   ];
   newControl.classList.add(...classes);
-  newControl.innerHTML = ` <i class="fal ${control.icon} control__icon"></i>
+  newControl.innerHTML = `<i class="fal ${control.icon} control__icon"></i>
 	<span class="toggle__label">${control.name}</span>`;
   newControl.id = `${control.windowID}-control`;
   if (windowElement) {

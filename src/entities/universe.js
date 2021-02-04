@@ -3,6 +3,7 @@ import {
   getDistanceAndAngleBetweenTwoPoints,
   generateStarName,
   getRandomArrayElement,
+  randomFloatFromInterval,
 } from "../helpers";
 
 import Star from "./star";
@@ -15,6 +16,16 @@ class Universe {
     this.size = null;
     this.generationTime = null;
     this.extraGenerationLoops = null;
+    this.starStats = {
+      O: { count: 0, type: "O" },
+      B: { count: 0, type: "B" },
+      A: { count: 0, type: "A" },
+      F: { count: 0, type: "F" },
+      G: { count: 0, type: "G" },
+      K: { count: 0, type: "K" },
+      M: { count: 0, type: "M" },
+    };
+    this.biggestStar = 0;
   }
   // return sector grid row from y coordinate
   getGridRow(y) {
@@ -173,7 +184,12 @@ class Universe {
       maxGenTime,
       radial,
     } = options;
-    this.size = parseInt(size);
+
+    if (size % 26 === 0) {
+      this.size = size;
+    } else {
+      this.size = size - (size % 26);
+    }
 
     // center center of universe
     const center = {
@@ -183,7 +199,10 @@ class Universe {
 
     // create sector grid
     // this.generateSectorGrid(2000);
-    this.generateSectorGrid(Math.ceil(this.size / 26));
+    this.generateSectorGrid(Math.floor(this.size / 26));
+    const sectorScan = minimumStarDistance / this.sectorGrid.delimiter;
+    const sectorDistance = Math.ceil(sectorScan);
+    console.log(`Scan at ${sectorDistance} sector depth`);
 
     // generation loop
     // keep generating until one threshold is hit
@@ -195,9 +214,10 @@ class Universe {
       performance.now() - start < maxGenTime
     ) {
       // create a random star coordinate
+
       let newStarCoordinate = {
-        x: randomIntFromInterval(edgeDistance, this.size - edgeDistance),
-        y: randomIntFromInterval(edgeDistance, this.size - edgeDistance),
+        x: randomIntFromInterval(0 + edgeDistance, this.size - edgeDistance),
+        y: randomIntFromInterval(0 + edgeDistance, this.size - edgeDistance),
       };
 
       // get the new coordinate sector
@@ -206,7 +226,17 @@ class Universe {
         newStarCoordinate.y
       );
 
+      // const sectorDistance = 1;
       const adjacentSectors = this.getAdjacentSectors(coordinateSector, true);
+      for (let s = 1; s < sectorDistance; s++) {
+        adjacentSectors.forEach((adjacentSector) => {
+          this.getAdjacentSectors(adjacentSector).forEach((loopedSector) => {
+            if (!adjacentSectors.includes(loopedSector)) {
+              adjacentSectors.push(loopedSector);
+            }
+          });
+        });
+      }
 
       const closeStars = this.getStarsFromSectorArray(adjacentSectors);
       proximityMax =
@@ -269,23 +299,83 @@ class Universe {
           coordinateSector,
           sectorStarCount
         );
+        const starTypePercentages = {
+          O: [0, 1],
+          B: [1, 3],
+          A: [3, 6],
+          F: [6, 11],
+          G: [11, 19],
+          K: [19, 32],
+        };
         // GET STAR TYPE
+
         let type = null;
-        if (this.stars.length <= 25) {
+        const starRand = randomIntFromInterval(1, 100);
+        if (
+          starRand >= starTypePercentages.O[0] &&
+          starRand <= starTypePercentages.O[1]
+        ) {
           type = "O";
-        } else if (this.stars.length <= 100) {
+        } else if (
+          starRand > starTypePercentages.B[0] &&
+          starRand <= starTypePercentages.B[1]
+        ) {
           type = "B";
-        } else if (this.stars.length <= 300) {
+        } else if (
+          starRand > starTypePercentages.A[0] &&
+          starRand <= starTypePercentages.A[1]
+        ) {
           type = "A";
-        } else if (this.stars.length <= 1500) {
+        } else if (
+          starRand > starTypePercentages.F[0] &&
+          starRand <= starTypePercentages.F[1]
+        ) {
           type = "F";
-        } else if (this.stars.length <= 3800) {
+        } else if (
+          starRand > starTypePercentages.G[0] &&
+          starRand <= starTypePercentages.G[1]
+        ) {
           type = "G";
-        } else if (this.stars.length <= 6050) {
+        } else if (
+          starRand > starTypePercentages.K[0] &&
+          starRand <= starTypePercentages.K[1]
+        ) {
           type = "K";
         } else {
           type = "M";
         }
+        this.starStats[type].count += 1;
+        // if (this.stars.length <= 25) {
+        //   type = "O";
+        // } else if (this.stars.length <= 100) {
+        //   type = "B";
+        // } else if (this.stars.length <= 300) {
+        //   type = "A";
+        // } else if (this.stars.length <= 1500) {
+        //   type = "F";
+        // } else if (this.stars.length <= 3800) {
+        //   type = "G";
+        // } else if (this.stars.length <= 6050) {
+        //   type = "K";
+        // } else {
+        //   type = "M";
+        // }
+        // if (this.stars.length < maxStars * starTypePercentages.O) {
+        //   type = "O";
+        // } else if (this.stars.length < maxStars * starTypePercentages.B) {
+        //   type = "B";
+        // } else if (this.stars.length < maxStars * starTypePercentages.A) {
+        //   type = "A";
+        // } else if (this.stars.length < maxStars * starTypePercentages.F) {
+        //   type = "F";
+        // } else if (this.stars.length < maxStars * starTypePercentages.G) {
+        //   type = "G";
+        // } else if (this.stars.length < maxStars * starTypePercentages.K) {
+        //   type = "K";
+        // } else {
+        //   type = "M";
+        // }
+
         // else if (classNumber > 7645) {
         // }
         // GET STAR TYPE
@@ -298,6 +388,8 @@ class Universe {
           newStarCoordinate.sector,
           type
         );
+        this.biggestStar =
+          newStar.size > this.biggestStar ? newStar.size : this.biggestStar;
 
         // push the coordinate to the list
         this.starCoordinates.push(newStarCoordinate);

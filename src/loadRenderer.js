@@ -9,6 +9,7 @@ import hoverRingPNG from "./assets/images/star-hover-ring.png";
 // ASSETS
 import starPNG from "./assets/images/star-indicator.png";
 import mousePNG from "./assets/images/mouse.png";
+import pinkMousePNG from "./assets/images/pinkMouse.png";
 import starMousePNG from "./assets/images/starMouse.png";
 import shipMousePNG from "./assets/images/shipMouse.png";
 
@@ -72,13 +73,13 @@ export default (universe) => {
   // mouseSprite.visible = true;
   // mouseSprite.interactive = false;
   // mouseSprite.position.set(25000, 25000);
-  app.renderer.plugins.interaction.cursorStyles.default = `url(${mousePNG}) 20 20,auto`;
-  app.renderer.plugins.interaction.cursorStyles.star = `url(${starMousePNG}) 25 25,auto`;
-  app.renderer.plugins.interaction.cursorStyles.ship = `url(${shipMousePNG}) 25 25,auto`;
+  app.renderer.plugins.interaction.cursorStyles.default = `url(${pinkMousePNG}) 16 16,auto`;
+  app.renderer.plugins.interaction.cursorStyles.star = `url(${starMousePNG}) 16 16,auto`;
+  app.renderer.plugins.interaction.cursorStyles.ship = `url(${shipMousePNG}) 16 16,auto`;
 
   // VIEWPORTS
   // app.viewport = createViewport(app, null, { minScale: 0.25, maxScale: 2 });
-  app.viewport = createViewport(app, null, { minScale: 0.1, maxScale: 2 });
+  app.viewport = createViewport(app, null, { minScale: 0.01, maxScale: 2 });
   // localApp.viewport = createViewport(localApp, {
   //   worldHeight: 400,
   //   worldWidth: 400,
@@ -188,6 +189,17 @@ export default (universe) => {
     });
   });
 
+  const snapShot = document.getElementById("snapshot");
+  snapShot.addEventListener("click", () => {
+    console.log("snap");
+    const image = app.renderer.extract.image(starContainer);
+    console.log(image);
+    document.body.appendChild(image);
+    setTimeout(() => {
+      document.body.removeChild(image);
+    }, 10000);
+  });
+
   for (const sector in universe.sectorGrid.sectors) {
     const { sectorGrid } = universe;
     const { center } = sectorGrid.sectors[sector];
@@ -206,22 +218,41 @@ export default (universe) => {
   }
 
   app.viewport.on("clicked", (ev) => {
+    const sectorDistance = 2;
     const { x, y } = ev.world;
     const row = universe.getGridRow(y);
     const column = universe.getGridColumn(x);
     const sector = universe.getGridSector(x, y);
+    // const allSectors = new Set([sector]);
     const starsInSector = universe.getStarsInSector(sector);
     const adjacentSectors = universe.getAdjacentSectors(sector);
+
+    for (let s = 1; s < sectorDistance; s++) {
+      adjacentSectors.forEach((adjacentSector) => {
+        universe.getAdjacentSectors(adjacentSector).forEach((loopedSector) => {
+          if (
+            !adjacentSectors.includes(loopedSector) &&
+            loopedSector !== sector
+          ) {
+            adjacentSectors.push(loopedSector);
+          }
+        });
+      });
+    }
+
     const starsInAdjacentSectors = universe.getStarsFromSectorArray(
       adjacentSectors
     );
+
     console.log(``);
     console.log("SECTOR INFORMATION");
-    console.log(`Row: ${row}`);
-    console.log(`Column: ${column}`);
+    // console.log(`Row: ${row}`);
+    // console.log(`Column: ${column}`);
     console.log(`Sector: ${sector}`);
     console.log(`Stars in Sector: ${starsInSector.length}`);
-    console.log(`Adjacent Sectors: ${adjacentSectors}`);
+    console.log(
+      `${adjacentSectors.length} Adjacent Sectors: ${adjacentSectors}`
+    );
     console.log(`Stars in Adjacent Sectors: ${starsInAdjacentSectors.length}`);
     console.log(
       `Total Stars: ${starsInSector.length + starsInAdjacentSectors.length}`

@@ -58,6 +58,10 @@
     <button class="control bordered blue__glow padded" id="grid_center">
       RECENTER
     </button>
+    
+    <button class="control bordered blue__glow padded" id="snapshot">
+      SNAPSHOT
+    </button>
     <div id="toggles" class="toggles grid grid--c">
       <!-- WILL BE FILLED WITH CONTROLS PROGRAMMATICALLY -->
     </div>
@@ -120,8 +124,9 @@
             <i class="control__icon control__icon--small far fa-bars"></i>
           </button>
         </div>
+        <div class="data__form__container grid grid--c">
         <form
-          class="form form--fluid padded"
+          class="form form--fluid padded data__form"
           id="generationForm"
           v-on:submit="generate"
         >
@@ -131,8 +136,8 @@
             id="generation_size"
             name="generation_size"
             type="number"
-            min="1000"
-            max="100000"
+            min="100"
+            max="1000000"
             autocomplete="off"
             v-model="size"
           />
@@ -143,7 +148,7 @@
             name="generation_maxStars"
             type="number"
             min="1"
-            max="100000"
+            max="1000000"
             autocomplete="off"
             v-model="maxStars"
           />
@@ -156,7 +161,7 @@
             name="generation_minStarDistance"
             type="number"
             min="0"
-            max="1000"
+            max="10000"
             autocomplete="off"
             v-model="minimumStarDistance"
           />
@@ -168,10 +173,23 @@
             id="generation_starEdgeDistance"
             name="generation_starEdgeDistance"
             type="number"
-            min="0"
+            min="1"
             max="100"
             autocomplete="off"
             v-model="edgeDistance"
+          />
+          <label class="blue__glow" for="generation_maxGenTime"
+            >Max Generation Time (ms)</label
+          >
+          <input
+            class="input input--center bordered blue"
+            id="generation_maxGenTime"
+            name="generation_maxGenTime"
+            type="number"
+            min="1"
+            max="300000"
+            autocomplete="off"
+            v-model="maxGenTime"
           />
           <label
             class="blue__glow checkmark__container"
@@ -200,6 +218,17 @@
             value="GENERATE"
           />
         </form>
+        <div class="data__form__data grid grid--r blue__glow" v-if="universe">
+          <span>SIZE: {{((universe.size / 100) * (universe.size / 100)).toLocaleString()}} SQUARE LIGHT YEARS</span>
+          <span>STARS: {{universe.stars.toLocaleString()}}</span>
+          <span>BIGGEST STAR: {{universe.biggestStar.toLocaleString()}}</span>
+          <!-- <span>SECTORS: {{universe.sectors}}</span> -->
+          <span>SECTOR SIZE: {{(universe.sectorSize / 100).toLocaleString()}} LIGHT YEARS</span>
+          <span>GENERATION TIME: {{(universe.generationTime / 1000).toFixed(2)}} SECONDS</span>
+          <span>FAILED GENERATION ATTEMPTS: {{universe.extraGenerationLoops.toLocaleString()}}</span>
+          <span v-for="starStat in universe.starStats">TYPE {{starStat.type}} STARS: {{starStat.count.toLocaleString()}} / {{(starStat.count / universe.stars * 100).toFixed(2)}}%</span>
+        </div>
+        </div>
       </div>
 
       <!-- <div id="audio-window" class="window grid grid--r bordered draggable">

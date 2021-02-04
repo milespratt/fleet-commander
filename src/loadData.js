@@ -16,7 +16,7 @@ export default () => {
     const baseGenerationParameters = {
       // maxExtraGenerationLoops: 1000000,
       maxStars: 50000, // 50,000
-      // maxGenTime: 1000 * 10, // milliseconds base
+      maxGenTime: 1000 * 10, // milliseconds base
       edgeDistance: 100, // pixels from edge
       // 100 pixels per light year
       // numbers below in pixels
@@ -29,12 +29,19 @@ export default () => {
     );
     if (storedGenerationParameters) {
       const parsedGenerationParameters = JSON.parse(storedGenerationParameters);
-      generationParameters.size = parsedGenerationParameters.size;
-      generationParameters.maxStars = parsedGenerationParameters.maxStars;
-      generationParameters.minimumStarDistance =
-        parsedGenerationParameters.minimumStarDistance;
-      generationParameters.edgeDistance =
-        parsedGenerationParameters.edgeDistance;
+      generationParameters.size = parseInt(parsedGenerationParameters.size);
+      generationParameters.maxStars = parseInt(
+        parsedGenerationParameters.maxStars
+      );
+      generationParameters.maxGenTime = parseInt(
+        parsedGenerationParameters.maxGenTime
+      );
+      generationParameters.minimumStarDistance = parseInt(
+        parsedGenerationParameters.minimumStarDistance
+      );
+      generationParameters.edgeDistance = parseInt(
+        parsedGenerationParameters.edgeDistance
+      );
       generationParameters.radial = parsedGenerationParameters.radial;
     }
     localStorage.setItem(
@@ -46,9 +53,11 @@ export default () => {
       data: {
         size: generationParameters.size,
         maxStars: generationParameters.maxStars,
+        maxGenTime: generationParameters.maxGenTime,
         minimumStarDistance: generationParameters.minimumStarDistance,
         edgeDistance: generationParameters.edgeDistance,
         radial: generationParameters.radial,
+        universe: null,
       },
       methods: {
         generate: function (ev) {
@@ -57,6 +66,7 @@ export default () => {
             size: this.size,
             maxStars: this.maxStars,
             minimumStarDistance: this.minimumStarDistance,
+            maxGenTime: this.maxGenTime,
             edgeDistance: this.edgeDistance,
             radial: this.radial,
           };
@@ -70,6 +80,7 @@ export default () => {
           console.log(baseGenerationParameters);
           ev.preventDefault();
           this.size = baseGenerationParameters.size;
+          this.maxGenTime = baseGenerationParameters.maxGenTime;
           this.maxStars = baseGenerationParameters.maxStars;
           this.minimumStarDistance =
             baseGenerationParameters.minimumStarDistance;
@@ -82,72 +93,137 @@ export default () => {
           // location.reload();
         },
       },
+      mounted: function () {
+        // GENERATION
+        const newUniverse = new Universe();
+        newUniverse.generate(generationParameters);
+        newUniverse.ships = [];
+
+        // create ships
+        const shipOrigin = newUniverse.stars[0];
+
+        // const shipList = [
+        //   {
+        //     name: "Test Ship",
+        //     range: 300,
+        //     speed: 0.1,
+        //     x: shipOrigin.x,
+        //     y: shipOrigin.y,
+        //     origin: shipOrigin,
+        //     // destination,
+        //   },
+        // ];
+        // const shipList = shipNames.map((name, i) => {
+        const shipList = new Array(0).fill(undefined).map((e, i) => {
+          return {
+            name: `Ship-${i + 1}`,
+            // name,
+            range: 300,
+            speed: (lightSpeed / lightYear) * 1000000,
+            x: shipOrigin.position.x,
+            y: shipOrigin.position.y,
+            origin: shipOrigin,
+            // destination,
+          };
+        });
+        for (const ship of shipList) {
+          const { name, range, speed, x, y, origin } = ship;
+          const destination = newUniverse.getRandomStar({
+            distance: range,
+            origin,
+          });
+          const newShip = new Ship(
+            name,
+            ship._id || name,
+            range,
+            x,
+            y,
+            { ...origin, id: origin._id || origin.name },
+            { ...destination, id: destination._id || destination.name },
+            newUniverse
+          );
+          newUniverse.ships.push(newShip);
+        }
+        this.universe = {
+          size: newUniverse.size,
+          stars: newUniverse.stars.length,
+          sectors: newUniverse.sectorGrid.totalSectors,
+          generationTime: newUniverse.generationTime,
+          extraGenerationLoops: newUniverse.extraGenerationLoops,
+          sectorSize: newUniverse.sectorGrid.delimiter,
+          biggestStar: newUniverse.biggestStar,
+          starStats: {
+            ...newUniverse.starStats,
+          },
+        };
+        resolve(newUniverse);
+      },
     });
 
-    // GENERATION
-    const newUniverse = new Universe();
-    newUniverse.generate(generationParameters);
-    newUniverse.ships = [];
-    // newUniverse.stars = [];
-
-    // create stars
-    // for (const star of newUniverse.starCoordinates) {
-    //   const newStar = new Star(
-    //     star.position.x,
-    //     star.position.y,
-    //     star.name,
-    //     star._id || star.name,
-    //     star.sector
-    //   );
-    //   newUniverse.stars.push(newStar);
-    // }
-
-    // create ships
-    const shipOrigin = newUniverse.stars[0];
-
-    // const shipList = [
-    //   {
-    //     name: "Test Ship",
+    // // GENERATION
+    // const newUniverse = new Universe();
+    // newUniverse.generate(generationParameters);
+    // newUniverse.ships = [];
+    // // newUniverse.stars = [];
+    //
+    // // create stars
+    // // for (const star of newUniverse.starCoordinates) {
+    // //   const newStar = new Star(
+    // //     star.position.x,
+    // //     star.position.y,
+    // //     star.name,
+    // //     star._id || star.name,
+    // //     star.sector
+    // //   );
+    // //   newUniverse.stars.push(newStar);
+    // // }
+    //
+    // // create ships
+    // const shipOrigin = newUniverse.stars[0];
+    //
+    // // const shipList = [
+    // //   {
+    // //     name: "Test Ship",
+    // //     range: 300,
+    // //     speed: 0.1,
+    // //     x: shipOrigin.x,
+    // //     y: shipOrigin.y,
+    // //     origin: shipOrigin,
+    // //     // destination,
+    // //   },
+    // // ];
+    // // const shipList = shipNames.map((name, i) => {
+    // const shipList = new Array(0).fill(undefined).map((e, i) => {
+    //   return {
+    //     name: `Ship-${i + 1}`,
+    //     // name,
     //     range: 300,
-    //     speed: 0.1,
-    //     x: shipOrigin.x,
-    //     y: shipOrigin.y,
+    //     speed: (lightSpeed / lightYear) * 1000000,
+    //     x: shipOrigin.position.x,
+    //     y: shipOrigin.position.y,
     //     origin: shipOrigin,
     //     // destination,
-    //   },
-    // ];
-    // const shipList = shipNames.map((name, i) => {
-    const shipList = new Array(0).fill(undefined).map((e, i) => {
-      return {
-        name: `Ship-${i + 1}`,
-        // name,
-        range: 300,
-        speed: (lightSpeed / lightYear) * 1000000,
-        x: shipOrigin.position.x,
-        y: shipOrigin.position.y,
-        origin: shipOrigin,
-        // destination,
-      };
-    });
-    for (const ship of shipList) {
-      const { name, range, speed, x, y, origin } = ship;
-      const destination = newUniverse.getRandomStar({
-        distance: range,
-        origin,
-      });
-      const newShip = new Ship(
-        name,
-        ship._id || name,
-        range,
-        x,
-        y,
-        { ...origin, id: origin._id || origin.name },
-        { ...destination, id: destination._id || destination.name },
-        newUniverse
-      );
-      newUniverse.ships.push(newShip);
-    }
-    resolve(newUniverse);
+    //   };
+    // });
+    // for (const ship of shipList) {
+    //   const { name, range, speed, x, y, origin } = ship;
+    //   const destination = newUniverse.getRandomStar({
+    //     distance: range,
+    //     origin,
+    //   });
+    //   const newShip = new Ship(
+    //     name,
+    //     ship._id || name,
+    //     range,
+    //     x,
+    //     y,
+    //     { ...origin, id: origin._id || origin.name },
+    //     { ...destination, id: destination._id || destination.name },
+    //     newUniverse
+    //   );
+    //   newUniverse.ships.push(newShip);
+    // }
+    // resolve(newUniverse);
   });
 };
 
