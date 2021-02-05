@@ -163,10 +163,31 @@ class Ship {
     return newDestination;
   }
   getStarsInRange(includeOrigin = false, includeDestination = false) {
-    const limitedStars = this.universe.getStarsInThisAndAdjacentSectors(
+    const sectorScan = this.range / this.universe.sectorGrid.delimiter;
+    const sectorDistance = Math.ceil(sectorScan);
+    const limitSector = this.universe.getGridSector(
       this.position.x,
       this.position.y
     );
+    const adjacentSectors = this.universe.getAdjacentSectors(limitSector, true);
+    for (let s = 1; s < sectorDistance; s++) {
+      adjacentSectors.forEach((adjacentSector) => {
+        this.universe
+          .getAdjacentSectors(adjacentSector)
+          .forEach((loopedSector) => {
+            if (!adjacentSectors.includes(loopedSector)) {
+              adjacentSectors.push(loopedSector);
+            }
+          });
+      });
+    }
+
+    const limitedStars = this.universe.getStarsFromSectorArray(adjacentSectors);
+
+    // const limitedStars = this.universe.getStarsInThisAndAdjacentSectors(
+    //   this.position.x,
+    //   this.position.y
+    // );
     const starsInRange = limitedStars.filter((limitStar) => {
       const starDistance = getDistanceAndAngleBetweenTwoPoints(
         { x: limitStar.position.x, y: limitStar.position.y },
@@ -239,6 +260,8 @@ class Ship {
     };
     this.updatePosition(newPlot);
     this.voyageGraphics.clear();
+    // AUTO MOVE
+    this.plot();
   }
   drawVoyageGraphics() {
     this.voyageGraphics.clear();
@@ -261,16 +284,24 @@ class Ship {
     } else {
       this.destination = this.getNewDestination();
     }
-    const distance = this.getDistanceToTarget(this.destination);
-    const { directionX, directionY } = this.getNewDirection(
-      this.position.x,
-      this.position.y,
-      this.destination.position
-    );
-    this.distanceToDestination = distance;
-    this.tripDistance = distance;
-    this.directionX = directionX;
-    this.directionY = directionY;
+    if (this.destination) {
+      const distance = this.getDistanceToTarget(this.destination);
+      const { directionX, directionY } = this.getNewDirection(
+        this.position.x,
+        this.position.y,
+        this.destination.position
+      );
+      this.distanceToDestination = distance;
+      this.tripDistance = distance;
+      this.directionX = directionX;
+      this.directionY = directionY;
+      // AUTO MOVE
+      setTimeout(() => {
+        this.launch();
+      }, randomIntFromInterval(1000, 10000));
+    } else {
+      console.log("No Destination!");
+    }
   }
   launch() {
     if (this.status === statuses.idle || this.status === statuses.spooling) {
@@ -308,8 +339,8 @@ class Ship {
   update() {
     if (this.status === statuses.travelling) {
       this.move();
+      this.drawVoyageGraphics();
     }
-    this.drawVoyageGraphics();
     // if (this.scanning) {
     //   this.scan();
     // }

@@ -35,9 +35,13 @@ export function createViewport(app, options, clamps) {
 
   if (clamps) {
     newViewport
-      // .clamp({ direction: "all", underflow: "center" })
+      .clamp({
+        direction: "all",
+        underflow: "center",
+      })
+      // .bounce({ sides: "all", underflow: "center", time: 50, friction: 0.1 })
       .clampZoom(clamps)
-      .drag()
+      .drag({ clampWheel: true })
       .pinch()
       .wheel()
       .decelerate();

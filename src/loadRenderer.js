@@ -1,6 +1,6 @@
 // RENDERING
 import * as PIXI from "pixi.js";
-import { GlowFilter } from "pixi-filters";
+import { AdvancedBloomFilter, GlowFilter } from "pixi-filters";
 import { createApp, createViewport } from "./engine";
 import Stats from "stats.js";
 import ringPNG from "./assets/images/star-selection-ring.png";
@@ -63,6 +63,7 @@ export default (universe) => {
 
   // APPS
   const app = createApp(null, null, "view");
+
   // const localApp = createApp(400, 400, "local_view");
   // APPS
 
@@ -73,13 +74,14 @@ export default (universe) => {
   // mouseSprite.visible = true;
   // mouseSprite.interactive = false;
   // mouseSprite.position.set(25000, 25000);
-  app.renderer.plugins.interaction.cursorStyles.default = `url(${pinkMousePNG}) 16 16,auto`;
-  app.renderer.plugins.interaction.cursorStyles.star = `url(${starMousePNG}) 16 16,auto`;
-  app.renderer.plugins.interaction.cursorStyles.ship = `url(${shipMousePNG}) 16 16,auto`;
+  app.renderer.plugins.interaction.cursorStyles.default = `url(${shipMousePNG}) 16 16,auto`;
+  app.renderer.plugins.interaction.cursorStyles.star = `url(${pinkMousePNG}) 16 16,auto`;
+  app.renderer.plugins.interaction.cursorStyles.ship = `url(${pinkMousePNG}) 16 16,auto`;
 
   // VIEWPORTS
   // app.viewport = createViewport(app, null, { minScale: 0.25, maxScale: 2 });
-  app.viewport = createViewport(app, null, { minScale: 0.01, maxScale: 2 });
+  app.viewport = createViewport(app, null, { minScale: 0.25, maxScale: 2 });
+
   // localApp.viewport = createViewport(localApp, {
   //   worldHeight: 400,
   //   worldWidth: 400,
@@ -94,6 +96,10 @@ export default (universe) => {
     const { width, height } = viewContainer.getBoundingClientRect();
     app.viewport.resize(width, height);
     app.viewport.initialWidth = width;
+    app.viewport.clamp({
+      direction: "all",
+      underflow: "center",
+    });
     app.viewport.dirty = true;
   }
   window.onresize = updateViewportSize;
@@ -113,13 +119,20 @@ export default (universe) => {
 
   // create containers
   const gridContainer = new PIXI.Container();
+
   const shipContainer = new PIXI.Container();
   const starContainer = new PIXI.Container();
-  // const starContainer = new PIXI.ParticleContainer(50000, {
-  //   vertices: true,
-  //   position: true,
-  //   tint: true,
-  // });
+  // starContainer.filters = [
+  //   new AdvancedBloomFilter({
+  //     threshold: 0.5,
+  //     bloomScale: 0.5,
+  //     brightness: 0.8,
+  //     blur: 6,
+  //     quality: 4,
+  //     pixelSize: 0.5,
+  //     // resolution: 4
+  //   }),
+  // ];
   const indicatorContainer = new PIXI.Container();
   const textContainer = new PIXI.Container();
   const errorContainer = new PIXI.Container();
@@ -127,16 +140,6 @@ export default (universe) => {
   const voyageContainer = new PIXI.Container();
   const selectionContainer = new PIXI.Container();
   const localMapContainer = new PIXI.Container();
-  // gridContainer.addChild(mouseSprite);
-  // gridContainer.interactive = true;
-  // gridContainer.on("pointermove", (e) => {
-  //   console.log(e);
-  //   console.log(app.viewport);
-  //   mouseSprite.position.set(
-  //     e.data.global.x + app.viewport.hitArea.x,
-  //     e.data.global.y + app.viewport.hitArea.y
-  //   );
-  // });
 
   // add containers to viewports
   app.viewport.addChild(errorContainer);
@@ -152,6 +155,23 @@ export default (universe) => {
 
   // GRIDS
   const gridLines = new PIXI.Graphics();
+  // gridContainer.filters = [
+  //   // new GlowFilter({
+  //   //   quality: 1,
+  //   //   color: colors.blueGlow,
+  //   //   distance: 10,
+  //   //   outerStrength: 1,
+  //   // }),
+  //   new AdvancedBloomFilter({
+  //     threshold: 0.5,
+  //     bloomScale: 0.5,
+  //     brightness: 1,
+  //     blur: 20,
+  //     quality: 4,
+  //     pixelSize: 0.1,
+  //     // resolution: 4
+  //   }),
+  // ];
   gridContainer.addChild(gridLines);
   gridLines.lineStyle(1, colors.blue, 1); //(thickness, color)
   for (
@@ -174,19 +194,27 @@ export default (universe) => {
 
   const gridCenter = document.getElementById("grid_center");
   gridCenter.addEventListener("click", () => {
-    app.viewport.snapZoom({
-      width: app.viewport.initialWidth,
-      time: 750,
-      removeOnComplete: true,
+    app.viewport.animate({
+      time: 250 / app.viewport.lastViewport.scaleX,
+      position: { x: universe.size / 2, y: universe.size / 2 },
+      // width: app.viewport.initialWidth,
+      scale: 1,
       removeOnInterrupt: true,
-      forceStart: true,
+      ease: "easeInOutCubic",
     });
-    app.viewport.snap(universe.size / 2, universe.size / 2, {
-      time: 500,
-      removeOnComplete: true,
-      removeOnInterrupt: true,
-      forceStart: true,
-    });
+    // app.viewport.snapZoom({
+    //   width: app.viewport.initialWidth,
+    //   time: Math.abs(1000 / app.viewport.lastViewport.scaleX),
+    //   removeOnComplete: true,
+    //   removeOnInterrupt: true,
+    //   forceStart: true,
+    // });
+    // app.viewport.snap(universe.size / 2, universe.size / 2, {
+    //   time: Math.abs(1000 / app.viewport.lastViewport.scaleX),
+    //   removeOnComplete: true,
+    //   removeOnInterrupt: true,
+    //   forceStart: true,
+    // });
   });
 
   const snapShot = document.getElementById("snapshot");
@@ -378,6 +406,7 @@ export default (universe) => {
 
   launch.addEventListener("click", () => {
     if (selectedShip) {
+      console.log("launch");
       selectedShip.launch();
     }
   });
@@ -454,18 +483,13 @@ export default (universe) => {
         clickedStar.position.y
       );
       if (selectedStar && selectedStar.id === clickedStar.id) {
-        app.viewport.snap(clickedStar.position.x, clickedStar.position.y, {
-          time: 500,
-          removeOnComplete: true,
+        app.viewport.animate({
+          time: 250 / app.viewport.lastViewport.scaleX,
+          position: { x: clickedStar.position.x, y: clickedStar.position.y },
+          // width: app.viewport.initialWidth,
+          scale: 1,
           removeOnInterrupt: true,
-          forceStart: true,
-        });
-        app.viewport.snapZoom({
-          width: app.viewport.initialWidth,
-          time: 750,
-          removeOnComplete: true,
-          removeOnInterrupt: true,
-          forceStart: true,
+          ease: "easeInOutCubic",
         });
       }
 
@@ -536,9 +560,10 @@ export default (universe) => {
     // voyageContainer.addChild(ship.pathLine);
     textContainer.addChild(ship.shipNameText);
     lineContainer.addChild(ship.scanningGraphics);
-
+    ship.plot();
     shipSprite.on("pointerdown", async (ev) => {
       selectedShip = ev.target.ship;
+      console.log(selectedShip);
       const clickedShip = ev.target.ship;
       // const apiShip = fetch(`${baseAPIurl}/ships/${clickedShip.id}`)
       //   .then((res) => res.json())

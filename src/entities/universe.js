@@ -117,10 +117,29 @@ class Universe {
   getRandomStar(limit) {
     let randomStar;
     if (limit && limit.distance > 0) {
-      const limitedStars = this.getStarsInThisAndAdjacentSectors(
+      const sectorScan = limit.distance / this.sectorGrid.delimiter;
+      const sectorDistance = Math.ceil(sectorScan);
+      const limitSector = this.getGridSector(
         limit.origin.position.x,
         limit.origin.position.y
       );
+      const adjacentSectors = this.getAdjacentSectors(limitSector, true);
+      for (let s = 1; s < sectorDistance; s++) {
+        adjacentSectors.forEach((adjacentSector) => {
+          this.getAdjacentSectors(adjacentSector).forEach((loopedSector) => {
+            if (!adjacentSectors.includes(loopedSector)) {
+              adjacentSectors.push(loopedSector);
+            }
+          });
+        });
+      }
+
+      const limitedStars = this.getStarsFromSectorArray(adjacentSectors);
+
+      // const limitedStars = this.getStarsInThisAndAdjacentSectors(
+      //   limit.origin.position.x,
+      //   limit.origin.position.y
+      // );
       // const limitedStars = starArray
       const closeStars = limitedStars.filter((limitStar, index) => {
         const starDistance = getDistanceAndAngleBetweenTwoPoints(

@@ -58,7 +58,7 @@
     <button class="control bordered blue__glow padded" id="grid_center">
       RECENTER
     </button>
-    
+
     <button class="control bordered blue__glow padded" id="snapshot">
       SNAPSHOT
     </button>
@@ -125,109 +125,128 @@
           </button>
         </div>
         <div class="data__form__container grid grid--c">
-        <form
-          class="form form--fluid padded data__form"
-          id="generationForm"
-          v-on:submit="generate"
-        >
-          <label class="blue__glow" for="generation_size">Universe Size</label>
-          <input
-            class="input input--center bordered blue"
-            id="generation_size"
-            name="generation_size"
-            type="number"
-            min="100"
-            max="1000000"
-            autocomplete="off"
-            v-model="size"
-          />
-          <label class="blue__glow" for="generation_maxStars">Max Stars</label>
-          <input
-            class="input input--center bordered blue"
-            id="generation_maxStars"
-            name="generation_maxStars"
-            type="number"
-            min="1"
-            max="1000000"
-            autocomplete="off"
-            v-model="maxStars"
-          />
-          <label class="blue__glow" for="generation_maxStars"
-            >Minimum Star Distance</label
+          <form
+            class="form form--fluid padded data__form"
+            id="generationForm"
+            v-on:submit="generate"
           >
-          <input
-            class="input input--center bordered blue"
-            id="generation_minStarDistance"
-            name="generation_minStarDistance"
-            type="number"
-            min="0"
-            max="10000"
-            autocomplete="off"
-            v-model="minimumStarDistance"
-          />
-          <label class="blue__glow" for="generation_maxStars"
-            >Star Edge Distance</label
-          >
-          <input
-            class="input input--center bordered blue"
-            id="generation_starEdgeDistance"
-            name="generation_starEdgeDistance"
-            type="number"
-            min="1"
-            max="100"
-            autocomplete="off"
-            v-model="edgeDistance"
-          />
-          <label class="blue__glow" for="generation_maxGenTime"
-            >Max Generation Time (ms)</label
-          >
-          <input
-            class="input input--center bordered blue"
-            id="generation_maxGenTime"
-            name="generation_maxGenTime"
-            type="number"
-            min="1"
-            max="300000"
-            autocomplete="off"
-            v-model="maxGenTime"
-          />
-          <label
-            class="blue__glow checkmark__container"
-            for="generation_radialUniverse"
-            >Radial
+            <label class="blue__glow" for="generation_size"
+              >Universe Size</label
+            >
             <input
-              id="generation_radialUniverse"
-              name="generation_radialUniverse"
-              type="checkbox"
-              v-model="radial"
+              class="input input--center bordered blue"
+              id="generation_size"
+              name="generation_size"
+              type="number"
+              min="100"
+              max="1000000"
+              autocomplete="off"
+              v-model="size"
             />
-            <span class="checkmark bordered"></span>
-          </label>
-          <button
-            type="button"
-            class="control bordered blue__glow padded"
-            v-on:click="reset"
-          >
-            RESET
-          </button>
+            <label class="blue__glow" for="generation_maxStars"
+              >Max Stars</label
+            >
+            <input
+              class="input input--center bordered blue"
+              id="generation_maxStars"
+              name="generation_maxStars"
+              type="number"
+              min="1"
+              max="1000000"
+              autocomplete="off"
+              v-model="maxStars"
+            />
+            <label class="blue__glow" for="generation_maxStars"
+              >Minimum Star Distance</label
+            >
+            <input
+              class="input input--center bordered blue"
+              id="generation_minStarDistance"
+              name="generation_minStarDistance"
+              type="number"
+              min="0"
+              max="10000"
+              autocomplete="off"
+              v-model="minimumStarDistance"
+            />
+            <label class="blue__glow" for="generation_maxStars"
+              >Star Edge Distance</label
+            >
+            <input
+              class="input input--center bordered blue"
+              id="generation_starEdgeDistance"
+              name="generation_starEdgeDistance"
+              type="number"
+              min="1"
+              max="100"
+              autocomplete="off"
+              v-model="edgeDistance"
+            />
+            <label class="blue__glow" for="generation_maxGenTime"
+              >Max Generation Time (ms)</label
+            >
+            <input
+              class="input input--center bordered blue"
+              id="generation_maxGenTime"
+              name="generation_maxGenTime"
+              type="number"
+              min="1"
+              max="300000"
+              autocomplete="off"
+              v-model="maxGenTime"
+            />
+            <label
+              class="blue__glow checkmark__container"
+              for="generation_radialUniverse"
+              >Radial
+              <input
+                id="generation_radialUniverse"
+                name="generation_radialUniverse"
+                type="checkbox"
+                v-model="radial"
+              />
+              <span class="checkmark bordered"></span>
+            </label>
+            <button
+              type="button"
+              class="control bordered blue__glow padded"
+              v-on:click="reset"
+            >
+              RESET
+            </button>
 
-          <input
-            type="submit"
-            style="margin-top: 10px"
-            class="control bordered blue__glow padded"
-            value="GENERATE"
-          />
-        </form>
-        <div class="data__form__data grid grid--r blue__glow" v-if="universe">
-          <span>SIZE: {{((universe.size / 100) * (universe.size / 100)).toLocaleString()}} SQUARE LIGHT YEARS</span>
-          <span>STARS: {{universe.stars.toLocaleString()}}</span>
-          <span>BIGGEST STAR: {{universe.biggestStar.toLocaleString()}}</span>
-          <!-- <span>SECTORS: {{universe.sectors}}</span> -->
-          <span>SECTOR SIZE: {{(universe.sectorSize / 100).toLocaleString()}} LIGHT YEARS</span>
-          <span>GENERATION TIME: {{(universe.generationTime / 1000).toFixed(2)}} SECONDS</span>
-          <span>FAILED GENERATION ATTEMPTS: {{universe.extraGenerationLoops.toLocaleString()}}</span>
-          <span v-for="starStat in universe.starStats">TYPE {{starStat.type}} STARS: {{starStat.count.toLocaleString()}} / {{(starStat.count / universe.stars * 100).toFixed(2)}}%</span>
-        </div>
+            <input
+              type="submit"
+              style="margin-top: 10px"
+              class="control bordered blue__glow padded"
+              value="GENERATE"
+            />
+          </form>
+          <div class="data__form__data grid grid--r blue__glow" v-if="universe">
+            <span
+              >SIZE: {{((universe.size / 100) * (universe.size /
+              100)).toLocaleString()}} SQUARE LIGHT YEARS</span
+            >
+            <span>STARS: {{universe.stars.toLocaleString()}}</span>
+            <span>BIGGEST STAR: {{universe.biggestStar.toLocaleString()}}</span>
+            <!-- <span>SECTORS: {{universe.sectors}}</span> -->
+            <span
+              >SECTOR SIZE: {{(universe.sectorSize / 100).toLocaleString()}}
+              LIGHT YEARS</span
+            >
+            <span
+              >GENERATION TIME: {{(universe.generationTime / 1000).toFixed(2)}}
+              SECONDS</span
+            >
+            <span
+              >FAILED GENERATION ATTEMPTS:
+              {{universe.extraGenerationLoops.toLocaleString()}}</span
+            >
+            <span v-for="starStat in universe.starStats"
+              >TYPE {{starStat.type}} STARS: {{starStat.count.toLocaleString()}}
+              / {{(starStat.count / universe.stars * 100).toFixed(2)}}%</span
+            >
+          </div>
         </div>
       </div>
 
