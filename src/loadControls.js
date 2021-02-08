@@ -57,7 +57,7 @@ function makeControl(control) {
   const windowElement = document.getElementById(control.windowID);
   let windowCloseButton;
   if (windowElement) {
-    // windowElement.classList.add("faded");
+    windowElement.classList.add("faded");
     windowCloseButton = document.getElementById(`${control.windowID}-close`);
   }
   const newControl = document.createElement("BUTTON");

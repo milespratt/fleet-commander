@@ -82,6 +82,7 @@ class Ship {
     this.scanProgress = 0;
   }
   scan() {
+    this.scanCoordinates = { ...this.position };
     const delta = this.getDelta();
     if (!this.scanning) {
       this.scanProgress = 0;
@@ -261,7 +262,16 @@ class Ship {
     this.updatePosition(newPlot);
     this.voyageGraphics.clear();
     // AUTO MOVE
-    this.plot();
+    setTimeout(
+      () => {
+        this.scan();
+        setTimeout(() => {
+          this.plot();
+        }, randomIntFromInterval(2000, 5000));
+      },
+      1000,
+      5000
+    );
   }
   drawVoyageGraphics() {
     this.voyageGraphics.clear();
@@ -271,7 +281,7 @@ class Ship {
     this.voyageGraphics.lineTo(this.position.x, this.position.y);
 
     // path line (from position to destination)
-    this.voyageGraphics.lineStyle(2, colors.blue, 0.5);
+    this.voyageGraphics.lineStyle(1, colors.blue, 0.5);
     this.voyageGraphics.moveTo(
       this.destination.position.x,
       this.destination.position.y
@@ -298,7 +308,7 @@ class Ship {
       // AUTO MOVE
       setTimeout(() => {
         this.launch();
-      }, randomIntFromInterval(1000, 10000));
+      }, randomIntFromInterval(2000, 5000));
     } else {
       console.log("No Destination!");
     }
@@ -339,6 +349,8 @@ class Ship {
   update() {
     if (this.status === statuses.travelling) {
       this.move();
+    }
+    if (this.destination) {
       this.drawVoyageGraphics();
     }
     // if (this.scanning) {

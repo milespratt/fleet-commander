@@ -62,7 +62,7 @@ const apiEndpoint =
 
 async function init() {
   const universe = await loadData();
-  // await fontLoader();
+  await fontLoader();
   windows();
   // loadAudio();
   loadControls();

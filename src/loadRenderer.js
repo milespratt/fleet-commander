@@ -30,6 +30,7 @@ import {
   Vector,
   getDistanceAndAngleBetweenTwoPoints,
   randomIntFromInterval,
+  intersection,
   // getStarsInSectors,
 } from "./helpers";
 import { startCulling } from "./engine/culler";
@@ -119,7 +120,7 @@ export default (universe) => {
 
   // create containers
   const gridContainer = new PIXI.Container();
-
+  const empireContainer = new PIXI.Container();
   const shipContainer = new PIXI.Container();
   const starContainer = new PIXI.Container();
   // starContainer.filters = [
@@ -144,6 +145,12 @@ export default (universe) => {
   // add containers to viewports
   app.viewport.addChild(errorContainer);
   app.viewport.addChild(gridContainer);
+  app.viewport.addChild(empireContainer);
+  const empireGraphics = new PIXI.Graphics();
+  const empireAlpha = new PIXI.Graphics();
+  empireContainer.addChild(empireGraphics);
+  empireContainer.addChild(empireAlpha);
+  empireAlpha.filters = [new PIXI.filters.AlphaFilter(1)];
   app.viewport.addChild(voyageContainer);
   app.viewport.addChild(starContainer);
   app.viewport.addChild(lineContainer);
@@ -217,16 +224,16 @@ export default (universe) => {
     // });
   });
 
-  const snapShot = document.getElementById("snapshot");
-  snapShot.addEventListener("click", () => {
-    console.log("snap");
-    const image = app.renderer.extract.image(starContainer);
-    console.log(image);
-    document.body.appendChild(image);
-    setTimeout(() => {
-      document.body.removeChild(image);
-    }, 10000);
-  });
+  // const snapShot = document.getElementById("snapshot");
+  // snapShot.addEventListener("click", () => {
+  //   console.log("snap");
+  //   const image = app.renderer.extract.image(starContainer);
+  //   console.log(image);
+  //   document.body.appendChild(image);
+  //   setTimeout(() => {
+  //     document.body.removeChild(image);
+  //   }, 10000);
+  // });
 
   for (const sector in universe.sectorGrid.sectors) {
     const { sectorGrid } = universe;
@@ -425,6 +432,7 @@ export default (universe) => {
   const hitAreaGraphics = new PIXI.Graphics();
   hitAreaGraphics.lineStyle(2, colors.pink, 0.0); //(thickness, color, alpha)
   // starContainer.addChild(hitAreaGraphics);
+  const empireCircles = [];
   for (const star of universe.stars) {
     const starSprite = star.createSprite();
     starSprite.cursor = "star";
@@ -457,6 +465,82 @@ export default (universe) => {
     starSprite.on("pointerdown", async (ev) => {
       ev.stopPropagation();
       const clickedStar = ev.target.star;
+
+      // add new circle to array
+      empireCircles.push(clickedStar.position);
+
+      // clear existing circles
+
+      empireGraphics.clear();
+      empireGraphics.lineStyle(1, colors.blue, 1); //(thickness, color)
+      // cycle through circle coordinates
+      empireCircles.forEach((empireCircle) => {
+        empireGraphics.beginFill(colors.blue, 0.25); //(thickness, color)
+        // draw a circle for each empire circle
+
+        // set fill and line style
+        // if the circle overlaps with another, draw arcs
+        const overlappingCircles = [];
+        for (let c = 0; c < empireCircles.length; c++) {
+          const circleDistance = getDistanceAndAngleBetweenTwoPoints(
+            { ...empireCircle },
+            { ...empireCircles[c] }
+          ).distance;
+          if (circleDistance < 140 && circleDistance > 0) {
+            const intersections = intersection(
+              empireCircle.x,
+              empireCircle.y,
+              70,
+              empireCircles[c].x,
+              empireCircles[c].y,
+              70
+            );
+            //first arc from origin circle
+            const deltaX1 = intersections[0] - empireCircle.x;
+            const deltaY1 = intersections[2] - empireCircle.y;
+            const rad1 = Math.atan2(deltaY1, deltaX1); // In radians
+
+            const deltaX2 = intersections[1] - empireCircle.x;
+            const deltaY2 = intersections[3] - empireCircle.y;
+            const rad2 = Math.atan2(deltaY2, deltaX2); // In radians
+
+            // empireGraphics.arc(empireCircle.x, empireCircle.y, 70, rad1, rad2);
+
+            const intersections2 = intersection(
+              empireCircles[c].x,
+              empireCircles[c].y,
+              70,
+              empireCircle.x,
+              empireCircle.y,
+              70
+            );
+
+            //second arc
+            const deltaX3 = intersections2[0] - empireCircles[c].x;
+            const deltaY3 = intersections2[2] - empireCircles[c].y;
+            const rad3 = Math.atan2(deltaY3, deltaX3); // In radians
+
+            const deltaX4 = intersections2[1] - empireCircles[c].x;
+            const deltaY4 = intersections2[3] - empireCircles[c].y;
+            const rad4 = Math.atan2(deltaY4, deltaX4); // In radians
+
+            // empireGraphics.arc(
+            //   empireCircles[c].x,
+            //   empireCircles[c].y,
+            //   70,
+            //   rad3,
+            //   rad4
+            // );
+            // } else {
+            // intersections
+            empireGraphics.drawCircle(intersections[0], intersections[2], 10);
+            empireGraphics.drawCircle(intersections[1], intersections[3], 10);
+          }
+        }
+        empireGraphics.drawCircle(empireCircle.x, empireCircle.y, 70);
+        empireAlpha.drawCircle(empireCircle.x, empireCircle.y, 69);
+        empireGraphics.endFill(); //(thickness, color)
+      });
       clickedStar.getInfo();
       // let apiStar;
       if (
@@ -519,32 +603,32 @@ export default (universe) => {
         x: clickedStar.position.x,
         y: clickedStar.position.y,
       };
-      if (selectedShip && selectedShip.status === "idle") {
-        const starsInRange = selectedShip.getStarsInRange(true, true);
-        const isInRange =
-          starsInRange.filter((star) => star.id === clickedStar.id).length > 0;
-        if (isInRange) {
-          selectedShip.plot(clickedStar);
-        } else {
-          errorPosition.origin = {
-            x: selectedShip.position.x,
-            y: selectedShip.position.y,
-          };
-          errorPosition.destination = {
-            x: selectedStar.x,
-            y: selectedStar.y,
-          };
-          errorTextText.innerText = "ERROR: DESTINATION OUT OF RANGE";
-          errorText.style.opacity = 1;
-          errorLine.clear();
-          errorLine.lineStyle(2, colors.pink, 1); //(thickness, color)
-          errorLine.moveTo(errorPosition.origin.x, errorPosition.origin.y);
-          errorLine.lineTo(
-            errorPosition.destination.x,
-            errorPosition.destination.y
-          );
-        }
-      }
+      // if (selectedShip && selectedShip.status === "idle") {
+      //   const starsInRange = selectedShip.getStarsInRange(true, true);
+      //   const isInRange =
+      //     starsInRange.filter((star) => star.id === clickedStar.id).length > 0;
+      //   if (isInRange) {
+      //     selectedShip.plot(clickedStar);
+      //   } else {
+      //     errorPosition.origin = {
+      //       x: selectedShip.position.x,
+      //       y: selectedShip.position.y,
+      //     };
+      //     errorPosition.destination = {
+      //       x: selectedStar.x,
+      //       y: selectedStar.y,
+      //     };
+      //     errorTextText.innerText = "ERROR: DESTINATION OUT OF RANGE";
+      //     errorText.style.opacity = 1;
+      //     errorLine.clear();
+      //     errorLine.lineStyle(2, colors.pink, 1); //(thickness, color)
+      //     errorLine.moveTo(errorPosition.origin.x, errorPosition.origin.y);
+      //     errorLine.lineTo(
+      //       errorPosition.destination.x,
+      //       errorPosition.destination.y
+      //     );
+      //   }
+      // }
     });
     starContainer.addChild(starSprite);
   }
@@ -638,7 +722,11 @@ export default (universe) => {
       ship.scanningGraphics.moveTo(x, y);
       ship.scanningGraphics.lineTo(star.position.x, star.position.y);
       ship.scanningGraphics.lineStyle(1, colors.white, 1);
-      ship.scanningGraphics.drawCircle(star.position.x, star.position.y, 15);
+      ship.scanningGraphics.drawCircle(
+        star.position.x,
+        star.position.y,
+        star.size
+      );
     }
     ship.scanning = false;
   }
@@ -767,7 +855,6 @@ export default (universe) => {
         ship.update();
       }
       if (ship.scanning) {
-        console.log("scan!");
         drawingScanningCircle(
           // ship.scanCoordinates.x,
           // ship.scanCoordinates.y,

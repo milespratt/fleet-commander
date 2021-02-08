@@ -113,13 +113,13 @@ export default () => {
         //     // destination,
         //   },
         // ];
-        // const shipList = shipNames.map((name, i) => {
-        const shipList = new Array(1000).fill(undefined).map((e, i) => {
+        const shipList = shipNames.map((name, i) => {
+          // const shipList = new Array(1000).fill(undefined).map((e, i) => {
           const shipOrigin = newUniverse.getRandomStar();
           // console.log("Ship");
           return {
-            name: `Ship-${i + 1}`,
-            // name,
+            // name: `Ship-${i + 1}`,
+            name,
             range: 300,
             speed: (lightSpeed / lightYear) * 100000000,
             x: shipOrigin.position.x,
