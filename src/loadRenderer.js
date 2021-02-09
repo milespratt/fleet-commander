@@ -1,6 +1,6 @@
 // RENDERING
 import * as PIXI from "pixi.js";
-import { AdvancedBloomFilter, GlowFilter } from "pixi-filters";
+import { AdvancedBloomFilter, GlowFilter, OutlineFilter } from "pixi-filters";
 import { createApp, createViewport } from "./engine";
 import Stats from "stats.js";
 import ringPNG from "./assets/images/star-selection-ring.png";
@@ -31,7 +31,7 @@ import {
   getDistanceAndAngleBetweenTwoPoints,
   randomIntFromInterval,
   intersection,
-  // getStarsInSectors,
+  getRandomArrayElement,
 } from "./helpers";
 import { startCulling } from "./engine/culler";
 
@@ -144,41 +144,26 @@ export default (universe) => {
 
   // add containers to viewports
   app.viewport.addChild(errorContainer);
-  app.viewport.addChild(gridContainer);
   app.viewport.addChild(empireContainer);
   const empireGraphics = new PIXI.Graphics();
-  const empireAlpha = new PIXI.Graphics();
+
+  // const empireLines = new PIXI.Graphics();
+  empireContainer.filters = [new PIXI.filters.AlphaFilter(0.2)];
+  // empireContainer.addChild(empireLines);
   empireContainer.addChild(empireGraphics);
-  empireContainer.addChild(empireAlpha);
-  empireAlpha.filters = [new PIXI.filters.AlphaFilter(1)];
+
   app.viewport.addChild(voyageContainer);
   app.viewport.addChild(starContainer);
   app.viewport.addChild(lineContainer);
   app.viewport.addChild(shipContainer);
   app.viewport.addChild(indicatorContainer);
   app.viewport.addChild(selectionContainer);
+  app.viewport.addChild(gridContainer);
   app.viewport.addChild(textContainer);
   // localApp.viewport.addChild(localMapContainer);
 
   // GRIDS
   const gridLines = new PIXI.Graphics();
-  // gridContainer.filters = [
-  //   // new GlowFilter({
-  //   //   quality: 1,
-  //   //   color: colors.blueGlow,
-  //   //   distance: 10,
-  //   //   outerStrength: 1,
-  //   // }),
-  //   new AdvancedBloomFilter({
-  //     threshold: 0.5,
-  //     bloomScale: 0.5,
-  //     brightness: 1,
-  //     blur: 20,
-  //     quality: 4,
-  //     pixelSize: 0.1,
-  //     // resolution: 4
-  //   }),
-  // ];
   gridContainer.addChild(gridLines);
   gridLines.lineStyle(1, colors.blue, 1); //(thickness, color)
   for (
@@ -467,80 +452,87 @@ export default (universe) => {
       const clickedStar = ev.target.star;
 
       // add new circle to array
-      empireCircles.push(clickedStar.position);
+      // empireCircles.push(clickedStar.position);
 
       // clear existing circles
-
-      empireGraphics.clear();
-      empireGraphics.lineStyle(1, colors.blue, 1); //(thickness, color)
+      // empireGraphics.clear();
+      // empireLines.lineStyle(4, colors.white, 1); //(thickness, color)
       // cycle through circle coordinates
-      empireCircles.forEach((empireCircle) => {
-        empireGraphics.beginFill(colors.blue, 0.25); //(thickness, color)
-        // draw a circle for each empire circle
+      // empireCircles.forEach((empireCircle) => {
+      empireGraphics.beginFill(colors.green, 1); //(thickness, color)
+      // draw a circle for each empire circle
 
-        // set fill and line style
-        // if the circle overlaps with another, draw arcs
-        const overlappingCircles = [];
-        for (let c = 0; c < empireCircles.length; c++) {
-          const circleDistance = getDistanceAndAngleBetweenTwoPoints(
-            { ...empireCircle },
-            { ...empireCircles[c] }
-          ).distance;
-          if (circleDistance < 140 && circleDistance > 0) {
-            const intersections = intersection(
-              empireCircle.x,
-              empireCircle.y,
-              70,
-              empireCircles[c].x,
-              empireCircles[c].y,
-              70
-            );
-            //first arc from origin circle
-            const deltaX1 = intersections[0] - empireCircle.x;
-            const deltaY1 = intersections[2] - empireCircle.y;
-            const rad1 = Math.atan2(deltaY1, deltaX1); // In radians
+      // set fill and line style
+      // if the circle overlaps with another, draw arcs
+      //         const overlappingCircles = [];
+      //         for (let c = 0; c < empireCircles.length; c++) {
+      //           const circleDistance = getDistanceAndAngleBetweenTwoPoints(
+      //             { ...empireCircle },
+      //             { ...empireCircles[c] }
+      //           ).distance;
+      //           if (circleDistance < 140 && circleDistance > 0) {
+      //             const intersections = intersection(
+      //               empireCircle.x,
+      //               empireCircle.y,
+      //               70,
+      //               empireCircles[c].x,
+      //               empireCircles[c].y,
+      //               70
+      //             );
+      //             //first arc from origin circle
+      //             const deltaX1 = intersections[0] - empireCircle.x;
+      //             const deltaY1 = intersections[2] - empireCircle.y;
+      //             const rad1 = Math.atan2(deltaY1, deltaX1); // In radians
+      //
+      //             const deltaX2 = intersections[1] - empireCircle.x;
+      //             const deltaY2 = intersections[3] - empireCircle.y;
+      //             const rad2 = Math.atan2(deltaY2, deltaX2); // In radians
+      //
+      //             // empireGraphics.arc(empireCircle.x, empireCircle.y, 70, rad1, rad2);
+      //
+      //             const intersections2 = intersection(
+      //               empireCircles[c].x,
+      //               empireCircles[c].y,
+      //               70,
+      //               empireCircle.x,
+      //               empireCircle.y,
+      //               70
+      //             );
+      //
+      //             //second arc
+      //             const deltaX3 = intersections2[0] - empireCircles[c].x;
+      //             const deltaY3 = intersections2[2] - empireCircles[c].y;
+      //             const rad3 = Math.atan2(deltaY3, deltaX3); // In radians
+      //
+      //             const deltaX4 = intersections2[1] - empireCircles[c].x;
+      //             const deltaY4 = intersections2[3] - empireCircles[c].y;
+      //             const rad4 = Math.atan2(deltaY4, deltaX4); // In radians
 
-            const deltaX2 = intersections[1] - empireCircle.x;
-            const deltaY2 = intersections[3] - empireCircle.y;
-            const rad2 = Math.atan2(deltaY2, deltaX2); // In radians
-
-            // empireGraphics.arc(empireCircle.x, empireCircle.y, 70, rad1, rad2);
-
-            const intersections2 = intersection(
-              empireCircles[c].x,
-              empireCircles[c].y,
-              70,
-              empireCircle.x,
-              empireCircle.y,
-              70
-            );
-
-            //second arc
-            const deltaX3 = intersections2[0] - empireCircles[c].x;
-            const deltaY3 = intersections2[2] - empireCircles[c].y;
-            const rad3 = Math.atan2(deltaY3, deltaX3); // In radians
-
-            const deltaX4 = intersections2[1] - empireCircles[c].x;
-            const deltaY4 = intersections2[3] - empireCircles[c].y;
-            const rad4 = Math.atan2(deltaY4, deltaX4); // In radians
-
-            // empireGraphics.arc(
-            //   empireCircles[c].x,
-            //   empireCircles[c].y,
-            //   70,
-            //   rad3,
-            //   rad4
-            // );
-            // } else {
-            // intersections
-            empireGraphics.drawCircle(intersections[0], intersections[2], 10);
-            empireGraphics.drawCircle(intersections[1], intersections[3], 10);
-          }
-        }
-        empireGraphics.drawCircle(empireCircle.x, empireCircle.y, 70);
-        empireAlpha.drawCircle(empireCircle.x, empireCircle.y, 69);
-        empireGraphics.endFill(); //(thickness, color)
-      });
+      // empireGraphics.arc(
+      //   empireCircles[c].x,
+      //   empireCircles[c].y,
+      //   70,
+      //   rad3,
+      //   rad4
+      // );
+      // } else {
+      // intersections
+      // empireGraphics.drawCircle(intersections[0], intersections[2], 10);
+      // empireGraphics.drawCircle(intersections[1], intersections[3], 10);
+      //   }
+      // }
+      // empireLines.drawCircle(
+      //   clickedStar.position.x,
+      //   clickedStar.position.y,
+      //   100
+      // );
+      empireGraphics.drawCircle(
+        clickedStar.position.x,
+        clickedStar.position.y,
+        70
+      );
+      empireGraphics.endFill(); //(thickness, color)
+      // });
       clickedStar.getInfo();
       // let apiStar;
       if (

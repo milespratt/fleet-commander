@@ -8,6 +8,7 @@ export const colors = {
   pink: 0xf7567c,
   yellow: 0xf9e784,
   white: 0xffffff,
+  green: 0x2ad15c,
 };
 export const baseAPIurl =
   process.env.NODE_ENV === "dev"
@@ -22,7 +23,7 @@ export const au = 149597870700; // 1 astronomical unit in meters 1AU
 // numbers below in pixels
 // export const worldWidth = 50000; // divide by 100 for light years
 // export const worldHeight = 50000; // divide by 100 for light years
-export const worldSize = 50000;
+export const worldSize = 10000;
 // export const screenWidth = window.innerWidth;
 // export const screenHeight = window.innerHeight;
 const viewContainer = document.getElementById("view");
@@ -42,7 +43,7 @@ export const textResolution = 2;
 // universe
 export const generationParameters = {
   maxExtraGenerationLoops: 1000000,
-  maxStars: 50000, // 50,000
+  maxStars: 10000, // 50,000
   maxGenTime: 1000 * 10, // milliseconds base
   edgeDistance: 100, // pixels from edge
   // 100 pixels per light year
