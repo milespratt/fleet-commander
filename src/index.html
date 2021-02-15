@@ -59,9 +59,9 @@
       RECENTER
     </button>
 
-    <!-- <button class="control bordered blue__glow padded" id="snapshot">
+    <button class="control bordered blue__glow padded" id="snapshot">
       SNAPSHOT
-    </button> -->
+    </button>
     <div id="toggles" class="toggles grid grid--c">
       <!-- WILL BE FILLED WITH CONTROLS PROGRAMMATICALLY -->
     </div>
@@ -390,11 +390,7 @@
           <p class="blue__glow window__message">PLANET INFORMATION OFFLINE</p>
         </div> -->
 
-      <div
-        style="display: none"
-        id="ship-window"
-        class="window grid grid--r bordered draggable"
-      >
+      <div id="ship-window" class="window grid grid--r bordered draggable">
         <div
           class="window__title__bar grid grid--c grid--c--split grid--c--split--3"
         >
@@ -409,7 +405,8 @@
             <i class="control__icon control__icon--small far fa-bars"></i>
           </button>
         </div>
-        <div class="control__grid grid">
+        <div id="shipControls" class="hidden control__grid grid">
+          <!-- <form class="form form--fluid padded"> -->
           <button id="scan" class="control bordered padded blue__glow">
             SCAN
           </button>
@@ -423,9 +420,24 @@
           <button id="launch" class="control bordered blue__glow padded">
             LAUNCH
           </button>
+          <button id="mine" class="control bordered blue__glow padded">
+            MINE
+          </button>
           <button id="deselect" class="control bordered blue__glow padded">
             DESELECT SHIP
           </button>
+          <label class="blue__glow checkmark__container" for="ship_autopilot"
+            >AUTOPILOT
+            <input id="ship_autopilot" name="ship_autopilot" type="checkbox" />
+            <span class="checkmark bordered"></span>
+          </label>
+          <button
+            id="centerShip"
+            class="control pic__control bordered-- padded blue__glow"
+          >
+            <i class="control__icon fal fa-location"></i>
+          </button>
+          <!-- </form> -->
         </div>
       </div>
 

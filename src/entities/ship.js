@@ -22,16 +22,11 @@ import {
 // TEXTURE
 const shipTexture = PIXI.Texture.from(shipPNG);
 
-const statuses = {
-  idle: "idle",
-  travelling: "travelling",
-  accelerating: "accelerating",
-  decelerating: "decelerating",
-  spooling: "spooling",
-};
+import { statuses } from "../config";
 
 class Ship {
   constructor(name, id, range, x, y, origin, destination, universe) {
+    this.autopilot = false;
     this.universe = universe;
     this.lastUpdate = Date.now();
     this.scanning = false;
@@ -51,14 +46,13 @@ class Ship {
     // this.acceleration = 0; // 1m/s
     // this.maxAcceleration = (lightSpeed / lightYear) * 1; // 100% the speed of light
     // this.maxAcceleration = (lightSpeed / lightYear) * (1000000000 / lightSpeed); // 1000000000m/s
-
     // SPEED
     this.speed = 0;
     // this.speed = (lightSpeed / lightYear) * (447040 / lightSpeed); // 447040m/s
     this.maxSpeed = (lightSpeed / lightYear) * 10000000; // 80% the speed of light
     // this.maxSpeed = (lightSpeed / lightYear) * (447040 / lightSpeed); // 447040m/s
     this.warpSpeed = (lightSpeed / lightYear) * 1;
-
+    this.location = origin;
     this.position = { x, y };
     this.sprite = null;
     this.shipNameText = null;
@@ -73,6 +67,14 @@ class Ship {
       this.origin.position.x > this.destination.position.x ? "west" : "east";
     this.directionY =
       this.origin.position.y > this.destination.position.y ? "north" : "south";
+  }
+  engageAutopilot() {
+    this.autopilot = true;
+    this.scanLaunch();
+    this.scanningGraphics.clear();
+  }
+  disengageAutopilot() {
+    this.autopilot = false;
   }
   timeStamp() {
     this.lastUpdate = Date.now();
@@ -245,23 +247,8 @@ class Ship {
       newCoordinates.directionY === this.directionY
     );
   }
-  arrive() {
-    this.status = statuses.idle;
-    this.speed = 0;
-    this.acceleration = 0;
-    this.distanceToDestination = 0;
-    const { x, y } = this.destination.position;
-    this.origin = this.destination;
-    const newPlot = {
-      posX: x,
-      posY: y,
-      directionX: this.directionX,
-      directionY: this.directionY,
-      distance: this.distanceToDestination,
-    };
-    this.updatePosition(newPlot);
-    this.voyageGraphics.clear();
-    // AUTO MOVE
+
+  scanLaunch() {
     setTimeout(
       () => {
         this.scan();
@@ -272,6 +259,28 @@ class Ship {
       1000,
       5000
     );
+  }
+  arrive() {
+    this.status = statuses.idle;
+    this.speed = 0;
+    this.acceleration = 0;
+    this.distanceToDestination = 0;
+    const { x, y } = this.destination.position;
+    this.origin = this.destination;
+    this.location = this.destination;
+    const newPlot = {
+      posX: x,
+      posY: y,
+      directionX: this.directionX,
+      directionY: this.directionY,
+      distance: this.distanceToDestination,
+    };
+    this.updatePosition(newPlot);
+    this.voyageGraphics.clear();
+    // AUTOPILOT
+    if (this.autopilot) {
+      this.scanLaunch();
+    }
   }
   drawVoyageGraphics() {
     this.voyageGraphics.clear();
@@ -306,9 +315,11 @@ class Ship {
       this.directionX = directionX;
       this.directionY = directionY;
       // AUTO MOVE
-      setTimeout(() => {
-        this.launch();
-      }, randomIntFromInterval(2000, 5000));
+      if (this.autopilot) {
+        setTimeout(() => {
+          this.launch();
+        }, randomIntFromInterval(2000, 5000));
+      }
     } else {
       console.log("No Destination!");
     }
@@ -321,6 +332,9 @@ class Ship {
       this.scanningGraphics.clear();
       this.status = statuses.travelling;
       this.speed = this.maxSpeed;
+      this.location = null;
+    } else {
+      console.log(`Cannot launch in current status: ${this.status}`);
     }
   }
   getDelta() {
@@ -345,18 +359,6 @@ class Ship {
         this.arrive(this.destination);
       }
     }
-  }
-  update() {
-    if (this.status === statuses.travelling) {
-      this.move();
-    }
-    if (this.destination) {
-      this.drawVoyageGraphics();
-    }
-    // if (this.scanning) {
-    //   this.scan();
-    // }
-    this.timeStamp();
   }
 }
 

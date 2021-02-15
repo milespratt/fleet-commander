@@ -1,4 +1,4 @@
-// renderer and viewport
+// VARIABLES
 export const colors = {
   blue: 0xe670ffe9,
   blueGlow: 0x0070ffe9,
@@ -10,36 +10,27 @@ export const colors = {
   white: 0xffffff,
   green: 0x2ad15c,
 };
+
+export const statuses = {
+  idle: "idle",
+  travelling: "travelling",
+  accelerating: "accelerating",
+  decelerating: "decelerating",
+  spooling: "spooling",
+  mining: "mining",
+};
+
+export const textResolution = 2;
+export const calculationMultiplier = 16.6666666666666666666666666666666666666667;
+export const lightYear = 9460730472580800; // meters per light year
+export const lightSpeed = 299792458; // meters per second
+export const pixelsPerLightyear = 100;
+export const au = 149597870700; // 1 astronomical unit in meters 1AU
 export const baseAPIurl =
   process.env.NODE_ENV === "dev"
     ? "http://192.168.1.30"
     : "https://api.fltcmdr.com";
-export const pixelsPerLightyear = 100;
-export const lightYear = 9460730472580800; // meters per light year
-export const lightSpeed = 299792458; // meters per second
-export const calculationMultiplier = 16.6666666666666666666666666666666666666667;
-export const au = 149597870700; // 1 astronomical unit in meters 1AU
-// 100 pixels per light year
-// numbers below in pixels
-// export const worldWidth = 50000; // divide by 100 for light years
-// export const worldHeight = 50000; // divide by 100 for light years
 export const worldSize = 10000;
-// export const screenWidth = window.innerWidth;
-// export const screenHeight = window.innerHeight;
-const viewContainer = document.getElementById("view");
-const viewContainerBounds = viewContainer.getBoundingClientRect();
-export const screenWidth = viewContainerBounds.width;
-export const screenHeight = viewContainerBounds.height;
-export const viewportClamps = {
-  minWidth: screenWidth / 2, // zoom in
-  minHeight: screenHeight / 2, // zoom in
-  // maxWidth: screenWidth > screenHeight ? 1000000000000 : worldHeight * 1, // zoom out
-  // maxHeight: screenHeight > screenWidth ? 1000000000000 : worldWidth * 1 // zoom out
-  maxWidth: screenWidth * 2.5, // zoom out
-  maxHeight: screenWidth * 2.5, // zoom out
-};
-export const textResolution = 2;
-
 // universe
 export const generationParameters = {
   maxExtraGenerationLoops: 1000000,
@@ -53,6 +44,21 @@ export const generationParameters = {
   radial: false,
 };
 
+// VIEWPORT
+const viewContainer = document.getElementById("view");
+const viewContainerBounds = viewContainer.getBoundingClientRect();
+export const screenWidth = viewContainerBounds.width;
+export const screenHeight = viewContainerBounds.height;
+export const viewportClamps = {
+  minWidth: screenWidth / 2, // zoom in
+  minHeight: screenHeight / 2, // zoom in
+  // maxWidth: screenWidth > screenHeight ? 1000000000000 : worldHeight * 1, // zoom out
+  // maxHeight: screenHeight > screenWidth ? 1000000000000 : worldWidth * 1 // zoom out
+  maxWidth: screenWidth * 2.5, // zoom out
+  maxHeight: screenWidth * 2.5, // zoom out
+};
+
+// SHIPS
 export const shipTypes = [
   "BC",
   "BS",

@@ -15,6 +15,10 @@
   transform: translate(10000px);
 }
 
+.hidden * {
+  pointer-events: none;
+}
+
 .faded {
   opacity: 0 !important;
   pointer-events: none !important;

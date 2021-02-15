@@ -11,7 +11,6 @@ export default () => {
 
   function adjustPostion(event) {
     if (event.clientX <= 0 || event.clientY <= 0) {
-      console.log("skipped");
       return;
     }
     // var elm = event.target;
@@ -44,7 +43,6 @@ export default () => {
       event.stopPropagation();
 
       if (isDraggable(event.target)) {
-        // console.log("+++++++++++++ dragstart");
         dragging = event.target;
 
         const windowElementStyle = window.getComputedStyle(event.target);
@@ -78,18 +76,13 @@ export default () => {
     });
     window.addEventListener("pointermove", function (event) {
       event.stopPropagation();
-      // if (isDraggable(event.target)) {
       if (dragging) {
-        // console.log("+++++++++++++ drag");
-
         adjustPostion(event);
       }
-      // }
     });
     window.addEventListener("pointerup", function (event) {
       event.stopPropagation();
       if (dragging) {
-        // console.log("+++++++++++++ dragend");
         dragging.style.cursor = "grab";
         dragging.classList.remove("bordered--white");
         reset();

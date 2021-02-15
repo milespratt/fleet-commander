@@ -11,7 +11,7 @@ const controls = {
         // },
         // { name: "Star", windowID: "star-window", icon: "fa-sun" },
         // { name: "Planet", windowID: "planet-window", icon: "fa-planet-moon" },
-        // { name: "Ship", windowID: "ship-window", icon: "fa-starfighter" },
+        { name: "Ship", windowID: "ship-window", icon: "fa-starfighter" },
         { name: "World", windowID: "generation-window", icon: "fa-cogs" },
         // { name: "Audio", windowID: "audio-window", icon: "fa-waveform-path" },
         // {

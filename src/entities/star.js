@@ -1,5 +1,6 @@
 // PIXI
 import * as PIXI from "pixi.js";
+import AstronomicalObject from "./astronomicalObject";
 import {
   generateStarName,
   getID,
@@ -10,9 +11,12 @@ import {
   getStarRadius,
   getStarMass,
   getStarAge,
+  getDistanceAndAngleBetweenTwoPoints,
 } from "../helpers";
 
 import { colors } from "../config";
+
+import Interaction from "../engine/interaction";
 
 // ASSETS
 import starPNG from "../assets/images/star-indicator-large.png";
@@ -20,12 +24,13 @@ import starPNG from "../assets/images/star-indicator-large.png";
 // TEXTURE
 const starTexture = PIXI.Texture.from(starPNG);
 
-class Star {
-  constructor(x, y, name, id, sector, starClass) {
-    this.id = id;
-    this.name = name;
+class Star extends AstronomicalObject {
+  constructor(x, y, name, id, sector, starClass, universe) {
+    super(name, id, universe, sector, { hydrogen: 1000000000 });
+    // this.id = id;
+    // this.name = name;
     this.position = { x, y };
-    this.sector = sector;
+    // this.sector = sector;
     this.sprite = null;
     this.class = getClass(starClass);
     this.type = getType();
@@ -34,6 +39,26 @@ class Star {
     this.radius = getStarRadius(this.size);
     this.mass = getStarMass(this.size);
     this.age = getStarAge(this.class);
+    // this.universe = universe;
+    this.range = 300;
+    this.select = this.select.bind(this);
+    this.hover = this.hover.bind(this);
+    this.blur = this.blur.bind(this);
+    this.interaction = new Interaction(
+      this,
+      this.select,
+      this.hover,
+      this.blur
+    );
+  }
+  select() {
+    this.universe.setSelectedStar(this);
+  }
+  hover() {
+    this.universe.setHoveredStar(this);
+  }
+  blur() {
+    this.universe.setHoveredStar();
   }
   getInfo() {
     console.log("");
@@ -42,7 +67,7 @@ class Star {
     console.log(`Name: ${this.name}`);
     console.log(`Position: ${this.position.x}x ${this.position.y}y`);
     console.log(`Sector: ${this.sector}`);
-    // console.log(`Type: ${this.type}`);
+    console.log(`Type: ${this.type}`);
     console.log(`Class: ${this.class}`);
     console.log(`Temp: ${this.temp.toLocaleString()}K`);
     console.log(`Solar Radius: ${this.size} R`);
@@ -69,27 +94,68 @@ class Star {
 
     const hitAreaSize = 50 * (baseTextureSize / this.size) + this.size; // pixels. 30 is the base texture size. 50 is the desired hit area size.
     this.hitAreaSize = hitAreaSize;
-    // console.log(this.size, hitAreaSize);
-    // console.log(hitAreaSize);
-    // console.log(hitAreaSize * (this.size / 30));
-    // console.log(this.size);
-    // const hitAreaScalePercentage = this.size * (hitAreaSize / this.size);
-    // const hitAreaCoordinates = [
-    //   0, // x
-    //   0, // y
-    //   hitAreaSize, // radius
-    // ];
-    // this.hitAreaCoordinates = hitAreaCoordinates;
-    // this.sprite.hitArea = new PIXI.Circle(0, 0, hitAreaSize / 2);
     this.sprite.hitArea = new PIXI.Rectangle(
       0 - hitAreaSize / 2,
       0 - hitAreaSize / 2,
       hitAreaSize,
       hitAreaSize
     );
-    // console.log(this.sprite.hitArea);
+
+    // add star event handlers
+    this.sprite.on("mouseover", () => {
+      this.interaction.hover();
+    });
+    this.sprite.on("mouseout", () => {
+      this.interaction.blur();
+    });
 
     return this.sprite;
+  }
+  getStarsInRange(includeOrigin = false, includeDestination = false) {
+    const sectorScan = this.range / this.universe.sectorGrid.delimiter;
+    const sectorDistance = Math.ceil(sectorScan);
+    const limitSector = this.universe.getGridSector(
+      this.position.x,
+      this.position.y
+    );
+    const adjacentSectors = this.universe.getAdjacentSectors(limitSector, true);
+    for (let s = 1; s < sectorDistance; s++) {
+      adjacentSectors.forEach((adjacentSector) => {
+        this.universe
+          .getAdjacentSectors(adjacentSector)
+          .forEach((loopedSector) => {
+            if (!adjacentSectors.includes(loopedSector)) {
+              adjacentSectors.push(loopedSector);
+            }
+          });
+      });
+    }
+
+    const limitedStars = this.universe.getStarsFromSectorArray(adjacentSectors);
+
+    // const limitedStars = this.universe.getStarsInThisAndAdjacentSectors(
+    //   this.position.x,
+    //   this.position.y
+    // );
+    const starsInRange = limitedStars.filter((limitStar) => {
+      const starDistance = getDistanceAndAngleBetweenTwoPoints(
+        { x: limitStar.position.x, y: limitStar.position.y },
+        this.position
+      ).distance;
+      return starDistance <= this.range;
+    });
+    // if (includeOrigin && includeDestination) {
+    //   return starsInRange;
+    // } else if (!includeOrigin && !includeDestination) {
+    //   return starsInRange.filter(
+    //     (star) => star.id !== this.origin.id && star.id !== this.destination.id
+    //   );
+    // } else if (includeOrigin && !includeDestination) {
+    //   return starsInRange.filter((star) => star.id !== this.destination.id);
+    // } else if (!includeOrigin && includeDestination) {
+    //   return starsInRange.filter((star) => star.id !== this.origin.id);
+    // }
+    return starsInRange;
   }
 }
 

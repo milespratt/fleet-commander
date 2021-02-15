@@ -1,3 +1,5 @@
+import * as PIXI from "pixi.js";
+
 import {
   randomIntFromInterval,
   getDistanceAndAngleBetweenTwoPoints,
@@ -6,10 +8,36 @@ import {
   randomFloatFromInterval,
 } from "../helpers";
 
+import { colors } from "../config";
+
 import Star from "./star";
+
+import ringPNG from "../assets/images/star-selection-ring.png";
+import hoverRingPNG from "../assets/images/star-hover-ring.png";
+
+const hoverRingTexture = PIXI.Texture.from(hoverRingPNG);
+const hoverRingSprite = new PIXI.Sprite(hoverRingTexture);
+hoverRingSprite.anchor.set(0.5);
+hoverRingSprite.height = 50;
+hoverRingSprite.interactive = false;
+hoverRingSprite.tint = colors.yellow;
+hoverRingSprite.visible = false;
+hoverRingSprite.width = 50;
+
+// create star selection ring sprite
+const selectionRingTexture = PIXI.Texture.from(ringPNG);
+const selectionRingSprite = new PIXI.Sprite(selectionRingTexture);
+selectionRingSprite.anchor.set(0.5);
+selectionRingSprite.height = 30;
+selectionRingSprite.interactive = false;
+selectionRingSprite.tint = colors.yellow;
+selectionRingSprite.visible = false;
+selectionRingSprite.width = 30;
 
 class Universe {
   constructor() {
+    this.selectionRingSprite = selectionRingSprite;
+    this.hoverRingSprite = hoverRingSprite;
     this.starCoordinates = [];
     this.stars = [];
     this.sectorGrid = {};
@@ -26,6 +54,50 @@ class Universe {
       M: { count: 0, type: "M" },
     };
     this.biggestStar = 0;
+    this.selectedStar = null;
+    this.hoveredStar = null;
+  }
+  checkStarEqual(star1, star2) {
+    return star1.id === star2.id;
+  }
+  showSelectionRing(coordinates, size) {
+    this.selectionRingSprite.visible = true;
+    this.selectionRingSprite.height = size - 14;
+    this.selectionRingSprite.width = size - 14;
+    this.selectionRingSprite.position.set(coordinates.x, coordinates.y);
+  }
+
+  showHoverRing(coordinates, size) {
+    this.hoverRingSprite.visible = true;
+    this.hoverRingSprite.height = size - 14;
+    this.hoverRingSprite.width = size - 14;
+    this.hoverRingSprite.position.set(coordinates.x, coordinates.y);
+  }
+  setSelectedStar(star) {
+    if (!this.selectedStar || !this.checkStarEqual(star, this.selectedStar)) {
+      this.selectedStar = star;
+      const hitAreaSize = star.hitAreaSize * (star.size / 72);
+      this.showSelectionRing(
+        { x: star.position.x, y: star.position.y },
+        hitAreaSize
+      );
+    }
+  }
+  setHoveredStar(star) {
+    if (!star) {
+      this.hoveredStar = null;
+      this.hoverRingSprite.visible = false;
+    } else if (
+      !this.hoveredStar ||
+      !this.checkStarEqual(star, this.hoveredStar)
+    ) {
+      this.hoveredStar = star;
+      const hitAreaSize = star.hitAreaSize * (star.size / 72);
+      this.showHoverRing(
+        { x: star.position.x, y: star.position.y },
+        hitAreaSize
+      );
+    }
   }
   // return sector grid row from y coordinate
   getGridRow(y) {
@@ -405,7 +477,8 @@ class Universe {
           newStarCoordinate.name,
           newStarCoordinate._id || newStarCoordinate.name,
           newStarCoordinate.sector,
-          type
+          type,
+          this
         );
         this.biggestStar =
           newStar.size > this.biggestStar ? newStar.size : this.biggestStar;
@@ -452,7 +525,7 @@ class Universe {
     console.log(
       `Max of ${proximityMax.toLocaleString()} calculations per star coordinate reached to verify minimum distance of ${minimumStarDistance.toLocaleString()}`
     );
-    console.log(this);
+
     console.log(``);
   }
 }

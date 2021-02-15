@@ -17,6 +17,16 @@ if (storedGenerationParameters) {
   generationParameters.radial = parsedGenerationParameters.radial;
 }
 
+function snapTo(viewport, scaleX, position) {
+  viewport.animate({
+    time: 500 / scaleX,
+    position: { x: position.x, y: position.y },
+    scale: 1,
+    removeOnInterrupt: true,
+    ease: "easeInOutCubic",
+  });
+}
+
 // create viewport
 export function createViewport(app, options, clamps) {
   const viewportOptions = options || {
@@ -52,6 +62,8 @@ export function createViewport(app, options, clamps) {
 
   // add viewport to app stage
   app.stage.addChild(newViewport);
+
+  newViewport.snapTo = snapTo;
 
   // return viewport
   return newViewport;
