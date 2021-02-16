@@ -6,16 +6,19 @@ import { io } from "socket.io-client";
 import loadData from "./loadData";
 import loadRenderer from "./loadRenderer";
 import fontLoader from "./fontLoader";
-import windows from "./windows";
+import loadWindows from "./loadWindows";
 import loadControls from "./loadControls";
 // import loadAudio from "./audio";
+import profileApp from "./user";
 
 async function init() {
-  const universe = await loadData();
   await fontLoader();
-  windows();
-  // loadAudio();
+  await profileApp();
+
+  const universe = await loadData();
+  loadWindows();
   loadControls();
+  // loadAudio();
   loadRenderer(universe);
 }
 

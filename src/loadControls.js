@@ -138,4 +138,5 @@ export default () => {
       domControl.classList.remove("control--active");
     });
   });
+  toggleContainer.classList.remove("hidden");
 };

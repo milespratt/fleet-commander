@@ -124,7 +124,6 @@
 }
 
 .data__form {
-  
 }
 
 .data__form__data {
@@ -248,5 +247,20 @@
   justify-self: center;
   text-transform: uppercase;
   margin-top: 10px;
+  margin-bottom: 5px;
   text-align: center;
+}
+
+#authContainer {
+  width: 250px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+canvas {
+  position: absolute;
+  top: 2px;
+  left: 2px;
 }

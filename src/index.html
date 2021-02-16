@@ -50,23 +50,33 @@
     <title>Fleet Commander</title>
   </head>
   <body>
-    <button class="control bordered blue__glow padded" id="grid_toggle">
+    <button
+      style="opacity: 0"
+      class="debug hidden control bordered blue__glow padded"
+      id="grid_toggle"
+    >
       TOGGLE GRID
     </button>
-    grid_center
 
-    <button class="control bordered blue__glow padded" id="grid_center">
+    <button
+      style="opacity: 0"
+      class="debug hidden control bordered blue__glow padded"
+      id="grid_center"
+    >
       RECENTER
     </button>
 
-    <button class="control bordered blue__glow padded" id="snapshot">
+    <button
+      class="debug control bordered blue__glow padded hidden"
+      id="snapshot"
+    >
       SNAPSHOT
     </button>
-    <div id="toggles" class="toggles grid grid--c">
+    <div id="toggles" class="toggles grid grid--c hidden">
       <!-- WILL BE FILLED WITH CONTROLS PROGRAMMATICALLY -->
     </div>
 
-    <div id="windows" class="padded--">
+    <div id="windows" class="padded-- hidden">
       <!-- SHOULD BE FILLED WITH WINDOWS PROGRAMMATICALLY -->
       <!-- <div
         id="chat-window"
@@ -107,7 +117,6 @@
       </div> -->
 
       <div
-        style="position: fixed; top: 20px; left: 20px"
         id="generation-window"
         class="window grid grid--r bordered draggable"
       >
@@ -552,12 +561,56 @@
       </div>-->
     </div>
 
-    <div id="view" class="">
-      <div id="loading_text" class="pulse">
+    <div id="view" class="bordered">
+      <div id="authContainer">
+        <form
+          v-on:submit="signIn"
+          class="form form--fluid padded"
+          id="signInForm"
+          v-if="!user && !loading"
+        >
+          <input
+            class="input input--center bordered blue"
+            id="signInUsername"
+            type="text"
+            autocomplete="off"
+            placeholder="CALL SIGN"
+            v-model="username"
+            v-on:keydown="clearError"
+          />
+          <input
+            class="input input--center bordered blue"
+            id="signInPassword"
+            type="password"
+            placeholder="PASSWORD"
+            v-model="password"
+            v-on:keydown="clearError"
+          />
+          <button class="control bordered blue__glow padded">
+            AUTHENTICATE
+          </button>
+          <span id="formError" v-if="error" class="form__error red__glow"
+            >{{error}}</span
+          >
+        </form>
+        <div class="sk-folding-cube" v-if="loading">
+          <div class="sk-cube1 sk-cube"></div>
+          <div class="sk-cube2 sk-cube"></div>
+          <div class="sk-cube4 sk-cube"></div>
+          <div class="sk-cube3 sk-cube"></div>
+        </div>
+      </div>
+      <div id="loading_text" class="pulse hidden">
         <span>LOADING</span>
       </div>
       <div id="error_text">
         <span id="error_text_text" class="red__glow"></span>
+      </div>
+    </div>
+    <div id="about">
+      <span class="blue__glow about__logo">FLEET COMMANDER</span>
+      <div class="about__links">
+        <a href="#" class="blue__glow link">ABOUT</a>
       </div>
     </div>
     <script src="./init.js"></script>

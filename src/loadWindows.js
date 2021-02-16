@@ -1,4 +1,5 @@
 export default () => {
+  const windowContainer = document.getElementById("windows");
   const windows = document.querySelectorAll(".window");
   let dragging = false;
   const config = {
@@ -91,4 +92,5 @@ export default () => {
       }
     });
   });
+  windowContainer.classList.remove("hidden");
 };

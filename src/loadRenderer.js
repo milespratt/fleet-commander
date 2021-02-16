@@ -691,5 +691,6 @@ export default (universe) => {
       starResourceText
     );
   });
+  updateViewportSize();
   return app;
 };

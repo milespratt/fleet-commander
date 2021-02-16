@@ -20,7 +20,7 @@ export default () => {
       edgeDistance: 100, // pixels from edge
       // 100 pixels per light year
       // numbers below in pixels
-      size: 10000,
+      size: 25000,
       minimumStarDistance: 100, // 100 default
       radial: false,
     };

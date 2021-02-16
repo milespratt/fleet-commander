@@ -70,8 +70,8 @@
 .toggles {
   z-index: 1000000;
   position: fixed;
-  bottom: 6px;
-  left: 6px;
+  bottom: 20px;
+  left: 25px;
   grid-gap: 15px;
 }
 

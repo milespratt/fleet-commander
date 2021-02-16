@@ -2,12 +2,18 @@
 #view {
   overflow: hidden;
   background: var(--black);
-  position: fixed;
+  /* position: fixed; */
   z-index: 900;
   height: 100vh;
   width: 100vw;
   top: 0;
   left: 0;
+
+  /* for animation */
+  height: auto;
+  width: auto;
+
+  transition: all 1000ms ease;
 }
 
 #view::after {
