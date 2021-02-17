@@ -258,6 +258,109 @@ class Universe {
     }
     this.sectorGrid = sectorGrid;
   }
+  getStarsInRange(range, origin) {
+    const sectorScan = range / this.sectorGrid.delimiter;
+    const sectorDistance = Math.ceil(sectorScan);
+    const limitSector = this.getGridSector(
+      origin.position.x,
+      origin.position.y
+    );
+    const adjacentSectors = this.getAdjacentSectors(limitSector, true);
+    for (let s = 1; s < sectorDistance; s++) {
+      adjacentSectors.forEach((adjacentSector) => {
+        this.getAdjacentSectors(adjacentSector).forEach((loopedSector) => {
+          if (!adjacentSectors.includes(loopedSector)) {
+            adjacentSectors.push(loopedSector);
+          }
+        });
+      });
+    }
+
+    const limitedStars = this.getStarsFromSectorArray(adjacentSectors);
+
+    // const limitedStars = this.universe.getStarsInThisAndAdjacentSectors(
+    //   this.position.x,
+    //   this.position.y
+    // );
+    const starsInRange = limitedStars.filter((limitStar) => {
+      const starDistance = getDistanceAndAngleBetweenTwoPoints(
+        { x: limitStar.position.x, y: limitStar.position.y },
+        origin.position
+      ).distance;
+      return starDistance <= range;
+    });
+    return starsInRange.filter((star) => star.id !== origin.id);
+    // if (includeOrigin && includeDestination) {
+    //   return starsInRange;
+    // } else if (!includeOrigin && !includeDestination) {
+    //   return starsInRange.filter(
+    //     (star) => star.id !== this.origin.id && star.id !== this.destination.id
+    //   );
+    // } else if (includeOrigin && !includeDestination) {
+    //   return starsInRange.filter((star) => star.id !== this.destination.id);
+    // } else if (!includeOrigin && includeDestination) {
+    //   return starsInRange.filter((star) => star.id !== this.origin.id);
+    // }
+    return starsInRange;
+  }
+  getRoute(origin, destination, range) {
+    console.log(origin);
+    console.log(destination);
+    console.log(range);
+
+    const distance = getDistanceAndAngleBetweenTwoPoints(
+      origin.position,
+      destination.position
+    ).distance;
+    console.log(distance);
+    const route = [];
+    if (distance > range) {
+      let routing = true;
+      let nextOrigin = origin;
+      let nextLegDestination = null;
+      let destinationDistance = null;
+      console.log("too far!");
+      let loops = 0;
+      while (routing) {
+        loops++;
+        // get stars in range of next origin
+        const inRangeStars = this.getStarsInRange(range, nextOrigin);
+        // loop through the in range stars and find the one closest to destination
+        // inRangeStars.forEach((rangeStar) => {
+        for (let s = 0; s < inRangeStars.length; s++) {
+          const { distance } = getDistanceAndAngleBetweenTwoPoints(
+            inRangeStars[s].position,
+            destination.position
+          );
+          if (inRangeStars[s].id === destination.id) {
+            nextLegDestination = inRangeStars[s];
+            break;
+          } else if (!destinationDistance || destinationDistance > distance) {
+            destinationDistance = distance;
+            nextLegDestination = inRangeStars[s];
+          }
+        }
+        // });
+        route.push({
+          start: nextOrigin,
+          end: nextLegDestination,
+        });
+        if (nextLegDestination.id === destination.id || loops > 1000) {
+          routing = false;
+        } else {
+          nextOrigin = nextLegDestination;
+          nextLegDestination = null;
+        }
+      }
+      return route;
+    } else {
+      route.push({
+        start: origin,
+        end: destination,
+      });
+      return route;
+    }
+  }
   // generate universe
   generate(options) {
     console.log(``);

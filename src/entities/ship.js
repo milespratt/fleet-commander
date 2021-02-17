@@ -39,6 +39,7 @@ class Ship {
     this.name = name;
     this.id = id;
     this.range = range;
+    this.route = null;
     this.spoolTime = 0;
     this.spoolReq = randomIntFromInterval(1, 10); //seconds
     // ACCELERATION 447040m/s = 1 million mph
@@ -69,11 +70,11 @@ class Ship {
       this.origin.position.y > this.destination.position.y ? "north" : "south";
   }
   engageAutopilot() {
+    console.log("autopilot engaged");
     this.autopilot = true;
-    this.scanLaunch();
-    this.scanningGraphics.clear();
   }
   disengageAutopilot() {
+    console.log("autopilot disengaged");
     this.autopilot = false;
   }
   timeStamp() {
@@ -278,14 +279,17 @@ class Ship {
     this.updatePosition(newPlot);
     this.voyageGraphics.clear();
     // AUTOPILOT
-    if (this.autopilot) {
-      this.scanLaunch();
+    if (this.autopilot && this.route && this.route.length > 0) {
+      const nextDestination = this.route.shift();
+      this.plot(nextDestination.end);
+    } else if (this.autopilot && (!this.route || this.route.length === 0)) {
+      this.disengageAutopilot();
     }
   }
   drawVoyageGraphics() {
     this.voyageGraphics.clear();
-    // voyage line (from origin to position)
     this.voyageGraphics.lineStyle(2, colors.blue, 1);
+    // voyage line (from origin to position)
     this.voyageGraphics.moveTo(this.origin.position.x, this.origin.position.y);
     this.voyageGraphics.lineTo(this.position.x, this.position.y);
 

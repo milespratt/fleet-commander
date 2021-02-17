@@ -24,9 +24,25 @@ export default () => {
             this.error = null;
           }
         },
+        load: function (fast) {
+          setTimeout(
+            () => {
+              this.loading = false;
+              this.view.style.height = `100vh`;
+              this.view.style.width = `100vw`;
+              this.container.classList.add("hidden");
+              const loadingText = document.getElementById("loading_text");
+              loadingText.classList.remove("hidden");
+
+              setTimeout(() => {
+                resolve();
+              }, 1200);
+            },
+            fast ? 0 : 2850
+          );
+        },
         signIn: function (ev) {
           ev.preventDefault();
-
           fetch(`${apiEndpoint}/users/signin`, {
             method: "POST",
             headers: {
@@ -54,17 +70,7 @@ export default () => {
                 this.error = null;
                 this.user = jsonRes.userRecord;
                 localStorage.setItem("token", jsonRes.token);
-                setTimeout(() => {
-                  this.loading = false;
-                  this.view.style.height = `100vh`;
-                  this.view.style.width = `100vw`;
-                  this.container.classList.add("hidden");
-                  const loadingText = document.getElementById("loading_text");
-                  loadingText.classList.remove("hidden");
-                  setTimeout(() => {
-                    resolve(jsonRes.token);
-                  }, 1200);
-                }, 2850);
+                this.load();
               }
             });
         },
@@ -75,6 +81,7 @@ export default () => {
 
         const { height, width } = this.view.getBoundingClientRect();
         this.view.style.width = `${width}px`;
+        // this.load(true);
       },
     });
   });

@@ -371,7 +371,7 @@ export default (universe) => {
     starSprite.on("pointerdown", async (ev) => {
       ev.stopPropagation();
       const clickedStar = ev.target.star;
-
+      // snap if clicked again
       if (
         universe.selectedStar &&
         clickedStar.id === universe.selectedStar.id
@@ -382,23 +382,7 @@ export default (universe) => {
           clickedStar.position
         );
       }
-      clickedStar.interaction.click();
-      // STAR NAME
-      starText.text = `${clickedStar.name}`;
-      starText.visible = true;
-      starText.position.set(
-        // clickedStar.position.x - 22 - starText.width,
-        clickedStar.position.x - hitAreaSize / 2 - starText.width,
-        clickedStar.position.y - starText.height / 2 + 1.8
-      );
-      // STAR RESOURCES
-      // STAR NAME
-      starResourceText.text = `${clickedStar.resources.hydrogen.toLocaleString()}`;
-      starResourceText.visible = true;
-      starResourceText.position.set(
-        clickedStar.position.x - starResourceText.width / 2,
-        clickedStar.position.y + hitAreaSize / 2 + 1.8
-      );
+
       // app.viewport.lastViewport.scaleX,
       //
       //       // add new circle to array
@@ -539,31 +523,67 @@ export default (universe) => {
       //       };
       if (selectedShip && selectedShip.status === "idle") {
         console.log("plot");
-        const starsInRange = selectedShip.getStarsInRange(true, true);
-        const isInRange =
-          starsInRange.filter((star) => star.id === clickedStar.id).length > 0;
-        if (isInRange) {
-          selectedShip.plot(clickedStar);
-        } else {
-          errorPosition.origin = {
-            x: selectedShip.position.x,
-            y: selectedShip.position.y,
-          };
-          errorPosition.destination = {
-            x: clickedStar.position.x,
-            y: clickedStar.position.y,
-          };
-          errorTextText.innerText = "ERROR: DESTINATION OUT OF RANGE";
-          errorText.style.opacity = 1;
-          errorLine.clear();
-          errorLine.lineStyle(2, colors.pink, 1); //(thickness, color)
-          errorLine.moveTo(errorPosition.origin.x, errorPosition.origin.y);
-          errorLine.lineTo(
-            errorPosition.destination.x,
-            errorPosition.destination.y
-          );
-        }
+        // pathfind
+        console.log("pathfind!");
+        const route = universe.getRoute(
+          selectedShip.location,
+          clickedStar,
+          selectedShip.range
+        );
+        console.log(route);
+        universeLines.clear();
+        universeLines.lineStyle(2, colors.pink, 0.1); //(thickness, color, alpha)
+        route.forEach((leg) => {
+          universeLines.moveTo(leg.start.position.x, leg.start.position.y);
+          universeLines.lineTo(leg.end.position.x, leg.end.position.y);
+        });
+        const firstDestination = route.shift();
+        selectedShip.plot(firstDestination.end);
+        selectedShip.route = route;
+
+        // const starsInRange = selectedShip.getStarsInRange(true, true);
+        // const isInRange =
+        //   starsInRange.filter((star) => star.id === clickedStar.id).length > 0;
+        // if (isInRange) {
+        //   selectedShip.plot(clickedStar);
+        // } else {
+        //   errorPosition.origin = {
+        //     x: selectedShip.position.x,
+        //     y: selectedShip.position.y,
+        //   };
+        //   errorPosition.destination = {
+        //     x: clickedStar.position.x,
+        //     y: clickedStar.position.y,
+        //   };
+        //   errorTextText.innerText = "ERROR: DESTINATION OUT OF RANGE";
+        //   errorText.style.opacity = 1;
+        //   errorLine.clear();
+        //   errorLine.lineStyle(2, colors.pink, 1); //(thickness, color)
+        //   errorLine.moveTo(errorPosition.origin.x, errorPosition.origin.y);
+        //   errorLine.lineTo(
+        //     errorPosition.destination.x,
+        //     errorPosition.destination.y
+        //   );
+        // }
       }
+
+      clickedStar.interaction.click();
+      // STAR NAME
+      starText.text = `${clickedStar.name}`;
+      starText.visible = true;
+      starText.position.set(
+        // clickedStar.position.x - 22 - starText.width,
+        clickedStar.position.x - hitAreaSize / 2 - starText.width,
+        clickedStar.position.y - starText.height / 2 + 1.8
+      );
+      // STAR RESOURCES
+      // STAR NAME
+      starResourceText.text = `${clickedStar.resources.hydrogen.toLocaleString()}`;
+      starResourceText.visible = true;
+      starResourceText.position.set(
+        clickedStar.position.x - starResourceText.width / 2,
+        clickedStar.position.y + hitAreaSize / 2 + 1.8
+      );
     });
     starContainer.addChild(starSprite);
   }
