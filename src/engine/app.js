@@ -12,7 +12,7 @@ export function createApp(height, width, viewportId) {
     antialias: true,
     autoResize: true,
     resizeTo: document.getElementById(viewportId),
-    resolution: 2,
+    resolution: 1,
   });
   return newApp;
 }
