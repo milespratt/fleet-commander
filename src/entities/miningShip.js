@@ -9,11 +9,13 @@ class MiningShip extends Ship {
     this.cargo = 0;
     this.maxCargo = 100000; // kg
     this.type = "Mining Ship";
+    this.mine = this.mine.bind(this);
   }
   startMining() {
     if (this.status === statuses.idle && this.cargo < this.maxCargo) {
       console.log("Mining Started");
       this.status = statuses.mining;
+      this.actions.mine = this.mine;
     } else if (this.status !== statuses.idle) {
       console.log("Ship must be idle to begin mining");
     } else if (this.cargo >= this.maxCargo) {
@@ -23,6 +25,7 @@ class MiningShip extends Ship {
   stopMining() {
     console.log("Mining Stopped");
     this.status = statuses.idle;
+    delete this.actions.mine;
   }
   mine(delta) {
     if (
@@ -49,19 +52,6 @@ class MiningShip extends Ship {
         this.stopMining();
       }
     }
-  }
-  update() {
-    const delta = this.getDelta();
-    if (this.status === statuses.travelling) {
-      this.move();
-    }
-    if (this.status === statuses.mining) {
-      this.mine(delta);
-    }
-    if (this.destination) {
-      this.drawVoyageGraphics();
-    }
-    this.timeStamp();
   }
 }
 

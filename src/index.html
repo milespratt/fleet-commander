@@ -50,6 +50,12 @@
     <title>Fleet Commander</title>
   </head>
   <body>
+    <div id="statPane" class="bordered ui__window"></div>
+    <div id="statPane2" class="bordered ui__window"></div>
+    <div id="statPane3" class="bordered ui__window"></div>
+    <div id="statPane4" class="bordered ui__window"></div>
+    <div id="infoPane" class="bordered ui__window"></div>
+
     <button
       style="opacity: 0"
       class="debug hidden control bordered blue__glow padded"
@@ -444,8 +450,16 @@
             id="centerShip"
             class="control pic__control bordered-- padded blue__glow"
           >
+            <i class="control__icon fal fa-location-arrow"></i>
+          </button>
+
+          <button
+            id="followShip"
+            class="control pic__control bordered-- padded blue__glow"
+          >
             <i class="control__icon fal fa-location"></i>
           </button>
+
           <!-- </form> -->
         </div>
       </div>

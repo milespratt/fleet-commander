@@ -32,6 +32,7 @@ class Ship {
     this.scanning = false;
     this.scanningGraphics = new PIXI.Graphics();
     this.voyageGraphics = new PIXI.Graphics();
+    this.routeGraphics = new PIXI.Graphics();
     this.scanProgress = 0;
     this.scanRange = range;
     this.scanSpeed = 1;
@@ -42,6 +43,7 @@ class Ship {
     this.route = null;
     this.spoolTime = 0;
     this.spoolReq = randomIntFromInterval(1, 10); //seconds
+    this.actions = {};
     // ACCELERATION 447040m/s = 1 million mph
     // this.baseAcceleration = (lightSpeed / lightYear) * (1 / lightSpeed); // 1m/s
     // this.acceleration = 0; // 1m/s
@@ -50,7 +52,7 @@ class Ship {
     // SPEED
     this.speed = 0;
     // this.speed = (lightSpeed / lightYear) * (447040 / lightSpeed); // 447040m/s
-    this.maxSpeed = (lightSpeed / lightYear) * 10000000; // 80% the speed of light
+    this.maxSpeed = (lightSpeed / lightYear) * 100000000; // 80% the speed of light
     // this.maxSpeed = (lightSpeed / lightYear) * (447040 / lightSpeed); // 447040m/s
     this.warpSpeed = (lightSpeed / lightYear) * 1;
     this.location = origin;
@@ -279,7 +281,7 @@ class Ship {
     this.updatePosition(newPlot);
     this.voyageGraphics.clear();
     // AUTOPILOT
-    if (this.autopilot && this.route && this.route.length > 0) {
+    if (this.route && this.route.length > 0) {
       const nextDestination = this.route.shift();
       this.plot(nextDestination.end);
     } else if (this.autopilot && (!this.route || this.route.length === 0)) {
@@ -287,19 +289,19 @@ class Ship {
     }
   }
   drawVoyageGraphics() {
-    this.voyageGraphics.clear();
+    // this.voyageGraphics.clear();
     this.voyageGraphics.lineStyle(2, colors.blue, 1);
     // voyage line (from origin to position)
     this.voyageGraphics.moveTo(this.origin.position.x, this.origin.position.y);
     this.voyageGraphics.lineTo(this.position.x, this.position.y);
 
     // path line (from position to destination)
-    this.voyageGraphics.lineStyle(1, colors.blue, 0.5);
-    this.voyageGraphics.moveTo(
-      this.destination.position.x,
-      this.destination.position.y
-    );
-    this.voyageGraphics.lineTo(this.position.x, this.position.y);
+    // this.voyageGraphics.lineStyle(1, colors.blue, 0.5);
+    // this.voyageGraphics.moveTo(
+    //   this.destination.position.x,
+    //   this.destination.position.y
+    // );
+    // this.voyageGraphics.lineTo(this.position.x, this.position.y);
   }
   plot(destination) {
     if (destination) {
@@ -318,11 +320,15 @@ class Ship {
       this.tripDistance = distance;
       this.directionX = directionX;
       this.directionY = directionY;
+      this.routeGraphics.lineStyle(1, colors.blue, 0.5); //(thickness, color, alpha)
+      this.routeGraphics.moveTo(this.position.x, this.position.y);
+      this.routeGraphics.lineTo(destination.position.x, destination.position.y);
+      // this.drawVoyageGraphics();
       // AUTO MOVE
       if (this.autopilot) {
         setTimeout(() => {
           this.launch();
-        }, randomIntFromInterval(2000, 5000));
+        }, 1000);
       }
     } else {
       console.log("No Destination!");
@@ -363,6 +369,41 @@ class Ship {
         this.arrive(this.destination);
       }
     }
+  }
+  plotCourse(star) {
+    console.log("plot");
+    // pathfind
+    console.log("pathfind!");
+    const route = this.universe.getRoute(this.location, star, this.range);
+    console.log(route);
+    this.routeGraphics.clear();
+    this.routeGraphics.lineStyle(1, colors.yellow, 0.5); //(thickness, color, alpha)
+    route.forEach((leg, i) => {
+      // if (i === 0) {
+      //   return;
+      // }
+      this.routeGraphics.moveTo(leg.start.position.x, leg.start.position.y);
+      this.routeGraphics.lineTo(leg.end.position.x, leg.end.position.y);
+    });
+    const firstDestination = route.shift();
+
+    this.plot(firstDestination.end);
+    this.route = route;
+  }
+  update() {
+    const delta = this.getDelta();
+    if (this.status === statuses.travelling) {
+      this.move();
+      this.drawVoyageGraphics();
+    }
+    // if (this.status === statuses.mining) {
+    //   this.mine(delta);
+    // }
+    Object.values(this.actions).forEach((action) => action(delta));
+    // if (this.destination) {
+    //   this.drawVoyageGraphics();
+    // }
+    this.timeStamp();
   }
 }
 

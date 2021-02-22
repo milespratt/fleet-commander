@@ -51,6 +51,7 @@ export default (universe) => {
   const autopilot = document.getElementById("ship_autopilot");
   const snapshot = document.getElementById("snapshot");
   const centerShip = document.getElementById("centerShip");
+  const followShip = document.getElementById("followShip");
   const mine = document.getElementById("mine");
   // SHIP BUTTONS
 
@@ -176,6 +177,7 @@ export default (universe) => {
   // GRIDS
   const gridLines = new PIXI.Graphics();
   gridContainer.addChild(gridLines);
+  gridContainer.visible = false;
   gridLines.lineStyle(1, colors.blue, 1); //(thickness, color)
   for (
     let i = universe.sectorGrid.delimiter;
@@ -318,6 +320,12 @@ export default (universe) => {
     }
   });
 
+  followShip.addEventListener("click", () => {
+    if (selectedShip) {
+      app.viewport.follow(selectedShip.sprite);
+    }
+  });
+
   autopilot.addEventListener("change", () => {
     if (selectedShip) {
       if (autopilot.checked) {
@@ -338,6 +346,7 @@ export default (universe) => {
     starResourceText.visible = false;
     selectedShip = null;
     shipInfoText.visible = false;
+    app.viewport.follow();
   });
   // add stars to container
   const hitAreaGraphics = new PIXI.Graphics();
@@ -522,24 +531,7 @@ export default (universe) => {
       //         y: clickedStar.position.y,
       //       };
       if (selectedShip && selectedShip.status === "idle") {
-        console.log("plot");
-        // pathfind
-        console.log("pathfind!");
-        const route = universe.getRoute(
-          selectedShip.location,
-          clickedStar,
-          selectedShip.range
-        );
-        console.log(route);
-        universeLines.clear();
-        universeLines.lineStyle(2, colors.pink, 0.1); //(thickness, color, alpha)
-        route.forEach((leg) => {
-          universeLines.moveTo(leg.start.position.x, leg.start.position.y);
-          universeLines.lineTo(leg.end.position.x, leg.end.position.y);
-        });
-        const firstDestination = route.shift();
-        selectedShip.plot(firstDestination.end);
-        selectedShip.route = route;
+        selectedShip.plotCourse(star);
 
         // const starsInRange = selectedShip.getStarsInRange(true, true);
         // const isInRange =
@@ -588,6 +580,17 @@ export default (universe) => {
     starContainer.addChild(starSprite);
   }
 
+  function selectShip(ship) {
+    shipControls.classList.remove("hidden");
+    selectedShip = ship;
+    const clickedShip = ship;
+    autopilot.checked = clickedShip.autopilot;
+    mine.innerText =
+      clickedShip.status === statuses.mining ? "STOP MINING" : "START MINING";
+    launch.innerText =
+      clickedShip.status === statuses.travelling ? "STOP SHIP" : "LAUNCH";
+  }
+
   // add ships to container
   let selectedShip;
   for (const ship of universe.ships) {
@@ -596,19 +599,21 @@ export default (universe) => {
     shipSprite.interactive = true;
     shipContainer.addChild(shipSprite);
     voyageContainer.addChild(ship.voyageGraphics);
+    voyageContainer.addChild(ship.routeGraphics);
     // voyageContainer.addChild(ship.pathLine);
     textContainer.addChild(ship.shipNameText);
     lineContainer.addChild(ship.scanningGraphics);
     // ship.plot();
     shipSprite.on("pointerdown", async (ev) => {
-      shipControls.classList.remove("hidden");
-      selectedShip = ev.target.ship;
-      const clickedShip = ev.target.ship;
-      autopilot.checked = clickedShip.autopilot;
-      mine.innerText =
-        clickedShip.status === statuses.mining ? "STOP MINING" : "START MINING";
-      launch.innerText =
-        clickedShip.status === statuses.travelling ? "STOP SHIP" : "LAUNCH";
+      selectShip(ev.target.ship);
+      // shipControls.classList.remove("hidden");
+      // selectedShip = ev.target.ship;
+      // const clickedShip = ev.target.ship;
+      // autopilot.checked = clickedShip.autopilot;
+      // mine.innerText =
+      //   clickedShip.status === statuses.mining ? "STOP MINING" : "START MINING";
+      // launch.innerText =
+      //   clickedShip.status === statuses.travelling ? "STOP SHIP" : "LAUNCH";
       // const apiShip = fetch(`${baseAPIurl}/ships/${clickedShip.id}`)
       //   .then((res) => res.json())
       //   .then((jsonData) => {
@@ -712,5 +717,11 @@ export default (universe) => {
     );
   });
   updateViewportSize();
+  // selectShip(universe.ships[0]);
+  // app.viewport.snapTo(
+  //   app.viewport,
+  //   app.viewport.lastViewport.scaleX,
+  //   selectedShip.position
+  // );
   return app;
 };

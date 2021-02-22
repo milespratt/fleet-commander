@@ -118,14 +118,15 @@ export default () => {
           return {
             // name: `Ship-${i + 1}`,
             name,
-            range: 300,
-            speed: (lightSpeed / lightYear) * 100000000,
+            range: 1000,
+            speed: (lightSpeed / lightYear) * 100,
             x: shipOrigin.position.x,
             y: shipOrigin.position.y,
             origin: shipOrigin,
             // destination,
           };
         });
+        const shortList = [shipList[0]];
         for (const ship of shipList) {
           const { name, range, speed, x, y, origin } = ship;
           const destination = newUniverse.getRandomStar({

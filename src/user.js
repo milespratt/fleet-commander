@@ -35,6 +35,7 @@ export default () => {
               loadingText.classList.remove("hidden");
 
               setTimeout(() => {
+                this.view.style.transition = `unset`;
                 resolve();
               }, 1200);
             },
@@ -81,7 +82,9 @@ export default () => {
 
         const { height, width } = this.view.getBoundingClientRect();
         this.view.style.width = `${width}px`;
-        // this.load(true);
+        if (process.env.NODE_ENV === "dev") {
+          this.load(true);
+        }
       },
     });
   });
