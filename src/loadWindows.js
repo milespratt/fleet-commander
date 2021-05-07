@@ -41,7 +41,7 @@ export default () => {
     // }px`;
     draggableWindow.style.zIndex = 1000;
     draggableWindow.addEventListener("pointerdown", function (event) {
-      event.stopPropagation();
+      // event.stopPropagation();
 
       if (isDraggable(event.target)) {
         dragging = event.target;

@@ -27,6 +27,9 @@ import { statuses } from "../config";
 class Ship {
   constructor(name, id, range, x, y, origin, destination, universe) {
     this.autopilot = false;
+    this.cargo = 0;
+    this.maxCargo = 100000; // kg
+    this.skills = {};
     this.universe = universe;
     this.lastUpdate = Date.now();
     this.scanning = false;
@@ -151,9 +154,17 @@ class Ship {
     return direction;
   }
   updatePosition(newCoordinates) {
-    const { posX, posY, directionX, directionY, distance } = newCoordinates;
+    const {
+      posX,
+      posY,
+      directionX,
+      directionY,
+      distance,
+      angle,
+    } = newCoordinates;
     this.position.x = posX;
     this.position.y = posY;
+    this.sprite.angle = angle + 90;
     this.directionX = directionX;
     this.directionY = directionY;
     this.distanceToDestination = distance;
@@ -240,6 +251,7 @@ class Ship {
       directionX,
       directionY,
       distance,
+      angle,
     };
     return newCoordinates;
   }
@@ -268,6 +280,7 @@ class Ship {
     this.speed = 0;
     this.acceleration = 0;
     this.distanceToDestination = 0;
+    console.log(this.destination);
     const { x, y } = this.destination.position;
     this.origin = this.destination;
     this.location = this.destination;
@@ -277,7 +290,9 @@ class Ship {
       directionX: this.directionX,
       directionY: this.directionY,
       distance: this.distanceToDestination,
+      angle: -90,
     };
+    console.log(newPlot);
     this.updatePosition(newPlot);
     this.voyageGraphics.clear();
     // AUTOPILOT
@@ -390,16 +405,27 @@ class Ship {
     this.plot(firstDestination.end);
     this.route = route;
   }
+  runSkills(delta) {
+    Object.keys(this.skills).forEach((skill) => {
+      const currentSkill = this.skills[skill];
+      // console.log(skill, currentSkill.active ? "Active" : "Inactive");
+      if (currentSkill.active) {
+        // currentSkill.tick(this.location, delta);
+        currentSkill.tick(this.location, 100);
+      }
+    });
+  }
   update() {
     const delta = this.getDelta();
+    this.runSkills(delta);
     if (this.status === statuses.travelling) {
       this.move();
-      this.drawVoyageGraphics();
+      // this.drawVoyageGraphics(); TODO: This is causing memory leaks
     }
     // if (this.status === statuses.mining) {
     //   this.mine(delta);
     // }
-    Object.values(this.actions).forEach((action) => action(delta));
+    // Object.values(this.actions).forEach((action) => action(delta));
     // if (this.destination) {
     //   this.drawVoyageGraphics();
     // }

@@ -28,8 +28,8 @@ export default () => {
           setTimeout(
             () => {
               this.loading = false;
-              this.view.style.height = `100vh`;
-              this.view.style.width = `100vw`;
+              this.view.style.height = `50vh`;
+              this.view.style.width = `50vw`;
               this.container.classList.add("hidden");
               const loadingText = document.getElementById("loading_text");
               loadingText.classList.remove("hidden");
@@ -79,12 +79,12 @@ export default () => {
       mounted: function () {
         this.view = document.getElementById("view");
         this.container = document.getElementById("authContainer");
-
         const { height, width } = this.view.getBoundingClientRect();
         this.view.style.width = `${width}px`;
         if (process.env.NODE_ENV === "dev") {
           this.load(true);
         }
+        this.container.style.opacity = 1;
       },
     });
   });

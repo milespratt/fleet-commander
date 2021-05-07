@@ -1,6 +1,6 @@
 // ENTITIES
-import { Star, MiningShip, Universe } from "./entities";
-
+import { Star, MiningShip, Ship, Universe } from "./entities";
+import { MiningSkill } from "./skills";
 // import { getRandomStar } from "./helpers";
 
 import {
@@ -118,8 +118,8 @@ export default () => {
           return {
             // name: `Ship-${i + 1}`,
             name,
-            range: 1000,
-            speed: (lightSpeed / lightYear) * 100,
+            range: 300,
+            speed: (lightSpeed / lightYear) * 10000000,
             x: shipOrigin.position.x,
             y: shipOrigin.position.y,
             origin: shipOrigin,
@@ -133,7 +133,7 @@ export default () => {
             distance: range,
             origin,
           });
-          const newShip = new MiningShip(
+          const newShip = new Ship(
             name,
             ship._id || name,
             range,
@@ -143,6 +143,8 @@ export default () => {
             { ...destination, id: destination._id || destination.name },
             newUniverse
           );
+          const newMiningSkill = new MiningSkill(newShip);
+          newShip.skills[newMiningSkill.skillName] = newMiningSkill;
           newUniverse.ships.push(newShip);
         }
         this.universe = {

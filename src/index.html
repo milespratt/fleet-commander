@@ -41,6 +41,7 @@
     <link rel="stylesheet" href="./styles/utility.css" />
     <link rel="stylesheet" href="./styles/viewports.css" />
     <link rel="stylesheet" href="./styles/windows.css" />
+    <link rel="stylesheet" href="./styles/newWindow.css" />
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
 
     <script
@@ -58,26 +59,28 @@
 
     <button
       style="opacity: 0"
-      class="debug hidden control bordered blue__glow padded"
+      class="debug control bordered blue__glow padded"
       id="grid_toggle"
     >
-      TOGGLE GRID
+      SHOW GRID
     </button>
 
     <button
       style="opacity: 0"
-      class="debug hidden control bordered blue__glow padded"
+      class="debug control bordered blue__glow padded"
       id="grid_center"
     >
       RECENTER
     </button>
 
     <button
-      class="debug control bordered blue__glow padded hidden"
+      style="opacity: 0"
+      class="debug control bordered blue__glow padded"
       id="snapshot"
     >
-      SNAPSHOT
+      DRAW ROUTES
     </button>
+
     <div id="toggles" class="toggles grid grid--c hidden">
       <!-- WILL BE FILLED WITH CONTROLS PROGRAMMATICALLY -->
     </div>

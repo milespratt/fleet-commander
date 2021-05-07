@@ -38,6 +38,7 @@ class Universe {
   constructor() {
     this.selectionRingSprite = selectionRingSprite;
     this.hoverRingSprite = hoverRingSprite;
+    this.indicatorGraphics = new PIXI.Graphics();
     this.starCoordinates = [];
     this.stars = [];
     this.sectorGrid = {};
@@ -61,25 +62,42 @@ class Universe {
     return star1.id === star2.id;
   }
   showSelectionRing(coordinates, size) {
-    this.selectionRingSprite.visible = true;
+    this.selectionRingSprite.visible = false;
     this.selectionRingSprite.height = size - 14;
     this.selectionRingSprite.width = size - 14;
     this.selectionRingSprite.position.set(coordinates.x, coordinates.y);
   }
-
+  drawSelectionLine(x, y, ring, xOffset) {
+    this.indicatorGraphics.clear();
+    this.indicatorGraphics.lineStyle(1, colors.blue, 1); //(thickness, color, alpha)
+    this.indicatorGraphics.drawCircle(x, y, ring / 2 + 8);
+    this.indicatorGraphics.moveTo(
+      x + Math.cos(135 * 0.0174533) * (ring / 2 + 8),
+      y - Math.sin(135 * 0.0174533) * (ring / 2 + 8)
+    );
+    // this.indicatorGraphics.lineTo(x - 200, y);
+    this.indicatorGraphics.lineTo(x - 50, y - 50);
+    this.indicatorGraphics.lineTo(x - xOffset, y - 50);
+  }
   showHoverRing(coordinates, size) {
     this.hoverRingSprite.visible = true;
     this.hoverRingSprite.height = size - 14;
     this.hoverRingSprite.width = size - 14;
     this.hoverRingSprite.position.set(coordinates.x, coordinates.y);
   }
-  setSelectedStar(star) {
+  setSelectedStar(star, xOffset) {
     if (!this.selectedStar || !this.checkStarEqual(star, this.selectedStar)) {
       this.selectedStar = star;
       const hitAreaSize = star.hitAreaSize * (star.size / 72);
       this.showSelectionRing(
         { x: star.position.x, y: star.position.y },
         hitAreaSize
+      );
+      this.drawSelectionLine(
+        star.position.x,
+        star.position.y,
+        star.size,
+        xOffset
       );
     }
   }

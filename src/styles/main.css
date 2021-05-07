@@ -26,7 +26,7 @@
   --black: #120114;
   --purple: #190b28;
   --yellow: #f9e784;
-  --borderWidth: 2px;
+  --borderWidth: 1px;
   --borderRadius: 0px;
   --fontSize: 2rem;
   --fontSizeSmall: 1.4rem;
@@ -37,6 +37,10 @@
   --gap: 5px;
   --columnGap: 5px;
   --rowGap: 5px;
+  --windowBack: #16181d;
+  --windowMid: #2f3543;
+  --windowFront: #555b68;
+  --windowInterior: #252a32;
 }
 
 /* GLOBAL */
@@ -47,6 +51,7 @@
   margin: 0;
   padding: 0;
   user-select: none;
+  border-collapse: collapse;
   /* cursor: url(../assets/images/mouse.png) 26.5 26.5, auto; */
 }
 
@@ -146,4 +151,10 @@ input[type="number"]::-webkit-outer-spin-button {
 .link:hover {
   color: var(--white90);
   text-shadow: 0px 0px 6px var(--white80);
+}
+
+/* USER AUTH */
+#authContainer {
+  opacity: 0;
+  transition: opacity 250ms ease;
 }

@@ -9,6 +9,10 @@ export const colors = {
   yellow: 0xf9e784,
   white: 0xffffff,
   green: 0x2ad15c,
+  windowBack: 0x16181d,
+  windowMid: 0x2f3543,
+  windowFront: 0x555b68,
+  windowInterior: 0x252a32,
 };
 
 export const statuses = {

@@ -6,8 +6,8 @@ class MiningShip extends Ship {
   constructor(name, id, range, x, y, origin, destination, universe) {
     super(name, id, range, x, y, origin, destination, universe);
     this.miningSpeed = 1 / 60; // 1kg per second
-    this.cargo = 0;
-    this.maxCargo = 100000; // kg
+    // this.cargo = 0;
+    // this.maxCargo = 100000; // kg
     this.type = "Mining Ship";
     this.mine = this.mine.bind(this);
   }

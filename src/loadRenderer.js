@@ -56,7 +56,9 @@ export default (universe) => {
   // SHIP BUTTONS
 
   // DOM
-  const viewContainer = document.getElementById("view");
+  const viewportID = "view";
+  // const viewContainer = document.getElementById("view");
+  const viewContainer = document.getElementById(viewportID);
   const localViewContainer = document.getElementById("local_view");
   const localViewTitle = document.getElementById("local_view_title");
   const localViewLoader = document.getElementById("local_view_loader");
@@ -71,7 +73,7 @@ export default (universe) => {
   // ERROR LINE
 
   // APPS
-  const app = createApp(null, null, "view");
+  const app = createApp(null, null, viewportID);
 
   app.renderer.plugins.interaction.cursorStyles.default = `url(${shipMousePNG}) 16 16,auto`;
   app.renderer.plugins.interaction.cursorStyles.star = `url(${pinkMousePNG}) 16 16,auto`;
@@ -156,19 +158,26 @@ export default (universe) => {
   snapshot.addEventListener("click", () => {
     universeLines.clear();
 
-    universeLines.lineStyle(2, colors.pink, 1); //(thickness, color, alpha)
+    universeLines.lineStyle(1, colors.pink, 1); //(thickness, color, alpha)
     universe.stars.forEach((star) => {
-      universeLines.moveTo(star.position.x, star.position.y);
+      universeLines.drawCircle(
+        star.position.x,
+        star.position.y,
+        star.size / 2 + 2
+      );
+      universeLines.beginFill(colors.pink, 1); //(thickness, color)
       const starsInRange = star.getStarsInRange();
       starsInRange.forEach((starInRange) => {
+        universeLines.moveTo(star.position.x, star.position.y);
         universeLines.lineTo(starInRange.position.x, starInRange.position.y);
-        universeLines.drawCircle(
-          starInRange.position.x,
-          starInRange.position.y,
-          10
-        );
-        universeLines.beginFill(colors.pink, 1); //(thickness, color)
+        // universeLines.drawCircle(
+        //   starInRange.position.x,
+        //   starInRange.position.y,
+        //   starInRange.size / 2 + 2
+        // );
+        // universeLines.beginFill(colors.pink, 1); //(thickness, color)
       });
+      // universeLines.closePath();
     });
     // const image = app.renderer.plugins.extract.image(universeLineContainer);
     // // document.body.appendChild(image);
@@ -259,9 +268,27 @@ export default (universe) => {
   // create star info text
   const starText = new PIXI.Text("star", {
     ...textStyle,
+    fill: colors.blueGlow,
+    strokeThickness: 1,
+    fontSize: 18,
+    fontWeight: 400,
+    letterSpacing: 1,
   });
   starText.resolution = textResolution;
   starText.visible = false;
+
+  // create star info text
+  const starInfoText = new PIXI.Text("star", {
+    ...textStyle,
+    fill: colors.white,
+    strokeThickness: 1,
+    fontSize: 12,
+    lineHeight: 12,
+    fontWeight: 400,
+    letterSpacing: 1,
+  });
+  starInfoText.resolution = textResolution;
+  starInfoText.visible = false;
 
   const starResourceText = new PIXI.Text("star", {
     ...textStyle,
@@ -276,12 +303,14 @@ export default (universe) => {
   shipInfoText.visible = false;
 
   textContainer.addChild(starText);
+  textContainer.addChild(starInfoText);
   textContainer.addChild(starResourceText);
   textContainer.addChild(shipInfoText);
 
   // add star hover ring sprite to star container
   indicatorContainer.addChild(universe.hoverRingSprite);
   indicatorContainer.addChild(universe.selectionRingSprite);
+  indicatorContainer.addChild(universe.indicatorGraphics);
 
   // DOM BUTTONS
   scan.addEventListener("click", () => {
@@ -299,14 +328,12 @@ export default (universe) => {
 
   mine.addEventListener("click", () => {
     if (selectedShip) {
-      selectedShip.status === statuses.mining
-        ? selectedShip.stopMining()
-        : selectedShip.startMining();
-
-      mine.innerText =
-        selectedShip.status !== statuses.mining
-          ? "START MINING"
-          : "STOP MINING";
+      selectedShip.skills.Mining.active
+        ? selectedShip.skills.Mining.stop()
+        : selectedShip.skills.Mining.start();
+      mine.innerText = selectedShip.skills.Mining.active
+        ? "STOP MINING"
+        : "START MINING";
     }
   });
 
@@ -322,7 +349,7 @@ export default (universe) => {
 
   followShip.addEventListener("click", () => {
     if (selectedShip) {
-      app.viewport.follow(selectedShip.sprite);
+      // app.viewport.follow(selectedShip.sprite);
     }
   });
 
@@ -346,7 +373,6 @@ export default (universe) => {
     starResourceText.visible = false;
     selectedShip = null;
     shipInfoText.visible = false;
-    app.viewport.follow();
   });
   // add stars to container
   const hitAreaGraphics = new PIXI.Graphics();
@@ -377,11 +403,17 @@ export default (universe) => {
     // starSprite.on("mouseout", (ev) => {
     //   universe.setHoveredStar();
     // });
+    let click1 = 0;
     starSprite.on("pointerdown", async (ev) => {
+      const now = performance.now();
+      const delay = now - click1;
+      click1 = now;
+
       ev.stopPropagation();
       const clickedStar = ev.target.star;
       // snap if clicked again
       if (
+        delay < 500 &&
         universe.selectedStar &&
         clickedStar.id === universe.selectedStar.id
       ) {
@@ -559,28 +591,42 @@ export default (universe) => {
         // }
       }
 
-      clickedStar.interaction.click();
       // STAR NAME
+      starInfoText.text = clickedStar.getInfo();
+      const starTextXOffset = starInfoText.width + clickedStar.size / 2 + 50;
+      // clickedStar.interaction.click();
+      universe.setSelectedStar(clickedStar, starTextXOffset);
       starText.text = `${clickedStar.name}`;
       starText.visible = true;
+      starInfoText.visible = true;
+
       starText.position.set(
-        // clickedStar.position.x - 22 - starText.width,
-        clickedStar.position.x - hitAreaSize / 2 - starText.width,
-        clickedStar.position.y - starText.height / 2 + 1.8
+        clickedStar.position.x - starTextXOffset,
+        clickedStar.position.y - 68
       );
+
+      starInfoText.position.set(
+        clickedStar.position.x - starTextXOffset,
+        clickedStar.position.y - 45
+      );
+      // starText.position.set(
+      //   // clickedStar.position.x - 22 - starText.width,
+      //   clickedStar.position.x - hitAreaSize / 2 - starText.width,
+      //   clickedStar.position.y - starText.height / 2 + 1.8
+      // );
       // STAR RESOURCES
       // STAR NAME
-      starResourceText.text = `${clickedStar.resources.hydrogen.toLocaleString()}`;
-      starResourceText.visible = true;
-      starResourceText.position.set(
-        clickedStar.position.x - starResourceText.width / 2,
-        clickedStar.position.y + hitAreaSize / 2 + 1.8
-      );
+      // starResourceText.text = `${clickedStar.resources.hydrogen.toLocaleString()}`;
+      // starResourceText.visible = true;
+      // starResourceText.position.set(
+      //   clickedStar.position.x - starResourceText.width / 2,
+      //   clickedStar.position.y + hitAreaSize / 2 + 1.8
+      // );
     });
     starContainer.addChild(starSprite);
   }
 
-  function selectShip(ship) {
+  function selectShip(ship, snapTo) {
     shipControls.classList.remove("hidden");
     selectedShip = ship;
     const clickedShip = ship;
@@ -717,11 +763,8 @@ export default (universe) => {
     );
   });
   updateViewportSize();
-  // selectShip(universe.ships[0]);
-  // app.viewport.snapTo(
-  //   app.viewport,
-  //   app.viewport.lastViewport.scaleX,
-  //   selectedShip.position
-  // );
+  document
+    .querySelectorAll(".debug")
+    .forEach((debug) => (debug.style.opacity = 1));
   return app;
 };

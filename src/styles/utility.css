@@ -10,7 +10,7 @@
 
 /* UTILITY */
 .hidden {
-  /* display: none; */
+  display: none;
   opacity: 0;
   transform: translate(10000px);
 }

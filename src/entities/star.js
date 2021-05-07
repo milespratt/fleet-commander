@@ -50,6 +50,7 @@ class Star extends AstronomicalObject {
       this.hover,
       this.blur
     );
+    this.textWidth = 0;
   }
   select() {
     this.universe.setSelectedStar(this);
@@ -78,6 +79,17 @@ class Star extends AstronomicalObject {
     );
     console.log(`Age: ${this.age.toLocaleString()}`);
     console.log("");
+    const starInfoText = `POS: ${this.position.x}x ${this.position.y}y\nSEC: ${
+      this.sector
+    }\nTYP: ${this.type}\nCLS: ${
+      this.class
+    }\nTMP: ${this.temp.toLocaleString()}K\nSRa: ${
+      this.size
+    } R\nRAD: ${this.radius.toLocaleString()} KM\nSMa: ${this.mass} R\nMAS: ${
+      this.mass * (2 * 10000000000000000000000000000000)
+    } kg\nAGE: ${this.age.toLocaleString()}`;
+    this.textWidth = starInfoText.width + this.size / 2 + 50;
+    return starInfoText;
   }
   createSprite() {
     const baseTextureSize = 72;
@@ -130,7 +142,6 @@ class Star extends AstronomicalObject {
           });
       });
     }
-
     const limitedStars = this.universe.getStarsFromSectorArray(adjacentSectors);
 
     // const limitedStars = this.universe.getStarsInThisAndAdjacentSectors(
