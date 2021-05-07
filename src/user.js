@@ -28,8 +28,8 @@ export default () => {
           setTimeout(
             () => {
               this.loading = false;
-              this.view.style.height = `50vh`;
-              this.view.style.width = `50vw`;
+              this.view.style.height = `100vh`;
+              this.view.style.width = `100vw`;
               this.container.classList.add("hidden");
               const loadingText = document.getElementById("loading_text");
               loadingText.classList.remove("hidden");

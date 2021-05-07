@@ -386,23 +386,21 @@ class Ship {
     }
   }
   plotCourse(star) {
-    console.log("plot");
-    // pathfind
-    console.log("pathfind!");
+    console.log("plotting course");
     const route = this.universe.getRoute(this.location, star, this.range);
     console.log(route);
     this.routeGraphics.clear();
     this.routeGraphics.lineStyle(1, colors.yellow, 0.5); //(thickness, color, alpha)
-    route.forEach((leg, i) => {
+    route.legs.forEach((leg, i) => {
       // if (i === 0) {
       //   return;
       // }
       this.routeGraphics.moveTo(leg.start.position.x, leg.start.position.y);
       this.routeGraphics.lineTo(leg.end.position.x, leg.end.position.y);
     });
-    const firstDestination = route.shift();
+    // const firstDestination = route.shift();
 
-    this.plot(firstDestination.end);
+    // this.plot(firstDestination.end);
     this.route = route;
   }
   runSkills(delta) {

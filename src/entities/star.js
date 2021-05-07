@@ -62,23 +62,23 @@ class Star extends AstronomicalObject {
     this.universe.setHoveredStar();
   }
   getInfo() {
-    console.log("");
-    console.log("STAR INFORMATION");
-    console.log(`ID: ${this.id}`);
-    console.log(`Name: ${this.name}`);
-    console.log(`Position: ${this.position.x}x ${this.position.y}y`);
-    console.log(`Sector: ${this.sector}`);
-    console.log(`Type: ${this.type}`);
-    console.log(`Class: ${this.class}`);
-    console.log(`Temp: ${this.temp.toLocaleString()}K`);
-    console.log(`Solar Radius: ${this.size} R`);
-    console.log(`Radius: ${this.radius.toLocaleString()} KM`);
-    console.log(`Solar Mass: ${this.mass} R`);
-    console.log(
-      `Mass: ${this.mass * (2 * 10000000000000000000000000000000)} kg`
-    );
-    console.log(`Age: ${this.age.toLocaleString()}`);
-    console.log("");
+    // console.log("");
+    // console.log("STAR INFORMATION");
+    // console.log(`ID: ${this.id}`);
+    // console.log(`Name: ${this.name}`);
+    // console.log(`Position: ${this.position.x}x ${this.position.y}y`);
+    // console.log(`Sector: ${this.sector}`);
+    // console.log(`Type: ${this.type}`);
+    // console.log(`Class: ${this.class}`);
+    // console.log(`Temp: ${this.temp.toLocaleString()}K`);
+    // console.log(`Solar Radius: ${this.size} R`);
+    // console.log(`Radius: ${this.radius.toLocaleString()} KM`);
+    // console.log(`Solar Mass: ${this.mass} R`);
+    // console.log(
+    //   `Mass: ${this.mass * (2 * 10000000000000000000000000000000)} kg`
+    // );
+    // console.log(`Age: ${this.age.toLocaleString()}`);
+    // console.log("");
     const starInfoText = `POS: ${this.position.x}x ${this.position.y}y\nSEC: ${
       this.sector
     }\nTYP: ${this.type}\nCLS: ${

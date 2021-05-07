@@ -160,27 +160,23 @@ export default (universe) => {
 
     universeLines.lineStyle(1, colors.pink, 1); //(thickness, color, alpha)
     universe.stars.forEach((star) => {
+      // draw circle behind star
       universeLines.drawCircle(
         star.position.x,
         star.position.y,
         star.size / 2 + 2
       );
+      // fill in the circle
       universeLines.beginFill(colors.pink, 1); //(thickness, color)
+      // get all stars in range of this star
       const starsInRange = star.getStarsInRange();
       starsInRange.forEach((starInRange) => {
+        // move to the current star
         universeLines.moveTo(star.position.x, star.position.y);
+        // draw a line to the first adjacent star
         universeLines.lineTo(starInRange.position.x, starInRange.position.y);
-        // universeLines.drawCircle(
-        //   starInRange.position.x,
-        //   starInRange.position.y,
-        //   starInRange.size / 2 + 2
-        // );
-        // universeLines.beginFill(colors.pink, 1); //(thickness, color)
       });
-      // universeLines.closePath();
     });
-    // const image = app.renderer.plugins.extract.image(universeLineContainer);
-    // // document.body.appendChild(image);
   });
 
   // GRIDS

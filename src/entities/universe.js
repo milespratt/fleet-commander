@@ -15,6 +15,16 @@ import Star from "./star";
 import ringPNG from "../assets/images/star-selection-ring.png";
 import hoverRingPNG from "../assets/images/star-hover-ring.png";
 
+class Route {
+  constructor(routeOrigin, routeDestination) {
+    this.legs = [];
+    this.stops = [];
+    this.distance = 0;
+    this.origin = routeOrigin;
+    this.destination = routeDestination
+  }
+}
+
 const hoverRingTexture = PIXI.Texture.from(hoverRingPNG);
 const hoverRingSprite = new PIXI.Sprite(hoverRingTexture);
 hoverRingSprite.anchor.set(0.5);
@@ -121,10 +131,10 @@ class Universe {
   getGridRow(y) {
     const row = String.fromCharCode(
       65 +
-        Math.floor(
-          (this.sectorGrid.size - (this.sectorGrid.size - y)) /
-            this.sectorGrid.delimiter
-        )
+      Math.floor(
+        (this.sectorGrid.size - (this.sectorGrid.size - y)) /
+        this.sectorGrid.delimiter
+      )
     );
     return row;
   }
@@ -133,7 +143,7 @@ class Universe {
     const column =
       Math.floor(
         (this.sectorGrid.size - (this.sectorGrid.size - x)) /
-          this.sectorGrid.delimiter
+        this.sectorGrid.delimiter
       ) + 1;
     return column;
   }
@@ -151,8 +161,8 @@ class Universe {
       row === this.sectorGrid.firstRow
         ? [row, String.fromCharCode(this.sectorGrid.firstRow.charCodeAt(0) + 1)]
         : row === this.sectorGrid.lastRow
-        ? [String.fromCharCode(this.sectorGrid.lastRow.charCodeAt(0) - 1), row]
-        : [
+          ? [String.fromCharCode(this.sectorGrid.lastRow.charCodeAt(0) - 1), row]
+          : [
             String.fromCharCode(row.charCodeAt(0) - 1),
             row,
             String.fromCharCode(row.charCodeAt(0) + 1),
@@ -162,8 +172,8 @@ class Universe {
       column === 1
         ? [column, 2]
         : column === columns
-        ? [column - 1, column]
-        : [column - 1, column, column + 1];
+          ? [column - 1, column]
+          : [column - 1, column, column + 1];
     const adjacentSectors = [];
     for (let r = 0; r < rowsToCapture.length; r++) {
       for (let c = 0; c < columnsToCapture.length; c++) {
@@ -322,61 +332,117 @@ class Universe {
     return starsInRange;
   }
   getRoute(origin, destination, range) {
+    console.log("pathfind from:")
     console.log(origin);
+    console.log("pathfind to:")
     console.log(destination);
+    console.log("max jump distance is:")
     console.log(range);
 
     const distance = getDistanceAndAngleBetweenTwoPoints(
       origin.position,
       destination.position
     ).distance;
+    console.log("origin and destination are this far apart:")
     console.log(distance);
-    const route = [];
+    let routes = [];
+    
+    const newRoute = new Route(origin, destination);
+    newRoute.stops.push(origin.id)
     if (distance > range) {
+      
+      console.log("distance is too far to jump, plotting course...");
       let routing = true;
       let nextOrigin = origin;
-      let nextLegDestination = null;
+      let nextDestination = null;
       let destinationDistance = null;
-      console.log("too far!");
       let loops = 0;
       while (routing) {
         loops++;
         // get stars in range of next origin
-        const inRangeStars = this.getStarsInRange(range, nextOrigin);
+        const inRangeStars = this.getStarsInRange(range, nextOrigin).filter(inRangeStar => !newRoute.stops.includes(inRangeStar.id)).sort((a, b) => {
+          const aDistance = getDistanceAndAngleBetweenTwoPoints(
+            a.position,
+            destination.position
+          ).distance;
+          const bDistance = getDistanceAndAngleBetweenTwoPoints(
+            b.position,
+            destination.position
+          ).distance;
+          if (aDistance > bDistance) {
+            return -1;
+          } else if (aDistance < bDistance) {
+            return 1
+          }
+          else {
+            return 0
+          }
+        });
         // loop through the in range stars and find the one closest to destination
-        // inRangeStars.forEach((rangeStar) => {
         for (let s = 0; s < inRangeStars.length; s++) {
+          console.log("")
+          console.log("checking star")
+
+          // if the in range star is the destination then stop
+
+          // get distance from in range star to destination
           const { distance } = getDistanceAndAngleBetweenTwoPoints(
             inRangeStars[s].position,
             destination.position
           );
-          if (inRangeStars[s].id === destination.id) {
-            nextLegDestination = inRangeStars[s];
-            break;
-          } else if (!destinationDistance || destinationDistance > distance) {
+          // if there is no distance, or the new in range star is closer to the destination then set it as the next destination
+          if (!destinationDistance || destinationDistance > distance) {
+            newRoute.distance += distance;
             destinationDistance = distance;
-            nextLegDestination = inRangeStars[s];
+            nextDestination = inRangeStars[s];
+            console.log("closer", distance)
+            console.log(destinationDistance)
+          } else {
+            console.log("not closer", distance)
+            console.log(destinationDistance)
           }
+          if (inRangeStars[s].id === destination.id) {
+            console.log("destination reached!")
+            nextDestination = inRangeStars[s];
+            routing = false;
+            break;
+          }
+          console.log("")
         }
-        // });
-        route.push({
-          start: nextOrigin,
-          end: nextLegDestination,
-        });
-        if (nextLegDestination.id === destination.id || loops > 1000) {
+        if (!nextDestination) {
+          // routing = false;
+          console.log("last star error")
+          nextDestination = inRangeStars[1]
+          // route = [];
+          // nextOrigin = origin;
+          // nextDestination = null;
+          // destinationDistance = null;
+        } 
+        // else {
+
+          newRoute.legs.push({
+            start: nextOrigin,
+            end: nextDestination,
+          });
+          newRoute.stops.push(nextDestination.id)
+          nextOrigin = nextDestination;
+          nextDestination = null;
+        // }
+
+        if (loops > 100) {
           routing = false;
-        } else {
-          nextOrigin = nextLegDestination;
-          nextLegDestination = null;
         }
       }
-      return route;
+
+      console.log(newRoute)
+      return newRoute;
     } else {
-      route.push({
+      newRoute.distance = distance;
+      newRoute.legs.push({
         start: origin,
         end: destination,
       });
-      return route;
+      return newRoute;
     }
   }
   // generate universe
