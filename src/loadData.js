@@ -119,7 +119,7 @@ export default () => {
             // name: `Ship-${i + 1}`,
             name,
             range: 300,
-            speed: (lightSpeed / lightYear) * 10000000,
+            speed: (lightSpeed / lightYear) * 1,
             x: shipOrigin.position.x,
             y: shipOrigin.position.y,
             origin: shipOrigin,

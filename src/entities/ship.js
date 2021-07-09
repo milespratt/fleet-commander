@@ -55,7 +55,7 @@ class Ship {
     // SPEED
     this.speed = 0;
     // this.speed = (lightSpeed / lightYear) * (447040 / lightSpeed); // 447040m/s
-    this.maxSpeed = (lightSpeed / lightYear) * 100000000; // 80% the speed of light
+    this.maxSpeed = (lightSpeed / lightYear) * 1000000; // 80% the speed of light
     // this.maxSpeed = (lightSpeed / lightYear) * (447040 / lightSpeed); // 447040m/s
     this.warpSpeed = (lightSpeed / lightYear) * 1;
     this.location = origin;
@@ -154,14 +154,8 @@ class Ship {
     return direction;
   }
   updatePosition(newCoordinates) {
-    const {
-      posX,
-      posY,
-      directionX,
-      directionY,
-      distance,
-      angle,
-    } = newCoordinates;
+    const { posX, posY, directionX, directionY, distance, angle } =
+      newCoordinates;
     this.position.x = posX;
     this.position.y = posY;
     this.sprite.angle = angle + 90;
@@ -296,10 +290,13 @@ class Ship {
     this.updatePosition(newPlot);
     this.voyageGraphics.clear();
     // AUTOPILOT
-    if (this.route && this.route.length > 0) {
-      const nextDestination = this.route.shift();
+    if (this.route && this.route.legs.length > 0) {
+      const nextDestination = this.route.legs.shift();
       this.plot(nextDestination.end);
-    } else if (this.autopilot && (!this.route || this.route.length === 0)) {
+    } else if (
+      this.autopilot &&
+      (!this.route || this.route.legs.length === 0)
+    ) {
       this.disengageAutopilot();
     }
   }
@@ -398,9 +395,9 @@ class Ship {
       this.routeGraphics.moveTo(leg.start.position.x, leg.start.position.y);
       this.routeGraphics.lineTo(leg.end.position.x, leg.end.position.y);
     });
-    // const firstDestination = route.shift();
+    const firstDestination = route.legs.shift();
 
-    // this.plot(firstDestination.end);
+    this.plot(firstDestination.end);
     this.route = route;
   }
   runSkills(delta) {
